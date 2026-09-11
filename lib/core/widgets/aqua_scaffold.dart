@@ -12,6 +12,7 @@ class AquaScaffold extends ConsumerStatefulWidget {
   final String? title;
   final List<Widget>? actions;
   final VoidCallback? onSearchTap;
+  final VoidCallback? onSettingsTap;
 
   const AquaScaffold({
     super.key,
@@ -21,6 +22,7 @@ class AquaScaffold extends ConsumerStatefulWidget {
     this.title,
     this.actions,
     this.onSearchTap,
+    this.onSettingsTap,
   });
 
   @override
@@ -113,15 +115,21 @@ class _AquaScaffoldState extends ConsumerState<AquaScaffold> {
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         // Global Search
         IconButton(
-          tooltip: 'Search (Ctrl+/)',
+          tooltip: 'Search',
           icon: const Icon(Icons.search_rounded),
           onPressed: widget.onSearchTap,
         ),
         if (widget.actions != null) ...widget.actions!,
-        const SizedBox(width: 8),
+        // Settings — always accessible from header
+        IconButton(
+          tooltip: 'Settings',
+          icon: const Icon(Icons.settings_outlined),
+          onPressed: widget.onSettingsTap,
+        ),
+        const SizedBox(width: 4),
       ],
     );
 
@@ -188,16 +196,6 @@ class _AquaScaffoldState extends ConsumerState<AquaScaffold> {
                 selectedIcon: const Icon(Icons.account_balance_wallet_rounded),
                 label: settings.tr('finance'),
               ),
-              NavigationDestination(
-                icon: const Icon(Icons.bar_chart_outlined),
-                selectedIcon: const Icon(Icons.bar_chart_rounded),
-                label: settings.tr('reports'),
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.settings_outlined),
-                selectedIcon: const Icon(Icons.settings_rounded),
-                label: settings.tr('settings'),
-              ),
             ],
           ),
         ),
@@ -244,16 +242,6 @@ class _AquaScaffoldState extends ConsumerState<AquaScaffold> {
                 icon: const Icon(Icons.account_balance_wallet_outlined),
                 selectedIcon: const Icon(Icons.account_balance_wallet_rounded),
                 label: Text(settings.tr('finance')),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.bar_chart_outlined),
-                selectedIcon: const Icon(Icons.bar_chart_rounded),
-                label: Text(settings.tr('reports')),
-              ),
-              NavigationRailDestination(
-                icon: const Icon(Icons.settings_outlined),
-                selectedIcon: const Icon(Icons.settings_rounded),
-                label: Text(settings.tr('settings')),
               ),
             ],
           ),

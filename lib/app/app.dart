@@ -12,7 +12,6 @@ import '../features/manage/manage_page.dart';
 import '../features/inventory/inventory_hub_page.dart';
 import '../features/feed/feed_logging_page.dart';
 import '../features/finance/finance_page.dart';
-import '../features/reports/reports_page.dart';
 import '../features/settings/settings_page.dart';
 
 class AquaLogApp extends ConsumerWidget {
@@ -78,6 +77,15 @@ class AppMainNavigation extends StatefulWidget {
 class _AppMainNavigationState extends State<AppMainNavigation> {
   int _currentIndex = 0;
 
+  // 5-item nav: 0=Overview, 1=Manage, 2=Stock, 3=LogFeed, 4=Finance
+  // Reports & Settings are accessible via header / dashboard shortcuts
+
+  void _goToSettings() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SettingsPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final pages = [
@@ -92,8 +100,6 @@ class _AppMainNavigationState extends State<AppMainNavigation> {
         onFeedLogged: () => setState(() => _currentIndex = 0),
       ),
       const FinancePage(),
-      const ReportsPage(),
-      const SettingsPage(),
     ];
 
     return AquaScaffold(
@@ -102,6 +108,7 @@ class _AppMainNavigationState extends State<AppMainNavigation> {
         setState(() => _currentIndex = index);
       },
       onSearchTap: () => AquaSearchDialog.show(context),
+      onSettingsTap: _goToSettings,
       body: IndexedStack(
         index: _currentIndex,
         children: pages,

@@ -482,7 +482,36 @@ class _ManagePageState extends ConsumerState<ManagePage> with SingleTickerProvid
       return;
     }
 
-    String selectedPondId = allPonds.first.id;
+    // ── CRITICAL: Only show VACANT ponds (no active batch) ──────────────────
+    final batchesAsync = ref.read(allBatchesMasterStreamProvider);
+    final allBatches = batchesAsync.valueOrNull ?? [];
+    final occupiedPondIds = allBatches
+        .where((b) => b.status == 'active')
+        .map((b) => b.pondId)
+        .toSet();
+    final vacantPonds = allPonds.where((p) => !occupiedPondIds.contains(p.id)).toList();
+
+    if (vacantPonds.isEmpty) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          icon: const Icon(Icons.info_outline_rounded, color: Color(0xFF006876), size: 40),
+          title: const Text('No Vacant Ponds', style: TextStyle(fontWeight: FontWeight.bold)),
+          content: const Text(
+            'All your ponds currently have active batches running.\n\n'
+            'To stock a new batch, first harvest or complete an existing active batch in one of your ponds.',
+          ),
+          actions: [
+            FilledButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('OK')),
+          ],
+        ),
+      );
+      return;
+    }
+    // ────────────────────────────────────────────────────────────────────────
+
+    String selectedPondId = vacantPonds.first.id;
     final countCtrl = TextEditingController(text: '100000');
     final hatcheryCtrl = TextEditingController(text: 'Apex Hatchery');
     final seedCostCtrl = TextEditingController(text: '40000');
@@ -497,11 +526,12 @@ class _ManagePageState extends ConsumerState<ManagePage> with SingleTickerProvid
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) {
-          final pond = allPonds.firstWhere((p) => p.id == selectedPondId, orElse: () => allPonds.first);
+          final pond = vacantPonds.firstWhere((p) => p.id == selectedPondId, orElse: () => vacantPonds.first);
           final count = int.tryParse(countCtrl.text) ?? 0;
           final density = count > 0 && pond.areaSqMeters > 0
               ? (count / pond.areaSqMeters).toStringAsFixed(1)
               : '0';
+
 
           return AlertDialog(
             title: const Text('Stock New Batch'),
@@ -514,7 +544,7 @@ class _ManagePageState extends ConsumerState<ManagePage> with SingleTickerProvid
                     value: selectedPondId,
                     isExpanded: true,
                     decoration: const InputDecoration(labelText: 'Target Pond *', border: OutlineInputBorder()),
-                    items: allPonds.map((p) {
+                    items: vacantPonds.map((p) {
                       final site = allSites.where((s) => s.id == p.siteId).firstOrNull;
                       return DropdownMenuItem(
                         value: p.id,
