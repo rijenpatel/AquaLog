@@ -61,3 +61,7 @@ source code/
 ux-ui-agent-skills-main/
 stitch_material_3_android_specification/
 AGENTS.md
+
+# APK / AAB builds
+*.apk
+*.aab
