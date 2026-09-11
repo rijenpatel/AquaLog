@@ -1,0 +1,2854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <!-- Mobile-first viewport: device-width ensures no forced zoom on small screens -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,viewport-fit=cover"/>
+  <!-- Theme color for browser chrome on mobile -->
+  <meta name="theme-color" content="#0d1117"/>
+  <link rel="manifest" href="manifest.json"/>
+  <!-- iOS PWA fullscreen support -->
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <!-- Android PWA fullscreen support -->
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <!-- SEO meta description -->
+  <meta name="description" content="AquaLog — झींगा पालन ऐप। मछली पालक किसानों के लिए फीड ट्रैकिंग, तालाब प्रबंधन।"/>
+  <title>AquaLog — Shrimp Feed Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin/>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="enhancements.css"/>
+</head>
+<body>
+
+
+<!-- ═══ SPLASH ═══ -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo-ring">
+      <div class="splash-icon">🦐</div>
+    </div>
+    <div class="splash-name">AquaLog</div>
+    <div class="splash-name-hindi">एक्वालॉग</div>
+    <div class="splash-sub">झींगा फीड ट्रैकर</div>
+    <div class="splash-sub-en">Shrimp Feed Manager</div>
+    <div class="splash-dots">
+      <div class="splash-dot"></div>
+      <div class="splash-dot"></div>
+      <div class="splash-dot"></div>
+    </div>
+    <div class="splash-tagline">तालाब प्रबंधन</div>
+  </div>
+</div>
+
+<!-- ═══ APP SHELL ═══ -->
+<div id="app" class="app hidden">
+
+  <!-- Animated ambient background -->
+  <div class="ambient-mesh-bg" aria-hidden="true">
+    <div class="ambient-light light-teal"></div>
+    <div class="ambient-light light-blue"></div>
+    <div class="ambient-light light-indigo"></div>
+    <div class="water-particles"></div>
+  </div>
+  <!-- Reactive ambient canvas: floating bubbles / particles (added by UI modernization) -->
+  <canvas id="ambientCanvas" aria-hidden="true"></canvas>
+
+  <!-- TOP STATUS BAR -->
+  <header class="status-bar">
+    <span id="statusTime" class="status-time"></span>
+    <div class="status-right">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusLabel" class="status-label">Online</span>
+    </div>
+  </header>
+
+  <!-- ═══ PAGES ═══ -->
+  <main class="pages" id="pages" role="main" aria-label="Application pages">
+
+    <!-- ░░░ PAGE: DASHBOARD ░░░ -->
+    <section class="page active" id="pageDashboard" aria-label="Overview Page">
+      <div class="page-scroll">
+
+        <!-- Dashboard Context Selector -->
+        <div class="context-selector-card">
+          <div class="sel-wrap context-sel-wrap">
+            <select class="fi context-select" id="dashboardContextSelect" aria-label="Overview Context Selector">
+              <option value="farm">Farm Overview</option>
+              <optgroup label="ACTIVE BATCHES" id="activeBatchesOptGroup"></optgroup>
+              <optgroup label="COMPLETED BATCHES" id="completedBatchesOptGroup"></optgroup>
+            </select>
+            <span class="sel-arrow">▼</span>
+          </div>
+        </div>
+
+        <!-- Farm Overview Content -->
+        <div id="farmOverviewContent">
+          <!-- ══ HERO CARD ══ -->
+          <div class="hero-card">
+            <div class="hero-bg-blob"></div>
+            <div class="hero-bg-blob-2"></div>
+            <div class="hero-top">
+              <div>
+                <div class="hero-greeting" id="heroGreeting">Good morning 👋</div>
+                <div class="hero-greeting-hindi" id="heroGreetingHindi" style="font-family:'Noto Sans Devanagari',sans-serif;font-size:0.82rem;color:rgba(255,255,255,0.75);font-weight:600;margin-top:2px;">नमस्ते किसान भाई!</div>
+                <div class="hero-date" id="heroDate"></div>
+              </div>
+              <div class="hero-avatar">🦐</div>
+            </div>
+            <div class="hero-stat-label">
+              Today's Total Feed
+              <span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:0.70rem;opacity:0.75;">· आज का कुल खाना</span>
+            </div>
+            <div class="hero-stat-value" id="heroTodayTotal">0 <span class="hero-unit">g</span></div>
+            <div class="hero-stat-sub" id="heroTodaySessions">0 sessions logged today</div>
+            <div class="hero-chips" id="heroChips"></div>
+
+            <div class="hero-trend-section" id="heroTrendSection">
+              <div class="hero-trend-header">7-Day Feed Trend</div>
+              <div class="hero-trend-chart-wrap">
+                <canvas id="farmTrendChart" aria-describedby="farmTrendSummary"></canvas>
+                <div class="an-empty-trend hidden" id="farmTrendEmpty">No Records Available</div>
+                <div class="chart-summary-box hidden" id="farmTrendSummary"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ SECTION: Operations (Active Batches + Sampling Alerts) ══ -->
+          <div class="dash-section dash-section--operations">
+            <div class="dash-section-header">
+              <span class="dash-section-icon">🦐</span>
+              <span class="dash-section-title">Operations</span>
+              <span class="dash-section-sub">Active batches &amp; sampling alerts</span>
+            </div>
+
+            <!-- SAMPLING REMINDER BANNER -->
+            <div id="samplingWarningWrap"></div>
+
+            <!-- FEATURE 1: Active Batch Summary Cards -->
+            <div class="section-header-row">
+              <div class="section-title-sm">Active Batches</div>
+            </div>
+            <div id="activeBatchSummaryCards" class="active-batch-cards-wrap">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- ══ SECTION: Finance Quick Access ══ -->
+          <div class="dash-section dash-section--finance">
+            <div class="dash-section-header">
+              <span class="dash-section-icon">💰</span>
+              <span class="dash-section-title">Finance &amp; Profit</span>
+              <span class="dash-section-sub">Track costs, revenue &amp; profitability</span>
+            </div>
+            <button class="fin-quick-access" data-action="switchPage" data-page-id="pageFinance" style="width:100%;background:none;border:none;padding:0;margin:0;cursor:pointer;text-align:left;">
+              <div class="fin-quick-card">
+                <div class="fin-quick-icon">💰</div>
+                <div class="fin-quick-info">
+                  <div class="fin-quick-title">Open Finance Module</div>
+                  <div class="fin-quick-sub">Expenses · Revenue · Profitability · Market Prices</div>
+                </div>
+                <div class="fin-quick-arrow">→</div>
+              </div>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- ══ SECTION: Today's Sessions (Feed day-view per pond) ══
+             Visible in BOTH Farm and Batch views.
+             In Farm view: shows pond selector chips + Daily Feed Timeline.
+             In Batch view: hides pond selector (pond already chosen via dropdown)
+             and shows the Daily Feed Timeline for the selected batch's pond. -->
+        <div class="dash-section dash-section--sessions" id="sessionsSectionWrap">
+          <div class="dash-section-header">
+            <span class="dash-section-icon">🍽</span>
+            <span class="dash-section-title" id="sessionSectionTitle">Today's Sessions</span>
+            <button class="see-all-btn" id="seeAllSessionsBtn">See All →</button>
+          </div>
+
+          <!-- Pond Selector Strip (scrollable chips) — hidden in Batch view -->
+          <div class="pond-session-strip" id="pondSessionStrip">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Date Navigator -->
+          <div id="sessionDateNav"></div>
+
+          <!-- Session Summary Card (Daily Feed Timeline) -->
+          <div id="pondSessionSummary" class="pond-session-summary-wrap">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Batch Summary Card -->
+        <div class="hero-card batch-summary-card hidden" id="batchSummaryCard" style="cursor:pointer; user-select:none;" tabindex="0" role="button" aria-expanded="false" aria-label="Batch Summary Overview">
+          <div class="hero-bg-blob"></div>
+          <div class="hero-bg-blob-2"></div>
+          <!-- Header row: pond name + status badge + chevron -->
+          <div class="hero-top">
+            <div>
+              <div class="hero-greeting" id="batchPondName">Pond Name</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div class="batch-status-badge" id="batchStatusBadge">Active</div>
+              <div class="bsc-details-indicator" id="batchDetailsIndicator">⌄</div>
+            </div>
+          </div>
+          <!-- DOC -->
+          <div class="bsc-doc-row">
+            <div class="bsc-doc-value" id="batchDocValue">DOC 42</div>
+          </div>
+          <!-- Primary Stats: Weight and Total Feed -->
+          <div class="bsc-primary-grid">
+            <div class="bsc-weight-block">
+              <div class="bsc-info-lbl" id="batchCardWeightLbl">Current Shrimp Weight</div>
+              <div class="bsc-info-val" id="batchCardWeight">—</div>
+              <div class="bsc-weight-status-inline" id="batchCardWeightStatus"></div>
+            </div>
+            <div class="bsc-feed-block">
+              <div class="bsc-info-lbl">Total Feed</div>
+              <div class="bsc-info-val" id="batchTotalFeed">—</div>
+              <div class="bsc-last-feed-inline" id="batchLastFeedStatus">Waiting for Today's Feed</div>
+            </div>
+          </div>
+
+          <!-- Expandable Details Content -->
+          <div class="bsc-details-content collapsed" id="batchDetailsContent">
+            <div class="bsc-details-inner">
+              <div class="bsc-details-grid">
+                <div class="bsc-info-item">
+                  <div class="bsc-info-lbl">Stock Date</div>
+                  <div class="bsc-info-val" id="batchCardStockDate">—</div>
+                </div>
+                <div class="bsc-info-item">
+                  <div class="bsc-info-lbl">Stocked Shrimp</div>
+                  <div class="bsc-info-val" id="batchStockedShrimp">—</div>
+                </div>
+                <div class="bsc-info-item">
+                  <div class="bsc-info-lbl">Batch Number</div>
+                  <div class="bsc-info-val" id="batchNumberLabel">Batch #3</div>
+                </div>
+                <div class="bsc-info-item">
+                  <div class="bsc-info-lbl">Farm Name</div>
+                  <div class="bsc-info-val" id="batchSiteName">Site Name</div>
+                </div>
+                <div class="bsc-info-item" style="grid-column: span 2;">
+                  <div class="bsc-info-lbl">Last Weight Entry</div>
+                  <div class="bsc-info-val" id="batchCardWeightMeta">—</div>
+                </div>
+                <div class="bsc-info-item" style="grid-column: span 2;" id="batchCardSamplingInfo">
+                  <div class="bsc-info-lbl">Latest Sampling</div>
+                  <div class="bsc-info-val">—</div>
+                </div>
+              </div>
+              <div class="bsc-biomass-section" id="batchBiomassSection"></div>
+            </div>
+          </div>
+          <!-- Quick action buttons (active only, hidden for completed) -->
+          <div class="bsc-quick-actions hidden" id="batchCardQuickActions">
+            <button class="abs-qa-btn abs-qa-btn--feed" id="batchCardAddFeedBtn">
+              <span class="abs-qa-icon">＋</span> Add Feed
+            </button>
+            <button class="abs-qa-btn abs-qa-btn--weight" id="batchCardAddWeightBtn">
+              <span class="abs-qa-icon">⚖</span> Add Weight
+            </button>
+            <button class="abs-qa-btn abs-qa-btn--sampling" id="batchCardAddSamplingBtn">
+              <!-- Text Label -->
+              <span class="sampling-btn-label">Sampling</span>
+              
+              <!-- Sparkle Icon at bottom right -->
+              <svg class="sampling-btn-sparkle" viewBox="0 0 24 24" fill="none">
+                <path d="M12,2 C12,2 13,8 15,10 C17,12 22,12 22,12 C22,12 17,12 15,14 C13,16 12,22 12,22 C12,22 11,16 9,14 C7,12 2,12 2,12 C2,12 7,12 9,10 C11,8 12,2 12,2 Z" fill="rgba(255,255,255,0.6)" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- AquaLog Intelligence: Weather / Alerts / Recommendation / Risk -->
+        <div id="weatherIntelligenceSection" class="weather-intel-section hidden"></div>
+
+        <!-- Section: Feed Progress By DOC -->
+        <div class="section-header-row hidden" id="docChartHeader">
+          <div class="section-title-sm">Feed Progress By DOC</div>
+        </div>
+        <div class="chart-card hidden" id="docChartSection">
+          <div class="chart-scroll-container">
+            <canvas id="chartDoc" aria-describedby="batchDocProgressSummary"></canvas>
+          </div>
+          <div class="chart-summary-box hidden" id="batchDocProgressSummary"></div>
+        </div>
+
+        <!-- Section: Feed Distribution — ORDER 5 -->
+        <div class="aql-dist-card" id="aqlDistCard">
+          <div class="aql-dist-body">
+            <!-- Top row: title + live badge -->
+            <div class="aql-dist-top-row">
+              <div class="aql-dist-title-block">
+                <div class="aql-dist-title">Distribution breakdown</div>
+                <div class="aql-dist-sub" id="aqlDistSub">All Time</div>
+              </div>
+              <div class="aql-dist-live-badge"><div class="aql-dist-live-dot"></div><span>Live</span></div>
+            </div>
+
+            <!-- Segmented control: By Size / By Pond / By Phase -->
+            <div class="aql-dist-seg" id="aqlDistSeg">
+              <button class="aql-sb on" data-k="size" style="--acc:#38bdf8">By size</button>
+              <button class="aql-sb" data-k="pond" style="--acc:#a78bfa">By pond</button>
+              <button class="aql-sb" data-k="phase" style="--acc:#f59e0b">By phase</button>
+            </div>
+
+            <!-- Donut ring + center KPI -->
+            <div class="aql-dist-ring-wrap">
+              <div class="aql-dist-ring-canvas-wrap">
+                <canvas id="chartDonut" role="img" aria-label="Interactive distribution donut chart. Tap segments or rows to inspect details." aria-describedby="donutChartSummary"></canvas>
+                <div class="aql-dist-kpi" id="aqlDistKpi">
+                  <div class="aql-dist-kpi-eye" id="aqlDistKpiEye">Total feed</div>
+                  <div class="aql-dist-kpi-val" id="aqlDistKpiVal">—</div>
+                  <div class="aql-dist-kpi-unit" id="aqlDistKpiUnit">kg · all sizes</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row list -->
+            <div class="aql-dist-rows" id="aqlDistRows"></div>
+
+            <!-- Expandable detail panel -->
+            <div class="aql-dist-detail-panel" id="aqlDistDetail">
+              <div class="aql-dist-dp-inner" id="aqlDistDpInner"></div>
+            </div>
+
+            <div class="chart-summary-box hidden" id="donutChartSummary"></div>
+          </div>
+
+          <!-- Footer: total + trend -->
+          <div class="aql-dist-footer" id="aqlDistFooter">
+            <div class="aql-dist-total-block">
+              <div class="aql-dist-total-lbl" id="aqlDistFootLbl">Total</div>
+              <div class="aql-dist-total-val" id="aqlDistFootVal">—</div>
+            </div>
+            <div class="aql-dist-trend-pill fl" id="aqlDistTrend">→ No data</div>
+          </div>
+        </div>
+
+
+
+        <!-- GROWTH TRACKING (Batch) — integrated into batch dashboard -->
+        <div class="section-header-row hidden" id="growthTrackingHeader">
+          <div class="section-title-sm">Weight Management</div>
+        </div>
+        <div class="gt-batch-card hidden" id="growthTrackingCard">
+          <!-- Dynamically populated by renderBatchGrowthCard() -->
+        </div>
+
+        <!-- GROWTH vs FEED TREND (Batch) -->
+        <div class="section-header-row hidden" id="growthFeedTrendHeader">
+          <div class="section-title-sm">Growth vs Feed Trend</div>
+        </div>
+        <div class="chart-card hidden" id="growthFeedTrendCard">
+          <canvas id="growthFeedChart" aria-describedby="growthFeedTrendSummary"></canvas>
+          <div class="neon-line-empty hidden" id="growthFeedEmpty"></div>
+          <div class="chart-summary-box hidden" id="growthFeedTrendSummary"></div>
+        </div>
+
+        <!-- SAMPLING (Batch) -->
+        <div class="section-header-row hidden" id="samplingHeader">
+          <div class="section-title-sm">Sampling</div>
+        </div>
+        <div class="sampling-card hidden" id="samplingCard">
+          <!-- Dynamically populated by renderBatchSamplingCard() -->
+        </div>
+
+        <!-- ══ ANALYTICS TAB TOGGLE ══ -->
+        <div class="section-header-row hidden" id="analyticsTabHeader">
+          <div class="section-title-sm">📊 Growth Analytics</div>
+          <button class="see-all-btn" id="toggleAnalyticsBtn" data-action="toggleAnalyticsPanel">Show ▾</button>
+        </div>
+
+        <!-- ══ ANALYTICS PANEL ══ -->
+        <div class="analytics-panel hidden" id="analyticsPanel">
+
+          <!-- KPI Summary Row -->
+          <div class="an-kpi-row" id="analyticsKpiRow">
+            <!-- Dynamically populated by renderAnalyticsModule() -->
+          </div>
+
+          <!-- Growth Trend Chart -->
+          <div class="section-header-row" style="padding:16px 0 8px;">
+            <div class="an-chart-title">Growth Trend (ABW)</div>
+            <div class="an-chart-legend" id="growthLegend">
+              <span class="legend-dot" style="background:#f59e0b;"></span><span class="legend-lbl">Visual</span>
+              <span class="legend-dot" style="background:#38bdf8;"></span><span class="legend-lbl">Sampling</span>
+            </div>
+          </div>
+          <div class="an-chart-wrap" id="growthTrendWrap">
+            <canvas id="analyticsTrendChart"></canvas>
+            <div class="an-chart-empty hidden" id="growthTrendEmpty">No growth data available yet.</div>
+          </div>
+
+          <!-- Biomass Forecast Chart -->
+          <div class="section-header-row" style="padding:16px 0 8px;">
+            <div class="an-chart-title">Biomass &amp; Forecast</div>
+          </div>
+          <div class="an-chart-wrap" id="biomassForecastWrap">
+            <canvas id="analyticsBiomassChart"></canvas>
+            <div class="an-chart-empty hidden" id="biomassForecastEmpty">Biomass requires Hapa &amp; Sampling data.</div>
+          </div>
+
+          <!-- FCR History -->
+          <div class="section-header-row" style="padding:16px 0 8px;">
+            <div class="an-chart-title">FCR Per Period</div>
+          </div>
+          <div id="analyticsFcrList" class="an-fcr-list">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- ══ BATCH FINANCE SUMMARY ══ -->
+          <div class="section-header-row" style="padding:16px 0 8px;">
+            <div class="an-chart-title">💰 Batch Finance</div>
+          </div>
+          <div id="batchFinanceSummary" class="batch-finance-summary">
+            <!-- Dynamically populated by renderBatchFinance() -->
+          </div>
+
+          <div style="height:8px;"></div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: LOG (FORM) ░░░ -->
+    <section class="page" id="pageLog" aria-label="Log Feed Page">
+      <div class="page-scroll">
+        <div class="page-hero-sm">
+          <div class="page-hero-title">🦐 Log Feed</div>
+          <div class="page-hero-sub" style="font-family:'Noto Sans Devanagari',sans-serif;">खाना दर्ज करें · Record a Feeding Session</div>
+        </div>
+
+        <form id="feedForm" novalidate>
+
+          <!-- WHEN -->
+          <div class="form-card">
+            <div class="form-card-label">
+              <span class="header-emoji">📅</span> When
+              <span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--t2);font-weight:600;margin-left:4px;">· कब?</span>
+            </div>
+            <div class="datetime-capsule-labels">
+              <label class="fl" for="feedDate">Date</label>
+              <label class="fl" for="feedTime">Time</label>
+            </div>
+            <div class="datetime-capsule-wrapper">
+              <div class="datetime-col date-col">
+                <span class="datetime-val" id="feedDateDisplay">Select Date</span>
+                <svg class="datetime-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <input class="fi datetime-input" type="date" id="feedDate" required aria-describedby="errDate"/>
+              </div>
+              <div class="datetime-divider"></div>
+              <div class="datetime-col time-col">
+                <span class="datetime-val" id="feedTimeDisplay">Select Time</span>
+                <svg class="datetime-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <select class="fi datetime-select" id="feedTime" required aria-describedby="errTime">
+                  <option value="">Select</option>
+                  <option value="7:00 AM">7:00 AM</option>
+                  <option value="11:00 AM">11:00 AM</option>
+                  <option value="4:00 PM">4:00 PM</option>
+                  <option value="7:00 PM">7:00 PM</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="twin-ferr-wrapper">
+              <div class="ferr" id="errDate">Required</div>
+              <div class="ferr" id="errTime">Required</div>
+            </div>
+            <div class="field-wrap slide-hide" id="customTimeGroup">
+              <label class="fl" for="customTime">Custom Time</label>
+              <input class="fi" type="time" id="customTime" aria-describedby="errCustomTime"/>
+              <div class="ferr" id="errCustomTime">Required</div>
+            </div>
+          </div>
+
+          <!-- WHERE -->
+          <div class="form-card">
+            <div class="form-card-label" id="lblPondSelect">
+              <span class="header-emoji">🏊</span> Pond
+              <span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--t2);font-weight:600;margin-left:4px;">· तालाब</span>
+            </div>
+            <div class="sel-wrap">
+              <select class="fi" id="pondSelect" required aria-labelledby="lblPondSelect" aria-describedby="errPond">
+                <option value="">— Select pond —</option>
+              </select>
+              <span class="sel-arrow">▾</span>
+            </div>
+            <div class="ferr" id="errPond">Please select a pond</div>
+            <div id="noBatchWarning" class="no-batch-inline hidden">
+              ⚠️ Selected pond has no active batch. <button type="button" class="go-manage-link" data-action="switchPage" data-page-id="pageManage">Go to Manage →</button>
+            </div>
+          </div>
+
+          <!-- FEED TYPES -->
+          <div class="form-card">
+            <div class="form-card-label">
+              <span class="header-emoji">🫧</span> Feed Types
+              <span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--t2);font-weight:600;margin-left:4px;">· खाने का प्रकार</span>
+            </div>
+            <div class="ferr no-mb" id="errFeed">Select at least one feed type</div>
+            <div class="feed-grid" id="feedGrid"></div>
+
+            <!-- Quantity inputs render here -->
+            <div id="qtySection"></div>
+
+            <div class="slide-hide" id="otherNameGroup">
+              <div class="field-wrap">
+                <label class="fl" for="otherFeedName">Other Feed Name</label>
+                <input class="fi" type="text" id="otherFeedName" placeholder="e.g. Special Mix A" maxlength="60" aria-describedby="errOtherName"/>
+                <div class="ferr" id="errOtherName">Required</div>
+              </div>
+            </div>
+            <div class="slide-hide" id="otherQtyGroup">
+              <div class="field-wrap">
+                <label class="fl" for="otherFeedQty">Other Feed Quantity (g)</label>
+                <input class="fi" type="number" id="otherFeedQty" inputmode="numeric" min="1" placeholder="e.g. 200" aria-describedby="errOtherQty"/>
+                <div class="ferr" id="errOtherQty">Enter valid quantity</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ MEDICINE / SUPPLEMENT LOG ═══ -->
+          <div class="collapsible-card medicine-log" id="medicineLogSection">
+            <div class="cc-header" id="medicineToggle" tabindex="0" role="button" aria-expanded="false">
+              <span><span class="header-emoji">💊</span> Medicine / Supplement Entry</span>
+              <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+                <span class="opt-tag" style="margin:0;">optional</span>
+                <span class="cc-arrow" id="medicineArrow">▾</span>
+              </div>
+            </div>
+            <div class="cc-body hidden" id="medicineBody">
+              <p class="cc-desc">Select from your inventory stock to log medicines or supplements used in this session. Stock will be deducted automatically.</p>
+
+              <!-- Inventory Stock Picker Row -->
+              <div class="med-picker-row">
+                <!-- Item selector -->
+                <div class="medicine-input-group med-picker-name-group">
+                  <label class="fl" for="medicineItemSelect">Item</label>
+                  <select class="fi" id="medicineItemSelect" aria-label="Select medicine or supplement from inventory">
+                  </select>
+                  <!-- Stock badge shown after selection -->
+                  <span class="med-stock-badge hidden" id="medStockBadge"></span>
+                </div>
+
+
+                <!-- Custom name — shown only when "custom" selected -->
+                <div class="medicine-input-group med-picker-custom-group hidden" id="medCustomNameGroup">
+                  <label class="fl" for="medicineName">Custom Name</label>
+                  <input
+                    class="fi"
+                    type="text"
+                    id="medicineName"
+                    placeholder="e.g. Probiotics, Vitamin C"
+                    maxlength="80"
+                    autocomplete="off"
+                    aria-label="Medicine or supplement name"
+                  />
+                </div>
+
+                <!-- Quantity -->
+                <div class="medicine-input-group medicine-qty-group">
+                  <label class="fl" for="medicineQty">
+                    Qty
+                    <span class="med-unit-label" id="medUnitLabel"></span>
+                  </label>
+                  <input
+                    class="fi"
+                    type="number"
+                    id="medicineQty"
+                    placeholder="e.g. 50"
+                    min="0"
+                    step="any"
+                    inputmode="decimal"
+                    aria-label="Medicine quantity"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  id="addMedicineBtn"
+                  class="pill-btn teal-btn medicine-add-btn"
+                  aria-label="Add medicine entry"
+                >＋ Add</button>
+              </div>
+              <div class="ferr hidden" id="errMedicine" role="alert"></div>
+
+              <!-- Entry Table — hidden until at least one row exists -->
+              <div class="medicine-table-wrap hidden" id="medicineTableWrap">
+                <table id="medicineTable" aria-label="Medicine and supplement entries">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Qty</th>
+                      <th>Stock Left</th>
+                      <th class="medicine-th-action">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="medicineTableBody">
+                    <!-- Rows inserted by JS -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Empty-state hint shown when table is empty -->
+              <div class="medicine-empty-hint" id="medicineEmptyHint">
+                No entries yet — select an item above and tap <strong>＋ Add</strong>.
+              </div>
+            </div>
+          </div>
+          <!-- END MEDICINE / SUPPLEMENT LOG -->
+
+
+
+          <!-- NOTES -->
+          <div class="form-card">
+            <div class="form-card-label" id="lblNotes">
+              <span class="header-emoji">📝</span> Notes
+              <span style="font-family:'Noto Sans Devanagari',sans-serif;font-size:0.75rem;color:var(--t2);font-weight:600;margin-left:4px;">· टिप्पणी</span>
+              <span class="opt-tag">optional</span>
+            </div>
+            <textarea class="fi fi-ta" id="notes" rows="3" placeholder="Observations, water quality, behavior…" maxlength="300" aria-labelledby="lblNotes"></textarea>
+          </div>
+
+          <!-- SUBMIT -->
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span id="submitLabel">✓ &nbsp;Log Feed Entry · फीड दर्ज करें</span>
+            <span id="submitLoading" class="hidden"><span class="spin"></span> Saving… · सहेज रहे हैं…</span>
+          </button>
+
+          <div class="dup-warn hidden" id="dupWarn">⚠️ Similar entry already submitted. Tap again to confirm.</div>
+
+        </form>
+
+        <!-- GOOGLE SHEETS -->
+        <div class="collapsible-card" id="sheetsCard">
+          <div class="cc-header" id="sheetsToggle" tabindex="0" role="button" aria-expanded="false">
+            <span><span class="header-emoji">📊</span> Google Sheets Sync</span>
+            <span class="cc-arrow" id="sheetsArrow">▾</span>
+          </div>
+          <div class="cc-body hidden" id="sheetsBody">
+            <p class="cc-desc">Auto-sync every entry to Google Sheets.</p>
+            <div class="field-wrap">
+              <label class="fl" for="sheetsUrl">Apps Script Web App URL</label>
+              <input class="fi" type="url" id="sheetsUrl" placeholder="https://script.google.com/macros/s/…/exec"/>
+            </div>
+            <button class="pill-btn amber-btn" id="sheetsSaveBtn">Save URL</button>
+            <div class="cc-hint">
+              Deploy a Google Apps Script as a Web App and paste the URL above. See README for full instructions.
+            </div>
+          </div>
+        </div>
+
+        <!-- CUSTOM REST API SYNC -->
+        <div class="collapsible-card" id="apiSyncCard">
+          <div class="cc-header" id="apiSyncToggle" tabindex="0" role="button" aria-expanded="false">
+            <span><span class="header-emoji">🌐</span> Custom REST API Sync</span>
+            <span class="cc-arrow" id="apiSyncArrow">▾</span>
+          </div>
+          <div class="cc-body hidden" id="apiSyncBody">
+            <p class="cc-desc">Sync feed logs to your own custom REST API.</p>
+            <div class="field-wrap">
+              <label class="fl" for="apiUrl">API Endpoint URL</label>
+              <input class="fi" type="url" id="apiUrl" placeholder="https://api.example.com/v1/feed-logs"/>
+            </div>
+            <div class="field-wrap">
+              <label class="fl" for="apiMethod">HTTP Method</label>
+              <select class="fi" id="apiMethod">
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+              </select>
+            </div>
+            <div class="field-wrap">
+              <label class="fl" for="apiAuth">Authorization Header Token (Optional)</label>
+              <input class="fi" type="text" id="apiAuth" placeholder="Bearer your-token-here or ApiKey ..."/>
+            </div>
+            <div class="field-wrap">
+              <label class="fl" for="apiHeaders">Custom Headers (JSON format, Optional)</label>
+              <textarea class="fi fi-ta" id="apiHeaders" rows="3" placeholder='{ "X-Custom-Header": "value" }'></textarea>
+              <div class="ferr" id="errApiHeaders">Invalid JSON format</div>
+            </div>
+            <button class="pill-btn amber-btn" id="apiSaveBtn">Save API Settings</button>
+            <div class="cc-hint">
+              Feed entries will be sent as JSON payloads to this endpoint.
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: MANAGE ░░░ -->
+    <section class="page" id="pageManage" aria-label="Manage Page">
+      <div class="page-scroll">
+        <div class="page-hero-sm">
+          <div class="page-hero-title">🌊 Manage</div>
+          <div class="page-hero-sub" style="font-family:'Noto Sans Devanagari',sans-serif;">तालाब प्रबंधन · Ponds & Batches</div>
+        </div>
+
+        <!-- ═══ PRIMARY MANAGEMENT ACTIONS ═══ -->
+        <!-- Issue #1, #3: Always-visible primary actions — Sites, Ponds, Batches -->
+        <div class="manage-primary-actions" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px 4px;">
+          <button class="manage-primary-card" id="manageSitesCardBtn" type="button">
+            <span class="mpc-icon">📍</span>
+            <span class="mpc-label">Sites</span>
+            <span class="mpc-sub" id="mpcSitesCount">0 sites</span>
+          </button>
+          <button class="manage-primary-card" id="managePondsCardBtn" type="button">
+            <span class="mpc-icon">🏊</span>
+            <span class="mpc-label">Ponds</span>
+            <span class="mpc-sub" id="mpcPondsCount">0 ponds</span>
+          </button>
+          <button class="manage-primary-card" id="manageBatchesCardBtn" type="button">
+            <span class="mpc-icon">🦐</span>
+            <span class="mpc-label">Batches</span>
+            <span class="mpc-sub" id="mpcBatchesCount">0 active</span>
+          </button>
+        </div>
+
+        <!-- Create Pond button (kept for discoverability; secondary CTA) -->
+        <div style="padding:8px 16px 4px;">
+          <button class="submit-btn" id="openCreatePondBtn" style="margin:0;width:100%">
+            ＋ &nbsp;Create Pond · <span style="font-family:'Noto Sans Devanagari',sans-serif;font-weight:700;">नया तालाब</span>
+          </button>
+        </div>
+
+        <!-- ═══ ACTIVE POND SELECTOR (chips) ═══ -->
+        <!-- Issue #2: chips at top sync with horizontal pager below -->
+        <div class="manage-pond-chips-wrap" id="managePondChipsWrap" style="padding:12px 0 4px;">
+          <div class="manage-pond-chips" id="managePondChips" role="tablist" aria-label="Active Ponds">
+            <!-- chips are rendered dynamically by renderManagePondChips() -->
+          </div>
+        </div>
+
+        <!-- ═══ POND MANAGEMENT CARD CAROUSEL ═══ -->
+        <!-- Issue #2: one full-screen-width card per active pond, horizontal page-by-page swiping -->
+        <div class="manage-pond-pager" id="managePondPager">
+          <!-- pond cards rendered dynamically by renderManagePondPager() -->
+        </div>
+
+        <!-- Empty state when no active ponds exist -->
+        <div id="managePondPagerEmpty" class="hidden" style="padding:32px 20px;text-align:center;color:var(--t3);font-size:0.88rem;">
+          <div style="font-size:2rem;margin-bottom:8px;">🏊</div>
+          <div style="font-weight:600;color:var(--t2);margin-bottom:4px;">No Active Ponds</div>
+          <div>Tap "Create Pond" above to add your first pond.</div>
+        </div>
+
+        <!-- ═══ INACTIVE PONDS (collapsed by default) ═══ -->
+        <div id="inactiveSection" class="hidden" style="margin-top:8px;">
+          <div class="section-header-row">
+            <div class="section-title-sm">Inactive Ponds</div>
+          </div>
+          <div id="inactivePondsList" class="manage-ponds-list"></div>
+        </div>
+
+        <!-- ═══ TOOLS & ANALYTICS (collapsible) ═══ -->
+        <!-- Issue #1: secondary features grouped, hidden by default to reduce clutter -->
+        <div class="collapsible-card manage-tools-card" id="manageToolsCard" style="margin:16px 16px 0;">
+          <div class="cc-header" id="manageToolsToggle" tabindex="0" role="button" aria-expanded="false">
+            <span><span class="header-emoji">🧰</span> Tools &amp; Analytics</span>
+            <span class="cc-arrow" id="manageToolsArrow">▾</span>
+          </div>
+          <div class="cc-body hidden" id="manageToolsBody">
+            <div class="manage-tools-grid" id="manageToolsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:6px 2px 4px;">
+              <!-- Compare feature buttons injected here by extra-features.js (re-targeted) -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ COMPLETED BATCHES (collapsible) ═══ -->
+        <div class="collapsible-card" id="completedBatchesCard" style="margin:16px 16px 0;">
+          <div class="cc-header" id="completedBatchesToggle" tabindex="0" role="button" aria-expanded="false">
+            <span><span class="header-emoji">📋</span> Completed Batches</span>
+            <span class="cc-arrow" id="completedBatchesArrow">▾</span>
+          </div>
+          <div class="cc-body hidden" id="completedBatchesBody">
+            <div id="completedBatchesList" class="batches-list" style="padding: 0; margin: 0;"></div>
+          </div>
+        </div>
+
+        <!-- Farm Sites & Locations list (kept for inline management; the primary "Sites" card button above also opens this section) -->
+        <div id="manageSitesSection" class="hidden" style="margin-top:16px;">
+          <div class="section-header-row" style="padding:0 16px;">
+            <div class="section-title-sm">Farm Sites &amp; Locations</div>
+            <button class="settings-dev-btn" id="manageAddSiteBtn" style="background:var(--teal-glow2);color:var(--teal);border:1px solid var(--teal-dim);margin:0;padding:6px 12px;font-size:0.78rem;border-radius:8px;cursor:pointer;">＋ Add Site</button>
+          </div>
+          <div id="manageSitesList" class="settings-sites-list" style="margin:0 16px 12px;"></div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: REPORTS ░░░ -->
+    <section class="page" id="pageReports" aria-label="Reports Page">
+      <div class="page-scroll">
+        <div class="page-hero-sm">
+          <div class="page-hero-title">📊 Reports</div>
+          <div class="page-hero-sub" style="font-family:'Noto Sans Devanagari',sans-serif;">रिपोर्ट और इतिहास · Analytics & History</div>
+        </div>
+
+        <!-- Period Tabs -->
+        <div class="tab-row" id="reportTabs">
+          <button class="tab-btn active" data-tab="daily">Daily</button>
+          <button class="tab-btn" data-tab="weekly">Weekly</button>
+          <button class="tab-btn" data-tab="monthly">Monthly</button>
+          <button class="tab-btn" data-tab="history">History</button>
+        </div>
+
+        <!-- Daily Report -->
+        <div class="tab-panel active" id="tabDaily">
+          <div class="report-date-nav">
+            <button class="nav-arrow-btn" id="dailyPrev">‹</button>
+            <div class="report-period-label" id="dailyLabel"></div>
+            <button class="nav-arrow-btn" id="dailyNext">›</button>
+          </div>
+          <div class="stat-strip" id="dailyStats"></div>
+          <div class="section-title-sm mt16">Sessions</div>
+          <div id="dailySessions" class="sessions-list"></div>
+          <div class="section-title-sm mt16">By Pond</div>
+          <div id="dailyPondList" class="pond-breakdown"></div>
+        </div>
+
+        <!-- Weekly Report -->
+        <div class="tab-panel hidden" id="tabWeekly">
+          <div class="report-date-nav">
+            <button class="nav-arrow-btn" id="weeklyPrev">‹</button>
+            <div class="report-period-label" id="weeklyLabel"></div>
+            <button class="nav-arrow-btn" id="weeklyNext">›</button>
+          </div>
+          <div class="stat-strip" id="weeklyStats"></div>
+          <div class="chart-card mt12">
+            <div class="chart-title">Daily Feed (grams)</div>
+            <canvas id="chartWeeklyBar" height="160" aria-describedby="weeklyChartSummary"></canvas>
+            <div class="chart-summary-box hidden" id="weeklyChartSummary"></div>
+          </div>
+          <div class="section-title-sm mt16">By Pond</div>
+          <div id="weeklyPondList" class="pond-breakdown"></div>
+          <div class="section-title-sm mt16">By Feed Size</div>
+          <div id="weeklyFeedList" class="feed-breakdown"></div>
+        </div>
+
+        <!-- Monthly Report -->
+        <div class="tab-panel hidden" id="tabMonthly">
+          <div class="report-date-nav">
+            <button class="nav-arrow-btn" id="monthlyPrev">‹</button>
+            <div class="report-period-label" id="monthlyLabel"></div>
+            <button class="nav-arrow-btn" id="monthlyNext">›</button>
+          </div>
+          <div class="stat-strip" id="monthlyStats"></div>
+          <div class="chart-card mt12">
+            <div class="chart-title">Weekly Feed Totals (grams)</div>
+            <canvas id="chartMonthlyBar" height="160" aria-describedby="monthlyChartSummary"></canvas>
+            <div class="chart-summary-box hidden" id="monthlyChartSummary"></div>
+          </div>
+          <div class="section-title-sm mt16">By Pond</div>
+          <div id="monthlyPondList" class="pond-breakdown"></div>
+          <div class="section-title-sm mt16">Trend vs Last Month</div>
+          <div class="trend-compare-card" id="trendCompare"></div>
+
+          <!-- ANALYTICS: Monthly Feed Consumption (Farm) -->
+          <div class="section-title-sm mt16">Monthly Feed Consumption</div>
+          <div class="an-monthly-wrap" id="farmMonthlyWrap">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- History -->
+        <div class="tab-panel hidden" id="tabHistory">
+          <div class="search-row">
+            <input class="search-input" type="text" id="historySearch" placeholder="Search pond, date, feed…"/>
+          </div>
+          <div class="filter-chips" id="historyFilters">
+            <button class="chip active" data-pond="all">All Ponds</button>
+          </div>
+          <div id="historyList" class="history-list"></div>
+          <div class="export-row">
+            <button class="pill-btn green-btn" id="csvExportBtn">⬇ Export CSV</button>
+            <span class="export-count-lbl" id="exportCountLbl">0 records</span>
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: GROWTH TRACKING ░░░ -->
+    <!-- (Removed: Growth Tracking is now embedded in Batch Dashboard) -->
+
+    <!-- ░░░ PAGE: SETTINGS ░░░ -->
+    <section class="page" id="pageSettings" aria-label="Settings Page">
+      <div class="page-scroll">
+        <div class="page-hero-sm">
+          <div class="page-hero-title">⚙️ Settings</div>
+          <div class="page-hero-title" style="font-family:'Noto Sans Devanagari',sans-serif;font-size:1.1rem;font-weight:700;color:var(--teal);margin-top:2px;">सेटिंग्स</div>
+          <div class="page-hero-sub">Preferences & Configuration · प्राथमिकताएं</div>
+        </div>
+
+        <!-- Language + Theme Settings Card -->
+        <div class="settings-section-header">
+          <span class="settings-section-icon">🌐</span>
+          <span class="settings-section-title">Language & Display · भाषा</span>
+        </div>
+        <div class="settings-card" style="margin:0 16px;">
+
+          <!-- Appearance section temporarily removed — app is dark-only.
+               To re-enable in the future, restore the Light/Dark + Material You rows here. -->
+
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Language · भाषा</div>
+              <div class="settings-row-sub">App display language</div>
+            </div>
+            <div class="sel-wrap" style="width:140px;">
+              <select class="fi" id="languageSelect" style="height:44px;font-size:0.85rem;">
+                <option value="en">English</option>
+                <option value="hi">हिंदी</option>
+              </select>
+              <span class="sel-arrow">▾</span>
+            </div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Outdoor Mode · धूप मोड</div>
+              <div class="settings-row-sub">High contrast for sunlight visibility</div>
+            </div>
+            <label class="settings-toggle" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
+              <input type="checkbox" id="outdoorModeToggle" style="display:none;" />
+              <div class="toggle-track" id="outdoorToggleTrack" style="width:52px;height:28px;border-radius:14px;background:#d0d0d0;transition:background .2s;position:relative;">
+                <div class="toggle-thumb" id="outdoorToggleThumb" style="position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#ffffff;box-shadow:0 2px 6px rgba(0,0,0,0.25);transition:transform .2s;"></div>
+              </div>
+            </label>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Text Size · अक्षर का आकार</div>
+              <div class="settings-row-sub">Larger text for better readability</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="pill-btn grey-btn" id="fontSizeSmall" style="height:38px;padding:0 14px;font-size:0.8rem;">A</button>
+              <button class="pill-btn green-btn" id="fontSizeLarge" style="height:38px;padding:0 14px;font-size:0.95rem;">A+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ DEVELOPER TOOLS ══ -->
+        <div class="settings-section-header">
+          <span class="settings-section-icon">🛠</span>
+          <span class="settings-section-title">Developer Tools</span>
+        </div>
+        <div class="settings-card settings-card-dev">
+          <div class="settings-dev-warning">
+            <span class="settings-dev-warning-icon">⚠️</span>
+            <span>Developer tools are intended for testing and development only.</span>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <div class="settings-row-info" style="padding:0 0 8px;">
+            <div class="settings-row-label">Generate Demo Data</div>
+            <div class="settings-row-sub">Load realistic demo batches and feed logs for testing and presentations. This will replace all existing data.</div>
+          </div>
+          <button class="settings-dev-btn settings-dev-btn-purple" id="settingsLoadDemoBtn">
+            🚀 &nbsp;Load Demo Data
+          </button>
+
+          <div class="settings-divider" style="margin-top:16px;"></div>
+
+          <div class="settings-row-info" style="padding:8px 0 8px;">
+            <div class="settings-row-label">Reset All Data</div>
+            <div class="settings-row-sub">Permanently clear all ponds, batches, and feed records from this device.</div>
+          </div>
+          <button class="settings-dev-btn settings-dev-btn-red" id="settingsResetDataBtn">
+            🗑 &nbsp;Reset All Data
+          </button>
+        </div>
+
+        <!-- ══ DATA BACKUP & RESTORE ══ -->
+        <div class="settings-section-header">
+          <span class="settings-section-icon">💾</span>
+          <span class="settings-section-title">Data Backup & Restore · बैकअप</span>
+        </div>
+        <div class="settings-card">
+          <div class="settings-row-info" style="padding:0 0 10px;">
+            <div class="settings-row-label">Export Full Backup</div>
+            <div class="settings-row-sub">Download all your data (ponds, batches, feed logs, inventory, finance, growth, sampling) as a single JSON file. Keep it safe — it's your complete farm record.</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="settings-dev-btn settings-dev-btn-purple" id="aqExportJsonBtn" style="flex:1;min-width:140px;">
+              📥 &nbsp;Export JSON Backup
+            </button>
+            <button class="settings-dev-btn" id="aqExportCsvBtn" style="flex:1;min-width:140px;background:rgba(56,189,248,0.12);color:var(--cyan);border:1px solid rgba(56,189,248,0.3);">
+              📊 &nbsp;Export Feed CSV
+            </button>
+          </div>
+
+          <div class="settings-divider" style="margin:18px 0 14px;"></div>
+
+          <div class="settings-row-info" style="padding:0 0 10px;">
+            <div class="settings-row-label">Restore from Backup</div>
+            <div class="settings-row-sub">Import a previously-exported JSON backup. This will <strong style="color:var(--amber);">replace all current data</strong>. Cannot be undone.</div>
+          </div>
+          <input type="file" id="aqImportFileInput" accept="application/json,.json" style="display:none;" />
+          <button class="settings-dev-btn settings-dev-btn-red" id="aqImportBtn" style="width:100%;">
+            📤 &nbsp;Choose Backup File to Restore…
+          </button>
+          <div id="aqRestoreStatus" style="display:none;margin-top:10px;padding:10px 12px;border-radius:10px;font-size:0.82rem;line-height:1.4;"></div>
+        </div>
+
+        <!-- ══ NOTIFICATIONS & REMINDERS ══ -->
+        <div class="settings-section-header">
+          <span class="settings-section-icon">🔔</span>
+          <span class="settings-section-title">Notifications & Reminders · सूचना</span>
+        </div>
+        <div class="settings-card">
+          <div class="settings-row" id="aqNotifFeedRow">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Feed Time Reminders</div>
+              <div class="settings-row-sub">Get notified at scheduled feed times (7 AM, 11 AM, 4 PM, 7 PM)</div>
+            </div>
+            <label class="settings-toggle" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
+              <input type="checkbox" id="aqNotifFeedToggle" style="display:none;" />
+              <div class="toggle-track" id="aqNotifFeedTrack" style="width:52px;height:28px;border-radius:14px;background:#d0d0d0;transition:background .2s;position:relative;">
+                <div class="toggle-thumb" style="position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#ffffff;box-shadow:0 2px 6px rgba(0,0,0,0.25);transition:transform .2s;"></div>
+              </div>
+            </label>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row" id="aqNotifLowStockRow">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Low Stock Alerts</div>
+              <div class="settings-row-sub">Warn when feed or medicine inventory runs low</div>
+            </div>
+            <label class="settings-toggle" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
+              <input type="checkbox" id="aqNotifLowStockToggle" style="display:none;" />
+              <div class="toggle-track" id="aqNotifLowStockTrack" style="width:52px;height:28px;border-radius:14px;background:#d0d0d0;transition:background .2s;position:relative;">
+                <div class="toggle-thumb" style="position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#ffffff;box-shadow:0 2px 6px rgba(0,0,0,0.25);transition:transform .2s;"></div>
+              </div>
+            </label>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row" id="aqNotifSamplingRow">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Sampling Due Reminders</div>
+              <div class="settings-row-sub">Remind when a batch is due for growth sampling</div>
+            </div>
+            <label class="settings-toggle" style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
+              <input type="checkbox" id="aqNotifSamplingToggle" style="display:none;" />
+              <div class="toggle-track" id="aqNotifSamplingTrack" style="width:52px;height:28px;border-radius:14px;background:#d0d0d0;transition:background .2s;position:relative;">
+                <div class="toggle-thumb" style="position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#ffffff;box-shadow:0 2px 6px rgba(0,0,0,0.25);transition:transform .2s;"></div>
+              </div>
+            </label>
+          </div>
+          <div class="settings-divider"></div>
+          <div style="padding:4px 0 2px;">
+            <button class="pill-btn grey-btn" id="aqNotifTestBtn" style="width:100%;height:42px;font-size:0.85rem;">
+              🔔 &nbsp;Send Test Notification
+            </button>
+          </div>
+          <div id="aqNotifPermissionNote" style="display:none;margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);font-size:0.78rem;color:var(--amber);line-height:1.4;">
+            ⚠️ Browser notifications are blocked. Enable them in your browser settings to receive reminders.
+          </div>
+        </div>
+
+        <div class="settings-version-footer">
+          <div class="settings-version-name">🦐 AquaLog</div>
+          <div class="settings-version-sub">Shrimp Feed Intelligence · v2.1</div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: INVENTORY ░░░ -->
+    <section class="page" id="pageInventory" aria-label="Inventory Page">
+      <div class="page-scroll">
+        <div class="page-hero-sm">
+          <div class="page-hero-title">📦 Inventory</div>
+          <div class="page-hero-sub" style="font-family:'Noto Sans Devanagari',sans-serif;">सामग्री प्रबंधन · Manage Farm Supplies</div>
+        </div>
+
+        <!-- Site Selector & Reports Button Row -->
+        <div class="inventory-controls-row" style="margin: 10px 16px 14px; display: flex; gap: 12px; align-items: flex-end;">
+          <div class="context-selector-card" style="flex: 1; margin: 0; padding: 12px;">
+            <div class="form-card-label" style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--t2); margin-bottom:4px;">Current Site · वर्तमान साइट</div>
+            <div class="sel-wrap context-sel-wrap" style="width:100%;">
+              <select class="fi context-select" id="inventorySiteSelect" aria-label="Current Site Selector">
+                <!-- Dynamically populated -->
+              </select>
+              <span class="sel-arrow">▼</span>
+            </div>
+          </div>
+          <button class="pill-btn green-btn" id="btnGoToInventoryReports" style="height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px; margin: 0; font-size: 0.9rem; font-weight: 600; border-radius: 12px;">
+            <i class="ti ti-file-analytics" style="font-size: 1.2rem;"></i> Reports
+          </button>
+        </div>
+
+        <!-- Dashboard Cards Responsive Grid -->
+        <div class="inventory-grid">
+          <!-- CARD 1: FEED -->
+          <div class="inventory-card">
+            <div class="inventory-card-header">
+              <span class="inventory-card-icon">🫧</span>
+              <span class="inventory-card-title">Feed</span>
+              <span class="inventory-badge orange-badge" id="feedLowStockCount" style="display:none;">0</span>
+            </div>
+            <div class="inventory-metrics">
+              <div class="inventory-metric-row">
+                <span class="metric-label">Current Stock</span>
+                <span class="metric-value" id="feedCurrentStock">0.0 kg</span>
+              </div>
+              <div class="inventory-metric-row">
+                <span class="metric-label">Purchased This Month</span>
+                <span class="metric-value" id="feedPurchasedMonth">0.0 kg</span>
+              </div>
+              <div class="inventory-metric-row">
+                <span class="metric-label">Consumed This Month</span>
+                <span class="metric-value" id="feedConsumedMonth">0.0 kg</span>
+              </div>
+            </div>
+            <div class="db-progress-container" id="feedCardProgressBar" style="margin: 0 12px 10px;"></div>
+            <div class="inventory-actions">
+              <button class="pill-btn green-btn btn-sm" id="btnQuickAddFeed">Quick Add</button>
+              <button class="pill-btn grey-btn btn-sm" id="btnViewDetailsFeed">View Details</button>
+            </div>
+          </div>
+
+          <!-- CARD 2: MEDICINE & CONSUMABLES -->
+          <div class="inventory-card">
+            <div class="inventory-card-header">
+              <span class="inventory-card-icon">💊</span>
+              <span class="inventory-card-title">Medicine &amp; Consumables</span>
+              <span class="inventory-badge orange-badge" id="medLowStockCount" style="display:none;">0</span>
+            </div>
+            <div class="inventory-metrics">
+              <div class="inventory-metric-row">
+                <span class="metric-label">Current Stock</span>
+                <span class="metric-value" id="medCurrentStock">0 units</span>
+              </div>
+              <div class="inventory-metric-row">
+                <span class="metric-label">Expiring Soon (30d)</span>
+                <span class="metric-value" id="medExpiringSoon" style="color:var(--amber);">0</span>
+              </div>
+            </div>
+            <div class="med-dashboard-list" id="medCardCategoryBars" style="margin: 0 12px 10px;"></div>
+            <div class="inventory-actions">
+              <button class="pill-btn green-btn btn-sm" id="btnQuickAddMedicine">Quick Add</button>
+              <button class="pill-btn grey-btn btn-sm" id="btnViewDetailsMedicine">View Details</button>
+            </div>
+          </div>
+
+          <!-- CARD 3: FUEL -->
+          <div class="inventory-card">
+            <div class="inventory-card-header">
+              <span class="inventory-card-icon">⛽</span>
+              <span class="inventory-card-title">Fuel</span>
+            </div>
+            <div class="inventory-metrics">
+              <div class="inventory-metric-row">
+                <span class="metric-label">Current Stock</span>
+                <span class="metric-value" id="fuelCurrentStock">0.0 L</span>
+              </div>
+              <div class="inventory-metric-row">
+                <span class="metric-label">Purchased This Month</span>
+                <span class="metric-value" id="fuelPurchasedMonth">0.0 L</span>
+              </div>
+              <div class="inventory-metric-row">
+                <span class="metric-label">Consumed This Month</span>
+                <span class="metric-value" id="fuelConsumedMonth">0.0 L</span>
+              </div>
+            </div>
+            <div class="db-progress-container" id="fuelCardProgressBar" style="margin: 0 12px 10px;"></div>
+            <div class="inventory-actions">
+              <button class="pill-btn green-btn btn-sm" id="btnQuickAddFuel">Quick Add</button>
+              <button class="pill-btn grey-btn btn-sm" id="btnViewDetailsFuel">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: FEED DETAIL VIEW ░░░ -->
+    <section class="page" id="pageFeedDetail" aria-label="Feed Detail Page">
+      <div class="page-scroll">
+        <div class="detail-header">
+          <button class="back-btn" id="btnBackFeedDetail" aria-label="Back to Inventory Dashboard">←</button>
+          <div class="detail-title-block">
+            <div class="detail-page-title">Feed Inventory</div>
+            <div class="detail-page-subtitle" id="feedDetailSiteName">Site Name</div>
+          </div>
+        </div>
+
+        <!-- Site Selector for detail view -->
+        <div class="context-selector-card" style="margin: 10px 16px 14px;">
+          <div class="form-card-label" style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--t2); margin-bottom:4px;">Current Site · वर्तमान साइट</div>
+          <div class="sel-wrap context-sel-wrap" style="width:100%;">
+            <select class="fi context-select" id="feedDetailSiteSelect" aria-label="Current Site Selector">
+              <!-- Dynamically populated -->
+            </select>
+            <span class="sel-arrow">▼</span>
+          </div>
+        </div>
+
+        <!-- Summary Bar -->
+        <div class="detail-summary-bar">
+          <div class="summary-kpi">
+            <div class="kpi-val" id="feedSumTotalStock">0.0 kg</div>
+            <div class="kpi-lbl">Total Stock</div>
+          </div>
+          <div class="summary-kpi">
+            <div class="kpi-val" id="feedSumTotalItems">0</div>
+            <div class="kpi-lbl">Feed Items</div>
+          </div>
+          <div class="summary-kpi">
+            <div class="kpi-val" id="feedSumLowStock" style="color:var(--amber);">0</div>
+            <div class="kpi-lbl">Low Stock</div>
+          </div>
+          <div class="summary-kpi">
+            <div class="kpi-val" id="feedSumOutOfStock" style="color:var(--red);">0</div>
+            <div class="kpi-lbl">Out of Stock</div>
+          </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="search-filter-card">
+          <div class="search-row">
+            <input class="search-input fi" type="text" id="feedSearchInput" placeholder="Search brand, size, supplier..."/>
+          </div>
+          
+          <div class="filters-row">
+            <div class="date-filter-group">
+              <div class="date-input-wrap">
+                <label for="feedFilterDateFrom">From</label>
+                <input type="date" id="feedFilterDateFrom" class="fi"/>
+              </div>
+              <div class="date-input-wrap">
+                <label for="feedFilterDateTo">To</label>
+                <input type="date" id="feedFilterDateTo" class="fi"/>
+              </div>
+            </div>
+            
+            <div class="toggle-filter-group">
+              <label class="filter-toggle-pill" id="lblFeedFilterLow">
+                <input type="checkbox" id="feedFilterLowOnly"/>
+                <span>Low Stock</span>
+              </label>
+              <label class="filter-toggle-pill" id="lblFeedFilterOut">
+                <input type="checkbox" id="feedFilterOutOnly"/>
+                <span>Out of Stock</span>
+              </label>
+            </div>
+            
+            <button class="clear-filters-btn" id="btnClearFeedFilters">Clear Filters</button>
+          </div>
+        </div>
+
+        <!-- Feed Supplies List -->
+        <div class="detail-list-section">
+          <div class="section-title-sm" style="margin-left:16px;">Feed Items</div>
+          <div id="feedDetailItemsList" class="detail-items-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: MEDICINE DETAIL VIEW ░░░ -->
+    <section class="page" id="pageMedicineDetail" aria-label="Medicine Detail Page">
+      <div class="page-scroll">
+        <div class="detail-header">
+          <button class="back-btn" id="btnBackMedicineDetail" aria-label="Back to Inventory Dashboard">←</button>
+          <div class="detail-title-block">
+            <div class="detail-page-title">Medicine &amp; Consumables</div>
+            <div class="detail-page-subtitle" id="medDetailSiteName">Site Name</div>
+          </div>
+        </div>
+
+        <!-- Site Selector for detail view -->
+        <div class="context-selector-card" style="margin: 10px 16px 14px;">
+          <div class="form-card-label" style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--t2); margin-bottom:4px;">Current Site · वर्तमान साइट</div>
+          <div class="sel-wrap context-sel-wrap" style="width:100%;">
+            <select class="fi context-select" id="medDetailSiteSelect" aria-label="Current Site Selector">
+              <!-- Dynamically populated -->
+            </select>
+            <span class="sel-arrow">▼</span>
+          </div>
+        </div>
+
+        <!-- Summary Bar -->
+        <div class="detail-summary-bar">
+          <div class="summary-kpi">
+            <div class="kpi-val" id="medSumTotalItems">0</div>
+            <div class="kpi-lbl">Total Items</div>
+          </div>
+          <div class="summary-kpi">
+            <div class="kpi-val" id="medSumExpiring" style="color:var(--amber);">0</div>
+            <div class="kpi-lbl">Expiring Soon</div>
+          </div>
+          <div class="summary-kpi">
+            <div class="kpi-val" id="medSumLowStock" style="color:var(--amber);">0</div>
+            <div class="kpi-lbl">Low Stock</div>
+          </div>
+          <div class="summary-kpi">
+            <div class="kpi-val" id="medSumOutOfStock" style="color:var(--red);">0</div>
+            <div class="kpi-lbl">Out of Stock</div>
+          </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="search-filter-card">
+          <div class="search-row">
+            <input class="search-input fi" type="text" id="medSearchInput" placeholder="Search medicine, category, supplier..."/>
+          </div>
+          
+          <div class="filters-row">
+            <div class="date-filter-group">
+              <div class="date-input-wrap">
+                <label for="medFilterDateFrom">From</label>
+                <input type="date" id="medFilterDateFrom" class="fi"/>
+              </div>
+              <div class="date-input-wrap">
+                <label for="medFilterDateTo">To</label>
+                <input type="date" id="medFilterDateTo" class="fi"/>
+              </div>
+            </div>
+            
+            <div class="toggle-filter-group">
+              <label class="filter-toggle-pill" id="lblMedFilterLow">
+                <input type="checkbox" id="medFilterLowOnly"/>
+                <span>Low Stock</span>
+              </label>
+              <label class="filter-toggle-pill" id="lblMedFilterOut">
+                <input type="checkbox" id="medFilterOutOnly"/>
+                <span>Out of Stock</span>
+              </label>
+              <label class="filter-toggle-pill" id="lblMedFilterExpiring">
+                <input type="checkbox" id="medFilterExpiringOnly"/>
+                <span>Expiring Soon</span>
+              </label>
+            </div>
+            
+            <button class="clear-filters-btn" id="btnClearMedFilters">Clear Filters</button>
+          </div>
+        </div>
+
+        <!-- Medicine Supplies List -->
+        <div class="detail-list-section">
+          <div class="section-title-sm" style="margin-left:16px;">Medicine &amp; Consumables</div>
+          <div id="medDetailItemsList" class="detail-items-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: FUEL DETAIL VIEW ░░░ -->
+    <section class="page" id="pageFuelDetail" aria-label="Fuel Detail Page">
+      <div class="page-scroll">
+        <div class="detail-header">
+          <button class="back-btn" id="btnBackFuelDetail" aria-label="Back to Inventory Dashboard">←</button>
+          <div class="detail-title-block">
+            <div class="detail-page-title">Fuel Inventory</div>
+            <div class="detail-page-subtitle" id="fuelDetailSiteName">Site Name</div>
+          </div>
+        </div>
+
+        <!-- Site Selector for detail view -->
+        <div class="context-selector-card" style="margin: 10px 16px 14px;">
+          <div class="form-card-label" style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--t2); margin-bottom:4px;">Current Site · वर्तमान साइट</div>
+          <div class="sel-wrap context-sel-wrap" style="width:100%;">
+            <select class="fi context-select" id="fuelDetailSiteSelect" aria-label="Current Site Selector">
+              <!-- Dynamically populated -->
+            </select>
+            <span class="sel-arrow">▼</span>
+          </div>
+        </div>
+
+        <!-- Summary Bar -->
+        <div class="detail-summary-bar">
+          <div class="summary-kpi">
+            <div class="kpi-val" id="fuelSumTotalStock">0.0 L</div>
+            <div class="kpi-lbl">Total Stock</div>
+          </div>
+          <div class="summary-kpi">
+            <div class="kpi-val" id="fuelSumTotalItems">0</div>
+            <div class="kpi-lbl">Fuel Types</div>
+          </div>
+          <div class="summary-kpi">
+            <div class="kpi-val" id="fuelSumLowStock" style="color:var(--amber);">0</div>
+            <div class="kpi-lbl">Low Stock</div>
+          </div>
+          <div class="summary-kpi">
+            <div class="kpi-val" id="fuelSumOutOfStock" style="color:var(--red);">0</div>
+            <div class="kpi-lbl">Out of Stock</div>
+          </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="search-filter-card">
+          <div class="search-row">
+            <input class="search-input fi" type="text" id="fuelSearchInput" placeholder="Search fuel type, supplier..."/>
+          </div>
+          
+          <div class="filters-row">
+            <div class="date-filter-group">
+              <div class="date-input-wrap">
+                <label for="fuelFilterDateFrom">From</label>
+                <input type="date" id="fuelFilterDateFrom" class="fi"/>
+              </div>
+              <div class="date-input-wrap">
+                <label for="fuelFilterDateTo">To</label>
+                <input type="date" id="fuelFilterDateTo" class="fi"/>
+              </div>
+            </div>
+            
+            <div class="toggle-filter-group">
+              <label class="filter-toggle-pill" id="lblFuelFilterLow">
+                <input type="checkbox" id="fuelFilterLowOnly"/>
+                <span>Low Stock</span>
+              </label>
+              <label class="filter-toggle-pill" id="lblFuelFilterOut">
+                <input type="checkbox" id="fuelFilterOutOnly"/>
+                <span>Out of Stock</span>
+              </label>
+            </div>
+            
+            <button class="clear-filters-btn" id="btnClearFuelFilters">Clear Filters</button>
+          </div>
+        </div>
+
+        <!-- Fuel Supplies List -->
+        <div class="detail-list-section">
+          <div class="section-title-sm" style="margin-left:16px;">Fuel Supplies</div>
+          <div id="fuelDetailItemsList" class="detail-items-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: INVENTORY REPORTS ░░░ -->
+    <section class="page" id="pageInventoryReports" aria-label="Inventory Reports Page">
+      <div class="page-scroll">
+        <div class="detail-header">
+          <button class="back-btn" id="btnBackInventoryReports" aria-label="Back to Inventory Dashboard">←</button>
+          <div class="detail-title-block">
+            <div class="detail-page-title">Inventory Reports</div>
+            <div class="detail-page-subtitle" id="reportsSiteName">Site Name</div>
+          </div>
+        </div>
+
+        <!-- Site Selector -->
+        <div class="context-selector-card" style="margin: 10px 16px 14px;">
+          <div class="form-card-label" style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--t2); margin-bottom:4px;">Current Site · वर्तमान साइट</div>
+          <div class="sel-wrap context-sel-wrap" style="width:100%;">
+            <select class="fi context-select" id="reportsSiteSelect" aria-label="Reports Site Selector">
+              <!-- Dynamically populated -->
+            </select>
+            <span class="sel-arrow">▼</span>
+          </div>
+        </div>
+
+        <!-- Report Type Selector Card -->
+        <div class="settings-card" style="margin: 10px 16px 14px; padding: 16px;">
+          <div class="form-card-label" style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--t2); margin-bottom:6px;">Select Report Type · रिपोर्ट का प्रकार</div>
+          <div class="sel-wrap" style="width:100%;">
+            <select class="fi" id="inventoryReportTypeSelect" style="border: 1px solid var(--border); background: rgba(255,255,255,0.02); color: var(--t1); border-radius: 8px;">
+              <option value="feed_purchase" selected>Feed Purchase History</option>
+              <option value="medicine_purchase">Medicine Purchase History</option>
+              <option value="fuel_purchase">Fuel Purchase History</option>
+              <option value="current_inventory">Current Inventory Status</option>
+              <option value="low_stock">Low Stock Alerts & Shortfalls</option>
+              <option value="stock_movement">Stock Movement Ledger</option>
+            </select>
+            <span class="sel-arrow">▼</span>
+          </div>
+        </div>
+
+        <!-- Filters and Controls Card -->
+        <div class="search-filter-card" style="margin: 10px 16px 14px;">
+          <div class="search-row">
+            <input class="search-input fi" type="text" id="reportSearchInput" placeholder="Search..."/>
+          </div>
+          
+          <div class="filters-row">
+            <!-- Date Filter Group -->
+            <div class="date-filter-group" id="reportDateFilterGroup">
+              <div class="date-input-wrap">
+                <label for="reportFilterDateFrom">From</label>
+                <input type="date" id="reportFilterDateFrom" class="fi"/>
+              </div>
+              <div class="date-input-wrap">
+                <label for="reportFilterDateTo">To</label>
+                <input type="date" id="reportFilterDateTo" class="fi"/>
+              </div>
+            </div>
+
+            <!-- Extra Dropdowns for specific reports (shown dynamically) -->
+            <div class="date-input-wrap hidden" id="reportCategoryFilterGroup" style="flex: 1 1 100%;">
+              <label for="reportCategorySelect">Category</label>
+              <div class="sel-wrap">
+                <select class="fi" id="reportCategorySelect">
+                  <option value="">— All Categories —</option>
+                  <option value="Probiotics">Probiotics</option>
+                  <option value="Minerals">Minerals</option>
+                  <option value="Lime">Lime</option>
+                  <option value="Salt">Salt</option>
+                  <option value="Molasses">Molasses</option>
+                  <option value="Zeolite">Zeolite</option>
+                  <option value="Chlorine">Chlorine</option>
+                  <option value="Bleaching Powder">Bleaching Powder</option>
+                  <option value="Vitamins">Vitamins</option>
+                  <option value="Water Treatment">Water Treatment</option>
+                </select>
+                <span class="sel-arrow">▼</span>
+              </div>
+            </div>
+
+            <div class="date-input-wrap hidden" id="reportFuelTypeFilterGroup" style="flex: 1 1 100%;">
+              <label for="reportFuelTypeSelect">Fuel Type</label>
+              <div class="sel-wrap">
+                <select class="fi" id="reportFuelTypeSelect">
+                  <option value="">— All Fuels —</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="Petrol">Petrol</option>
+                  <option value="Engine Oil">Engine Oil</option>
+                </select>
+                <span class="sel-arrow">▼</span>
+              </div>
+            </div>
+
+            <div class="date-input-wrap hidden" id="reportTxTypeFilterGroup" style="flex: 1 1 100%;">
+              <label for="reportTxTypeSelect">Transaction Type</label>
+              <div class="sel-wrap">
+                <select class="fi" id="reportTxTypeSelect">
+                  <option value="">— All Types —</option>
+                  <option value="purchase">Purchase</option>
+                  <option value="consumption">Consumption</option>
+                  <option value="manual_adjustment">Manual Adjustment</option>
+                  <option value="transfer_in">Transfer In</option>
+                  <option value="transfer_out">Transfer Out</option>
+                  <option value="expired">Expired</option>
+                  <option value="damaged">Damaged</option>
+                </select>
+                <span class="sel-arrow">▼</span>
+              </div>
+            </div>
+
+            <!-- Toggles (shown dynamically) -->
+            <div class="toggle-filter-group" id="reportToggleFilterGroup">
+              <label class="filter-toggle-pill hidden" id="lblReportLowStock">
+                <input type="checkbox" id="reportFilterLowStock"/>
+                <span>Low Stock</span>
+              </label>
+              <label class="filter-toggle-pill hidden" id="lblReportOutOfStock">
+                <input type="checkbox" id="reportFilterOutOfStock"/>
+                <span>Out of Stock</span>
+              </label>
+              <label class="filter-toggle-pill hidden" id="lblReportExpiring">
+                <input type="checkbox" id="reportFilterExpiring"/>
+                <span>Expiring Soon</span>
+              </label>
+            </div>
+
+            <!-- Action buttons -->
+            <div style="display: flex; gap: 8px; width: 100%; margin-top: 8px;">
+              <button class="clear-filters-btn" id="btnClearReportFilters" style="flex: 1; height: 38px; margin: 0;">Clear Filters</button>
+              <button class="pill-btn green-btn" id="btnExportReportCSV" style="flex: 1; height: 38px; display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0; font-size: 0.82rem; border-radius: 8px;">
+                <i class="ti ti-download" style="font-size: 1.1rem;"></i> Export CSV
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table View Section -->
+        <div class="detail-list-section" style="margin: 0 16px 20px;">
+          <!-- Loading placeholder -->
+          <div id="reportLoadingState" class="hidden" style="text-align: center; padding: 40px; color: var(--t2); font-size: 0.9rem;">
+            <div class="wx-loading-dot" style="margin-bottom: 8px;"></div>
+            Generating Report...
+          </div>
+          
+          <!-- Table Wrapper -->
+          <div id="reportTableWrapper" class="report-table-wrapper" style="width: 100%; overflow-x: auto; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 12px;">
+            <!-- Dynamically populated table -->
+          </div>
+
+          <!-- Pagination Bar -->
+          <div id="reportPaginationBar" class="report-pagination-bar hidden" style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 16px;">
+            <button class="icon-btn" id="btnReportPrevPage" style="background: transparent; border: none; color: var(--t1); font-size: 1.2rem; cursor: pointer; padding: 4px;">◀</button>
+            <span id="reportPaginationLabel" style="font-size: 0.85rem; color: var(--t2); font-weight: 600;">Page 1 of 1</span>
+            <button class="icon-btn" id="btnReportNextPage" style="background: transparent; border: none; color: var(--t1); font-size: 1.2rem; cursor: pointer; padding: 4px;">▶</button>
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ░░░ PAGE: FINANCE ░░░ -->
+    <section class="page" id="pageFinance" aria-label="Finance Page">
+      <div class="page-scroll">
+        <div class="page-hero-sm">
+          <div class="page-hero-title">💰 Finance</div>
+          <div class="page-hero-sub" style="font-family:'Noto Sans Devanagari',sans-serif;">लाभ और लागत · Profit & Cost Tracking</div>
+        </div>
+
+        <!-- Finance Tab Bar -->
+        <div class="tab-row fin-tab-row" id="financeTabs">
+          <button class="tab-btn fin-tab-btn active" data-action="switchFinanceTab" data-tab="overview">Overview</button>
+          <button class="tab-btn fin-tab-btn" data-action="switchFinanceTab" data-tab="expenses">Expenses</button>
+          <button class="tab-btn fin-tab-btn" data-action="switchFinanceTab" data-tab="revenue">Revenue</button>
+          <button class="tab-btn fin-tab-btn" data-action="switchFinanceTab" data-tab="prices">Market Prices</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div class="tab-panel fin-tab-panel" id="financeOverviewTab"></div>
+        <!-- Expenses Tab -->
+        <div class="tab-panel fin-tab-panel hidden" id="financeExpensesTab"></div>
+        <!-- Revenue Tab -->
+        <div class="tab-panel fin-tab-panel hidden" id="financeRevenueTab"></div>
+        <!-- Prices Tab -->
+        <div class="tab-panel fin-tab-panel hidden" id="financePricesTab"></div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ═══ ADD EXPENSE MODAL ═══ -->
+    <div class="modal-overlay hidden" id="addExpenseModal" role="dialog" aria-modal="true">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Add Expense</div>
+        <div class="modal-desc" style="color:var(--t2);margin-bottom:12px;">Record a manual expense (labor, electricity, etc.)</div>
+
+        <div class="field-wrap">
+          <label class="fl" for="expenseDate">Date <span class="req-star">*</span></label>
+          <input class="fi" type="date" id="expenseDate"/>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="expenseCategory">Category <span class="req-star">*</span></label>
+          <div class="sel-wrap">
+            <select class="fi" id="expenseCategory">
+              <option value="seed">🦐 Seed / Post-larvae</option>
+              <option value="labor">👷 Labor</option>
+              <option value="electricity">⚡ Electricity</option>
+              <option value="maintenance">🔧 Pond Maintenance</option>
+              <option value="rent">🏠 Rent</option>
+              <option value="equipment">🛠️ Equipment</option>
+              <option value="other">📦 Other</option>
+            </select>
+            <span class="sel-arrow">▼</span>
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="expenseAmount">Amount (₹) <span class="req-star">*</span></label>
+          <input class="fi" type="number" id="expenseAmount" min="0" step="any" placeholder="e.g. 5000"/>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="expenseBatch">Batch (optional)</label>
+          <div class="sel-wrap">
+            <select class="fi" id="expenseBatch"></select>
+            <span class="sel-arrow">▼</span>
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="expenseDescription">Description</label>
+          <input class="fi" type="text" id="expenseDescription" placeholder="e.g. Weekly wages for 2 workers"/>
+        </div>
+
+        <div class="modal-actions">
+          <button class="pill-btn grey-btn" onclick="closeModal('addExpenseModal')">Cancel</button>
+          <button class="pill-btn green-btn" data-action="doSaveExpense">Save Expense</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ADD REVENUE MODAL ═══ -->
+    <div class="modal-overlay hidden" id="addRevenueModal" role="dialog" aria-modal="true">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Record Sale</div>
+        <div class="modal-desc" style="color:var(--t2);margin-bottom:12px;">Log a shrimp sale to track revenue</div>
+
+        <div class="field-wrap">
+          <label class="fl" for="revenueDate">Date <span class="req-star">*</span></label>
+          <input class="fi" type="date" id="revenueDate"/>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="revenueBatch">Batch <span class="req-star">*</span></label>
+          <div class="sel-wrap">
+            <select class="fi" id="revenueBatch"></select>
+            <span class="sel-arrow">▼</span>
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="revenueWeightKg">Weight Sold (kg) <span class="req-star">*</span></label>
+          <input class="fi" type="number" id="revenueWeightKg" min="0" step="any" placeholder="e.g. 850"/>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="revenuePricePerKg">Price per kg (₹) <span class="req-star">*</span></label>
+          <input class="fi" type="number" id="revenuePricePerKg" min="0" step="any" placeholder="e.g. 450"/>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="revenueBuyer">Buyer (optional)</label>
+          <input class="fi" type="text" id="revenueBuyer" placeholder="e.g. Local exporter"/>
+        </div>
+
+        <div class="modal-actions">
+          <button class="pill-btn grey-btn" onclick="closeModal('addRevenueModal')">Cancel</button>
+          <button class="pill-btn green-btn" data-action="doSaveRevenue">Save Sale</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ADD MARKET PRICE MODAL ═══ -->
+    <div class="modal-overlay hidden" id="addPriceModal" role="dialog" aria-modal="true">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Add Market Price</div>
+        <div class="modal-desc" style="color:var(--t2);margin-bottom:12px;">Log current shrimp selling price per kg</div>
+
+        <div class="field-wrap">
+          <label class="fl" for="priceDate">Date <span class="req-star">*</span></label>
+          <input class="fi" type="date" id="priceDate"/>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="pricePerKg">Price per kg (₹) <span class="req-star">*</span></label>
+          <input class="fi" type="number" id="pricePerKg" min="0" step="any" placeholder="e.g. 450"/>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="priceSizeCategory">Size Category (optional)</label>
+          <input class="fi" type="text" id="priceSizeCategory" placeholder="e.g. 30 count, 40 count"/>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="priceLocation">Location (optional)</label>
+          <input class="fi" type="text" id="priceLocation" placeholder="e.g. Visakhapatnam market"/>
+        </div>
+
+        <div class="modal-actions">
+          <button class="pill-btn grey-btn" onclick="closeModal('addPriceModal')">Cancel</button>
+          <button class="pill-btn green-btn" data-action="doSavePrice">Save Price</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EDIT THRESHOLD MODAL ═══ -->
+    <div class="modal-overlay hidden" id="editThresholdModal" role="dialog" aria-modal="true" aria-labelledby="editThresholdTitle">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="editThresholdTitle">Set Low Stock Threshold</div>
+        <div class="modal-desc" id="editThresholdItemName" style="color:var(--teal); font-weight:700; margin-bottom:12px;">Item Name</div>
+        
+        <div class="field-wrap">
+          <label class="fl" for="thresholdInputValue">Threshold Value <span class="req-star">*</span></label>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input class="fi" type="number" id="thresholdInputValue" min="0" step="any" placeholder="e.g. 50" style="flex:1;" aria-describedby="errThresholdInputValue"/>
+            <span id="thresholdUnitLabel" style="font-weight:700; color:var(--t2); font-size:0.92rem;">kg</span>
+          </div>
+          <div class="ferr" id="errThresholdInputValue">Enter a valid positive number</div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="pill-btn grey-btn" id="editThresholdCancel">Cancel</button>
+          <button class="pill-btn green-btn" id="editThresholdSave">Save Threshold</button>
+        </div>
+      </div>
+    </div>
+
+  </main><!-- /pages -->
+
+  <!-- ═══ BOTTOM NAV CONTAINER ═══ -->
+  <div class="bottom-nav-wrap">
+    <!-- Dynamic batch shortcut (appears when a batch is selected in dashboard dropdown) -->
+    <button class="batch-shortcut-btn hidden" id="batchShortcutBtn" aria-label="Go to selected batch">
+      <span class="bsc-icon">🦐</span>
+      <span class="bsc-text" id="batchShortcutText">View Batch</span>
+    </button>
+
+    <nav class="bottom-nav" style="grid-template-columns: repeat(7, 1fr);">
+      <button class="nav-item active" data-tab="overview" data-page="pageDashboard" aria-label="Overview">
+        <span class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon-svg">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+        </span>
+        <span class="nav-label">Overview</span>
+      </button>
+
+      <button class="nav-item" data-tab="manage" data-page="pageManage" aria-label="Manage ponds and batches">
+        <span class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon-svg">
+            <path d="M6.5 12c.94-3.5 3.75-6.08 7.5-6 3.75.08 6.56 2.5 7.5 6-.94 3.5-3.75 6.08-7.5 6-3.75.08-6.56-2.5-7.5 6Z" />
+            <path d="M18 12h.01" />
+            <path d="M6.5 12C5 13.5 3.5 15 2 12c1.5-3 3-1.5 4.5 0Z" />
+            <path d="M14 9c.77.77 1.23 1.83 1.23 3s-.46 2.23-1.23 3" />
+          </svg>
+        </span>
+        <span class="nav-label">Manage</span>
+      </button>
+
+      <button class="nav-item" data-tab="inventory" data-page="pageInventory" aria-label="Inventory">
+        <span class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon-svg">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </span>
+        <span class="nav-label">Stock</span>
+      </button>
+
+      <span class="nav-fab">
+        <button data-action="quick-add" data-page="pageLog" aria-label="Quick add">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="nav-icon-svg">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </button>
+      </span>
+
+      <button class="nav-item" data-tab="finance" data-page="pageFinance" aria-label="Finance and profit">
+        <span class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon-svg">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </span>
+        <span class="nav-label">Finance</span>
+      </button>
+
+      <button class="nav-item" data-tab="reports" data-page="pageReports" aria-label="Reports and history">
+        <span class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon-svg">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+        </span>
+        <span class="nav-label">Reports</span>
+      </button>
+
+      <button class="nav-item" data-tab="settings" data-page="pageSettings" aria-label="Settings">
+        <span class="icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon-svg">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </span>
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+  </div>
+
+
+</div><!-- /app -->
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast">
+  <span class="toast-ico" id="toastIco">✅</span>
+  <div>
+    <div class="toast-title" id="toastTitle">Saved!</div>
+    <div class="toast-sub" id="toastSub"></div>
+  </div>
+</div>
+
+<!-- SCREEN READER ANNOUNCER -->
+<div id="srAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"></div>
+
+<!-- ═══ CREATE POND MODAL ═══ -->
+<div class="modal-overlay hidden" id="createPondModal" role="dialog" aria-modal="true" aria-labelledby="createPondModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="createPondModalTitle">Create Pond</div>
+    <div class="field-wrap">
+      <label class="fl" for="newPondName">Pond Name <span class="req-star">*</span></label>
+      <input class="fi" type="text" id="newPondName" placeholder="e.g. Growout A" maxlength="40" aria-describedby="errNewPondName"/>
+      <div class="ferr" id="errNewPondName">Pond name is required</div>
+    </div>
+    <div class="field-wrap">
+      <label class="fl" for="newPondSite">Site <span class="req-star">*</span></label>
+      <div class="sel-wrap">
+        <select class="fi" id="newPondSite" aria-describedby="errNewPondSite">
+          <option value="" disabled selected>— Select Site —</option>
+          <option value="__new__">＋ Add New Site…</option>
+        </select>
+        <span class="sel-arrow">▼</span>
+      </div>
+      <div class="ferr" id="errNewPondSite">Site is required</div>
+    </div>
+    <div class="field-wrap">
+      <label class="fl" for="newPondSize">Size (Square Feet) <span class="req-star">*</span></label>
+      <input class="fi" type="number" id="newPondSize" inputmode="numeric" min="1" placeholder="e.g. 12000" aria-describedby="errNewPondSize"/>
+      <div class="ferr" id="errNewPondSize">Enter a valid size (positive number)</div>
+    </div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="createPondCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="createPondConfirm">Create Pond</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT POND MODAL -->
+<div class="modal-overlay hidden" id="editPondModal" role="dialog" aria-modal="true" aria-labelledby="editPondModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="editPondModalTitle">Edit Pond</div>
+    <div class="field-wrap">
+      <label class="fl" for="editPondName">Pond Name <span class="req-star">*</span></label>
+      <input class="fi" type="text" id="editPondName" placeholder="e.g. Growout A" maxlength="40" aria-describedby="errEditPondName"/>
+      <div class="ferr" id="errEditPondName">Pond name is required</div>
+    </div>
+    <div class="field-wrap">
+      <label class="fl" for="editPondSite">Site <span class="req-star">*</span></label>
+      <div class="sel-wrap">
+        <select class="fi" id="editPondSite" aria-describedby="errEditPondSite">
+          <option value="" disabled selected>— Select Site —</option>
+          <option value="__new__">＋ Add New Site…</option>
+        </select>
+        <span class="sel-arrow">▼</span>
+      </div>
+      <div class="ferr" id="errEditPondSite">Site is required</div>
+    </div>
+    <div class="field-wrap">
+      <label class="fl" for="editPondSize">Size (Square Feet) <span class="req-star">*</span></label>
+      <input class="fi" type="number" id="editPondSize" inputmode="numeric" min="1" placeholder="e.g. 12000" aria-describedby="errEditPondSize"/>
+      <div class="ferr" id="errEditPondSize">Enter a valid size (positive number)</div>
+    </div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="editPondCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="editPondConfirm">Save Pond</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CREATE SITE MODAL ═══ -->
+<div class="modal-overlay hidden" id="createSiteModal" role="dialog" aria-modal="true" aria-labelledby="createSiteModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="createSiteModalTitle">Create Farm Site</div>
+
+    <div class="field-wrap">
+      <label class="fl" for="newSiteName">Farm Name <span class="req-star">*</span></label>
+      <input class="fi" type="text" id="newSiteName" placeholder="e.g. ABC Shrimp Farm" maxlength="60" aria-describedby="errNewSiteName"/>
+      <div class="ferr" id="errNewSiteName">Farm name is required</div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="fl" for="newSiteSearch">Search Location</label>
+      <div style="display:flex;gap:8px;">
+        <input class="fi" type="text" id="newSiteSearch" placeholder="e.g. Surat, Gujarat" style="flex:1;"/>
+        <button class="pill-btn green-btn" type="button" id="siteSearchBtn" style="white-space:nowrap;">Search</button>
+      </div>
+      <div id="siteSearchResults" class="site-search-results hidden"></div>
+    </div>
+
+    <button class="pill-btn grey-btn" type="button" id="siteUseGpsBtn" style="width:100%;margin:4px 0 10px;">📍 Use Current GPS Location</button>
+
+    <div class="site-location-preview" id="siteLocationPreview">
+      <div class="twin-fields">
+        <div class="field-wrap">
+          <label class="fl">Latitude</label>
+          <div class="hapa-stocked-readonly fi" id="siteLatDisplay">—</div>
+        </div>
+        <div class="field-wrap">
+          <label class="fl">Longitude</label>
+          <div class="hapa-stocked-readonly fi" id="siteLngDisplay">—</div>
+        </div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl">Address</label>
+        <div class="hapa-stocked-readonly fi" id="siteAddressDisplay">No location set yet</div>
+      </div>
+    </div>
+    <div class="ferr" id="errNewSiteLocation" style="margin-bottom:8px;">Set a location using search or GPS</div>
+
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="createSiteCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="createSiteConfirm">✓ Save Site</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE BATCH MODAL -->
+<div class="modal-overlay hidden" id="createBatchModal" role="dialog" aria-modal="true" aria-labelledby="createBatchModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="createBatchModalTitle">Create Batch</div>
+    <div class="modal-pond-context" id="createBatchPondContext"></div>
+    <div class="field-wrap">
+      <label class="fl" for="modalBatchShrimpCount">Baby Shrimp Count <span class="req-star">*</span></label>
+      <input class="fi" type="number" id="modalBatchShrimpCount" inputmode="numeric" min="1" placeholder="e.g. 250000" aria-describedby="errModalBatchShrimp"/>
+      <div class="ferr" id="errModalBatchShrimp">Enter a valid shrimp count</div>
+    </div>
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="modalBatchStockDate">Stocking Date <span class="req-star">*</span></label>
+        <input class="fi" type="date" id="modalBatchStockDate" aria-describedby="errModalBatchDate"/>
+        <div class="ferr" id="errModalBatchDate">Required</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="modalBatchStockTime">Stocking Time <span class="req-star">*</span></label>
+        <input class="fi" type="time" id="modalBatchStockTime" aria-describedby="errModalBatchTime"/>
+        <div class="ferr" id="errModalBatchTime">Required</div>
+      </div>
+    </div>
+    <div class="field-wrap">
+      <label class="fl" for="modalBatchNotes">Notes <span class="opt-tag">optional</span></label>
+      <textarea class="fi fi-ta" id="modalBatchNotes" rows="2" placeholder="Initial observations, source, supplier…" maxlength="300"></textarea>
+    </div>
+    <div class="field-wrap">
+      <label class="fl" for="modalHapaStocked">Hapa Stocked <span class="opt-tag">default 100</span></label>
+      <input class="fi" type="number" id="modalHapaStocked" inputmode="numeric" min="1" value="100" placeholder="100"/>
+    </div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="createBatchCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="createBatchConfirm">＋ Create Batch</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIEW BATCH MODAL ═══ -->
+<div class="modal-overlay hidden" id="viewBatchModal" role="dialog" aria-modal="true" aria-label="View Batch Details">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="viewBatchContent"></div>
+    <!-- Issue #8: Responsive 3-button footer with equal widths and full "Complete Batch" label always visible -->
+    <div class="modal-actions view-batch-footer" style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:8px;padding:12px 16px 0;border-top:1px solid var(--border);">
+      <button class="pill-btn grey-btn view-batch-footer-btn" id="viewBatchClose">Close</button>
+      <button class="pill-btn view-batch-footer-btn" id="viewBatchEdit" style="background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);color:var(--cyan);">✏ Edit</button>
+      <button class="pill-btn red-btn view-batch-footer-btn" id="viewBatchComplete" style="font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">✓ Complete Batch</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DELETE CONFIRM MODAL ═══ -->
+<div class="modal-overlay hidden" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="deleteModalTitle">Delete Feed Entry?</div>
+    <div class="delete-feed-details" id="deleteFeedDetails"></div>
+    <div class="modal-desc" style="margin-top:10px">This action cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="deleteCancel">Cancel</button>
+      <button class="pill-btn red-btn" id="deleteConfirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EDIT FEED MODAL ═══ -->
+<div class="modal-overlay hidden" id="editFeedModal" role="dialog" aria-modal="true" aria-labelledby="editFeedModalTitle">
+  <div class="modal-sheet" style="max-height:90svh;overflow-y:auto;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="editFeedModalTitle">Edit Feed Entry</div>
+    <div class="edit-feed-pond-ctx" id="editFeedPondCtx"></div>
+
+    <div class="datetime-capsule-labels">
+      <label class="fl" for="editFeedDate">Date <span class="req-star">*</span></label>
+      <label class="fl" for="editFeedTime">Time <span class="req-star">*</span></label>
+    </div>
+    <div class="datetime-capsule-wrapper">
+      <div class="datetime-col date-col">
+        <span class="datetime-val" id="editFeedDateDisplay">Select Date</span>
+        <svg class="datetime-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <input class="fi datetime-input" type="date" id="editFeedDate" required aria-describedby="errEditFeedDate"/>
+      </div>
+      <div class="datetime-divider"></div>
+      <div class="datetime-col time-col">
+        <span class="datetime-val" id="editFeedTimeDisplay">Select Time</span>
+        <svg class="datetime-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <select class="fi datetime-select" id="editFeedTime" required aria-describedby="errEditFeedTime">
+          <option value="">Select</option>
+          <option value="7:00 AM">7:00 AM</option>
+          <option value="11:00 AM">11:00 AM</option>
+          <option value="4:00 PM">4:00 PM</option>
+          <option value="7:00 PM">7:00 PM</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="twin-ferr-wrapper">
+      <div class="ferr" id="errEditFeedDate">Required</div>
+      <div class="ferr" id="errEditFeedTime">Required</div>
+    </div>
+    <div class="field-wrap" id="editCustomTimeGroup" style="display:none">
+      <label class="fl" for="editCustomTime">Custom Time</label>
+      <input class="fi" type="time" id="editCustomTime" aria-describedby="errEditCustomTime"/>
+      <div class="ferr" id="errEditCustomTime">Required</div>
+    </div>
+
+    <div class="form-card-label" style="margin:12px 0 10px;font-size:.78rem;font-weight:700;color:var(--t2);letter-spacing:.4px;text-transform:uppercase;display:flex;align-items:center;gap:6px;"><span class="header-emoji">🫧</span> Feed Types</div>
+    <div class="ferr no-mb" id="errEditFeed">Select at least one feed type</div>
+    <div class="feed-grid" id="editFeedGrid" style="margin-bottom:14px;"></div>
+    <div id="editQtySection"></div>
+
+    <div class="field-wrap" id="editOtherNameGroup" style="display:none">
+      <label class="fl" for="editOtherFeedName">Other Feed Name</label>
+      <input class="fi" type="text" id="editOtherFeedName" placeholder="e.g. Special Mix A" maxlength="60" aria-describedby="errEditOtherName"/>
+      <div class="ferr" id="errEditOtherName">Required</div>
+    </div>
+    <div class="field-wrap" id="editOtherQtyGroup" style="display:none">
+      <label class="fl" for="editOtherFeedQty">Other Feed Quantity (g)</label>
+      <input class="fi" type="number" id="editOtherFeedQty" inputmode="numeric" min="1" placeholder="e.g. 200" aria-describedby="errEditOtherQty"/>
+      <div class="ferr" id="errEditOtherQty">Enter valid quantity</div>
+    </div>
+
+    <div class="field-wrap" style="margin-top:12px;">
+      <label class="fl" for="editFeedNotes">Notes <span class="opt-tag">optional</span></label>
+      <textarea class="fi fi-ta" id="editFeedNotes" rows="2" maxlength="300" placeholder="Observations…"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="editFeedCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="editFeedConfirm">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EDIT BATCH MODAL ═══ -->
+<div class="modal-overlay hidden" id="editBatchModal" role="dialog" aria-modal="true" aria-labelledby="editBatchModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="editBatchModalTitle">Edit Batch</div>
+    <div class="modal-pond-context" id="editBatchPondCtx"></div>
+
+    <div class="field-wrap">
+      <label class="fl" for="editBatchShrimpCount">Baby Shrimp Count <span class="req-star">*</span></label>
+      <input class="fi" type="number" id="editBatchShrimpCount" inputmode="numeric" min="1" placeholder="e.g. 250000" aria-describedby="errEditBatchShrimp"/>
+      <div class="ferr" id="errEditBatchShrimp">Enter a valid shrimp count</div>
+    </div>
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="editBatchStockDate">Stocking Date <span class="req-star">*</span></label>
+        <input class="fi" type="date" id="editBatchStockDate" aria-describedby="errEditBatchDate"/>
+        <div class="ferr" id="errEditBatchDate">Required</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="editBatchStockTime">Stocking Time <span class="req-star">*</span></label>
+        <input class="fi" type="time" id="editBatchStockTime" aria-describedby="errEditBatchTime"/>
+        <div class="ferr" id="errEditBatchTime">Required</div>
+      </div>
+    </div>
+    <div class="field-wrap">
+      <label class="fl" for="editBatchNotes">Notes <span class="opt-tag">optional</span></label>
+      <textarea class="fi fi-ta" id="editBatchNotes" rows="2" maxlength="300" placeholder="Observations…"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="editBatchCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="editBatchConfirm">Save Batch</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BATCH DATE WARNING MODAL ═══ -->
+<div class="modal-overlay hidden" id="batchDateWarnModal" role="dialog" aria-modal="true" aria-labelledby="batchDateWarnModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:var(--amber)" id="batchDateWarnModalTitle">⚠️ Warning</div>
+    <div class="modal-desc">Changing the stocking date will affect:</div>
+    <ul class="batch-date-warn-list">
+      <li>DOC calculations</li>
+      <li>Historical feed assignments</li>
+      <li>Batch reports</li>
+    </ul>
+    <div class="modal-desc" style="margin-top:10px">Continue?</div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="batchDateWarnCancel">Cancel</button>
+      <button class="pill-btn amber-btn" id="batchDateWarnConfirm">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COMPLETE BATCH MODAL (Harvest Summary + Completion Workflow) ═══ -->
+<div class="modal-overlay hidden" id="completeBatchModal" role="dialog" aria-modal="true" aria-labelledby="completeBatchTitle">
+  <div class="modal-sheet complete-batch-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="completeBatchTitle">Complete Batch</div>
+    <div class="modal-pond-context" id="completeBatchDesc"></div>
+
+    <!-- 1. Pond & Batch Summary Card -->
+    <div class="cb-section" id="cbSummarySection">
+      <div class="cb-section-title"><span>📋</span> Pond &amp; Batch Summary</div>
+      <div class="cb-summary-grid" id="cbSummaryGrid"><!-- filled dynamically --></div>
+    </div>
+
+    <!-- 2. Harvest Summary (calculated values) -->
+    <div class="cb-section">
+      <div class="cb-section-title"><span>📊</span> Harvest Summary</div>
+      <div class="cb-harvest-summary-grid" id="cbHarvestSummaryGrid"><!-- filled dynamically --></div>
+    </div>
+
+    <!-- 3. Harvest Details (User Input) -->
+    <div class="cb-section">
+      <div class="cb-section-title"><span>✏️</span> Harvest Details <span class="cb-section-sub">required</span></div>
+
+      <div class="twin-fields">
+        <div class="field-wrap">
+          <label class="fl" for="harvestDate">Harvest Date <span class="req-star">*</span></label>
+          <input class="fi" type="date" id="harvestDate" aria-describedby="errHarvestDate"/>
+          <div class="ferr" id="errHarvestDate">Required</div>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="harvestTime">Harvest Time <span class="req-star">*</span></label>
+          <input class="fi" type="time" id="harvestTime" aria-describedby="errHarvestTime"/>
+          <div class="ferr" id="errHarvestTime">Required</div>
+        </div>
+      </div>
+
+      <div class="twin-fields">
+        <div class="field-wrap">
+          <label class="fl" for="finalShrimpCount">Final Shrimp Count <span class="req-star">*</span></label>
+          <input class="fi" type="number" id="finalShrimpCount" inputmode="numeric" min="0" placeholder="Count or leave blank if unknown" aria-describedby="errFinalShrimpCount"/>
+          <div class="ferr" id="errFinalShrimpCount">Enter a valid count</div>
+          <div class="fi-hint">Leave blank if not counted — survival will be skipped.</div>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="harvestWeightKg">Total Harvest Weight (kg) <span class="req-star">*</span></label>
+          <input class="fi" type="number" id="harvestWeightKg" inputmode="decimal" min="0" step="0.1" placeholder="e.g. 180.5" aria-describedby="errHarvestWeight"/>
+          <div class="ferr" id="errHarvestWeight">Enter a valid weight</div>
+        </div>
+      </div>
+
+      <!-- Optional fields (expandable) -->
+      <button class="cb-optional-toggle" id="cbOptionalToggle" type="button" aria-expanded="false">
+        <span class="cb-ot-text">＋ Optional Details</span>
+        <span class="cb-ot-arrow">▾</span>
+      </button>
+      <div class="cb-optional-section hidden" id="cbOptionalSection">
+        <div class="twin-fields">
+          <div class="field-wrap">
+            <label class="fl" for="harvestPricePerKg">Avg Selling Price (per kg) <span class="opt-tag">optional</span></label>
+            <input class="fi" type="number" id="harvestPricePerKg" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 350"/>
+          </div>
+          <div class="field-wrap">
+            <label class="fl" for="harvestBuyer">Buyer Name <span class="opt-tag">optional</span></label>
+            <input class="fi" type="text" id="harvestBuyer" placeholder="e.g. Aqua Traders"/>
+          </div>
+        </div>
+        <div class="twin-fields">
+          <div class="field-wrap">
+            <label class="fl" for="harvestMethod">Harvest Method <span class="opt-tag">optional</span></label>
+            <select class="fi" id="harvestMethod">
+              <option value="">Select method</option>
+              <option value="Drag Net">Drag Net</option>
+              <option value="Cast Net">Cast Net</option>
+              <option value="Pump Out">Pump Out</option>
+              <option value="Drain Harvest">Drain Harvest</option>
+              <option value="Partial Harvest">Partial Harvest</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field-wrap">
+            <label class="fl" for="harvestGrade">Grade / Count Size <span class="opt-tag">optional</span></label>
+            <select class="fi" id="harvestGrade">
+              <option value="">Select grade</option>
+              <option value="20 count">20 count</option>
+              <option value="30 count">30 count</option>
+              <option value="40 count">40 count</option>
+              <option value="50 count">50 count</option>
+              <option value="60 count">60 count</option>
+              <option value="80 count">80 count</option>
+              <option value="100 count">100 count</option>
+              <option value="Mixed">Mixed</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="fl" for="completionNotes">Completion Notes <span class="opt-tag">optional</span></label>
+          <textarea class="fi fi-ta" id="completionNotes" rows="2" placeholder="Final observations, quality notes, harvest conditions…" maxlength="500"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Auto Calculations (live updated as user types) -->
+    <div class="cb-section cb-calculations-section">
+      <div class="cb-section-title"><span>🧮</span> Auto Calculations <span class="cb-section-sub">live</span></div>
+      <div class="cb-calc-grid" id="cbCalcGrid"><!-- filled dynamically --></div>
+    </div>
+
+    <!-- 5. Confirmation Section -->
+    <div class="cb-warning-box">
+      <span class="cb-warning-icon">⚠️</span>
+      <div class="cb-warning-text">
+        Completing this batch will archive it and make it read-only. This action cannot be undone unless the batch is restored.
+      </div>
+    </div>
+
+    <!-- 6. Sticky bottom action button -->
+    <div class="cb-sticky-footer">
+      <button class="pill-btn grey-btn" id="completeBatchCancel">Cancel</button>
+      <button class="pill-btn green-btn cb-complete-btn" id="completeBatchConfirm">✓ Complete Harvest</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ARCHIVE POND CONFIRM MODAL ═══ -->
+<div class="modal-overlay hidden" id="archivePondModal" role="dialog" aria-modal="true" aria-labelledby="archivePondModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="archivePondModalTitle">Archive Pond?</div>
+    <div class="modal-desc" id="archivePondDesc">This pond will be moved to the inactive section and removed from feed logging.</div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="archivePondCancel">Cancel</button>
+      <button class="pill-btn amber-btn" id="archivePondConfirm">Archive Pond</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DELETE POND CONFIRM MODAL ═══ -->
+<div class="modal-overlay hidden" id="deletePondModal" role="dialog" aria-modal="true" aria-labelledby="deletePondModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="deletePondModalTitle">Delete Pond Permanently?</div>
+    <div class="modal-desc">This action cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="deletePondCancel">Cancel</button>
+      <button class="pill-btn red-btn" id="deletePondConfirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CUSTOM CONFIRM DIALOG ═══ -->
+<div class="modal-overlay hidden" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="confirmModalIcon" class="confirm-modal-icon"></div>
+    <div class="modal-title" id="confirmModalTitle">Are you sure?</div>
+    <div class="modal-desc" id="confirmModalMsg"></div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="confirmModalCancelBtn">Cancel</button>
+      <button class="pill-btn red-btn"  id="confirmModalConfirmBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- OFFLINE QUEUE NOTICE -->
+<div class="queue-strip hidden" id="queueStrip">
+  <span id="queueCount">0</span> queued offline &nbsp;·&nbsp;
+  <button class="qs-sync" id="syncBtn">Sync Now ↑</button>
+</div>
+
+<!-- ═══ LOG WEIGHT MODAL (Growth Tracking) ═══ -->
+<div class="modal-overlay hidden" id="logWeightModal" role="dialog" aria-modal="true" aria-labelledby="logWeightModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="logWeightModalTitle">Log Weight</div>
+    <div class="modal-pond-context">Record estimated average shrimp weight</div>
+    <div class="ferr hidden" id="errVisualDisabled" style="color:var(--amber);margin-bottom:10px;font-size:0.78rem;">⚠ Visual Weight disabled after first sampling entry.</div>
+
+    <div class="field-wrap">
+      <label class="fl" for="growthBatchSelect">Batch <span class="req-star">*</span></label>
+      <div class="sel-wrap">
+        <select class="fi" id="growthBatchSelect" aria-describedby="errGrowthBatch">
+          <option value="">— Select batch —</option>
+        </select>
+        <span class="sel-arrow">▾</span>
+      </div>
+      <div class="ferr" id="errGrowthBatch">Please select a batch</div>
+    </div>
+
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="growthDate">Date <span class="req-star">*</span></label>
+        <input class="fi" type="date" id="growthDate" aria-describedby="errGrowthDate"/>
+        <div class="ferr" id="errGrowthDate">Required</div>
+        <div class="gt-doc-badge hidden" id="growthDocBadge"></div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="growthWeightInput">Avg Weight (g/shrimp) <span class="req-star">*</span></label>
+        <input class="fi" type="number" id="growthWeightInput" inputmode="decimal" min="0.001" max="1000" step="0.01" placeholder="e.g. 8.5" aria-describedby="errGrowthWeight"/>
+        <div class="ferr" id="errGrowthWeight">Enter a valid weight (0.001–1000g)</div>
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="fl" for="growthNotes">Notes <span class="opt-tag">optional</span></label>
+      <textarea class="fi fi-ta" id="growthNotes" rows="2" placeholder="Visual estimate, pond observations…" maxlength="200"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="logWeightCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="logWeightConfirm">✓ Log Weight</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SAMPLING ENTRY MODAL ═══ -->
+<div class="modal-overlay hidden" id="samplingEntryModal" role="dialog" aria-modal="true" aria-labelledby="samplingModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="samplingModalTitle">Add Sampling</div>
+    <div class="modal-pond-context" id="samplingModalContext"></div>
+
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="samplingDate">Sampling Date <span class="req-star">*</span></label>
+        <input class="fi" type="date" id="samplingDate" aria-describedby="errSamplingDate"/>
+        <div class="ferr" id="errSamplingDate">Required</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl">DOC</label>
+        <div class="hapa-stocked-readonly fi" id="samplingDocDisplay">—</div>
+      </div>
+    </div>
+
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="samplingTotalWeight">Total Cast Weight (g) <span class="req-star">*</span></label>
+        <input class="fi" type="number" id="samplingTotalWeight" inputmode="decimal" min="0.001" step="0.01" placeholder="e.g. 850" aria-describedby="errSamplingTotalWeight"/>
+        <div class="ferr" id="errSamplingTotalWeight">Required</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="samplingShrimpCount">Shrimp Count <span class="req-star">*</span></label>
+        <input class="fi" type="number" id="samplingShrimpCount" inputmode="numeric" min="1" step="1" placeholder="e.g. 100" aria-describedby="errSamplingShrimpCount"/>
+        <div class="ferr" id="errSamplingShrimpCount">Required</div>
+      </div>
+    </div>
+
+    <div class="sampling-prev-preview hidden" id="samplingPrevPreview">
+      <div class="spp-label">Previous ABW</div>
+      <div class="spp-value" id="samplingPrevValue">—</div>
+    </div>
+
+    <div class="sampling-abw-preview" id="samplingAbwPreview">
+      <div class="sabw-label">Calculated ABW</div>
+      <div class="sabw-value" id="samplingAbwValue">—</div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="fl" for="samplingNotes">Notes <span class="opt-tag">optional</span></label>
+      <textarea class="fi fi-ta" id="samplingNotes" rows="2" placeholder="e.g. Normal Growth" maxlength="300"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="samplingEntryCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="samplingEntryConfirm">✓ Save Sampling</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HAPA ENTRY MODAL ═══ -->
+<div class="modal-overlay hidden" id="hapaEntryModal" role="dialog" aria-modal="true" aria-labelledby="hapaModalTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="hapaModalTitle">Hapa Check</div>
+    <div class="modal-pond-context" id="hapaModalContext"></div>
+
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="hapaDate">Date <span class="req-star">*</span></label>
+        <input class="fi" type="date" id="hapaDate" aria-describedby="errHapaDate"/>
+        <div class="ferr" id="errHapaDate">Required</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl">Hapa Stocked</label>
+        <div class="hapa-stocked-readonly fi" id="hapaStockedDisplay">100</div>
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="fl" for="hapaAliveInput">Hapa Alive <span class="req-star">*</span></label>
+      <input class="fi" type="number" id="hapaAliveInput" inputmode="numeric" min="0" placeholder="e.g. 82" aria-describedby="errHapaAlive"/>
+      <div class="ferr" id="errHapaAlive">Enter a valid count</div>
+    </div>
+
+    <div class="hapa-survival-preview hidden" id="hapaSurvivalPreview">
+      <div class="hapa-survival-stat">
+        <div class="hapa-survival-label">Survival Rate</div>
+        <div class="hapa-survival-value" id="hapaSurvivalValue">—</div>
+      </div>
+      <div class="hapa-survival-divider"></div>
+      <div class="hapa-survival-stat">
+        <div class="hapa-survival-label">Est. Survived</div>
+        <div class="hapa-survival-value hapa-survival-count" id="hapaSurvivedCount">—</div>
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="fl" for="hapaNotesInput">Notes <span class="opt-tag">optional</span></label>
+      <textarea class="fi fi-ta" id="hapaNotesInput" rows="2" placeholder="Observations…" maxlength="300"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="hapaEntryCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="hapaEntryConfirm">✓ Save Hapa</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ANALYTICS DATA POINT MODAL ═══ -->
+<div class="modal-overlay hidden" id="analyticsPointModal" role="dialog" aria-modal="true" aria-labelledby="analyticsPointTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="analyticsPointTitle">Growth Detail</div>
+    <div id="analyticsPointContent" class="an-point-content">
+      <!-- Dynamically populated -->
+    </div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" data-action="closeAnalyticsPointModal">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BAR CHART DETAIL MODAL ═══ -->
+<div class="modal-overlay hidden" id="barDetailModal" role="dialog" aria-modal="true" aria-labelledby="barDetailTitle">
+  <div class="modal-sheet bd-sheet">
+    <div class="bd-accent-line"></div>
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="barDetailTitle">Feed Detail</div>
+    <div id="barDetailContent" class="an-point-content">
+      <!-- Dynamically populated by showBarDetailModal() -->
+    </div>
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" data-action="closeBarDetailModal">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ IN-APP DATE PICKER MODAL ═══ -->
+<div class="modal-overlay hidden" id="appDatePickerModal" role="dialog" aria-modal="true" aria-label="Select Date">
+  <div class="modal-sheet calendar-sheet">
+    <div class="modal-handle"></div>
+    <div class="calendar-header">
+      <button type="button" class="calendar-nav-btn" id="calPrevMonthBtn">‹</button>
+      <div class="calendar-month-year" id="calMonthYearLabel">June 2026</div>
+      <button type="button" class="calendar-nav-btn" id="calNextMonthBtn">›</button>
+    </div>
+    <div class="calendar-weekdays">
+      <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+    </div>
+    <div class="calendar-days" id="calendarDaysGrid"></div>
+    <div class="modal-actions" style="margin-top: 16px;">
+      <button type="button" class="pill-btn grey-btn" id="calCancelBtn">Cancel</button>
+      <button type="button" class="pill-btn green-btn" id="calTodayBtn">Today</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PURCHASE FEED MODAL ═══ -->
+<div class="modal-overlay hidden" id="purchaseFeedModal" role="dialog" aria-modal="true" aria-labelledby="purchaseFeedTitle">
+  <div class="modal-sheet" style="max-height: 90svh; overflow-y: auto;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="purchaseFeedTitle">Purchase Feed</div>
+    
+    <div class="field-wrap">
+      <label class="fl" for="feedPurchaseDate">Purchase Date <span class="req-star">*</span></label>
+      <input class="fi" type="date" id="feedPurchaseDate" required aria-describedby="errFeedPurchaseDate"/>
+      <div class="ferr" id="errFeedPurchaseDate">Date is required</div>
+    </div>
+    
+    <div class="field-wrap">
+      <label class="fl" for="feedSupplier">Supplier <span class="req-star">*</span></label>
+      <input class="fi" type="text" id="feedSupplier" placeholder="e.g. CP Foods" required aria-describedby="errFeedSupplier"/>
+      <div class="ferr" id="errFeedSupplier">Supplier name is required</div>
+    </div>
+    
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="feedBrand">Feed Brand <span class="req-star">*</span></label>
+        <input class="fi" type="text" id="feedBrand" placeholder="e.g. CP 9001" required aria-describedby="errFeedBrand"/>
+        <div class="ferr" id="errFeedBrand">Feed brand is required</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="feedSize">Feed Size / Type <span class="req-star">*</span></label>
+        <div class="sel-wrap">
+          <select class="fi" id="feedSize" required aria-describedby="errFeedSize">
+            <option value="">— Select Size —</option>
+            <option value="Feed Size 1">Feed Size 1</option>
+            <option value="Feed Size 2">Feed Size 2</option>
+            <option value="Feed Size 3">Feed Size 3</option>
+            <option value="Feed Size 4">Feed Size 4</option>
+            <option value="Feed Size 5">Feed Size 5</option>
+            <option value="Other">Other</option>
+          </select>
+          <span class="sel-arrow">▾</span>
+        </div>
+        <div class="ferr" id="errFeedSize">Feed size is required</div>
+      </div>
+    </div>
+    
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="feedBagWeight">Bag Weight (kg) <span class="req-star">*</span></label>
+        <input class="fi" type="number" id="feedBagWeight" min="0.1" step="any" placeholder="e.g. 25" required aria-describedby="errFeedBagWeight"/>
+        <div class="ferr" id="errFeedBagWeight">Bag weight must be positive</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="feedNumBags">Number of Bags <span class="req-star">*</span></label>
+        <input class="fi" type="number" id="feedNumBags" min="1" step="1" placeholder="e.g. 10" required aria-describedby="errFeedNumBags"/>
+        <div class="ferr" id="errFeedNumBags">Number of bags must be positive</div>
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="fl" for="feedPricePerBag">Price Per Bag <span class="req-star">*</span></label>
+      <input class="fi" type="number" id="feedPricePerBag" min="0" step="any" placeholder="e.g. 1500" required aria-describedby="errFeedPricePerBag"/>
+      <div class="ferr" id="errFeedPricePerBag">Price cannot be negative</div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="fl" for="feedNotes">Notes <span class="opt-tag">optional</span></label>
+      <textarea class="fi fi-ta" id="feedNotes" rows="2" placeholder="Batch details, quality..."></textarea>
+    </div>
+
+    <!-- Calculations Preview -->
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="feedCalcWeight">Total Quantity (kg)</label>
+        <input class="fi" type="text" id="feedCalcWeight" readonly style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--t2); cursor: not-allowed;" placeholder="Auto-calculated..."/>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="feedCalcCost">Purchase Cost (INR)</label>
+        <input class="fi" type="text" id="feedCalcCost" readonly style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--t2); cursor: not-allowed;" placeholder="Auto-calculated..."/>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="purchaseFeedCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="purchaseFeedSave">Save Purchase</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PURCHASE MEDICINE MODAL ═══ -->
+<div class="modal-overlay hidden" id="purchaseMedicineModal" role="dialog" aria-modal="true" aria-labelledby="purchaseMedicineTitle">
+  <div class="modal-sheet" style="max-height: 90svh; overflow-y: auto;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="purchaseMedicineTitle">Purchase Medicine &amp; Consumables</div>
+    
+    <div class="field-wrap">
+      <label class="fl" for="medPurchaseDate">Purchase Date <span class="req-star">*</span></label>
+      <input class="fi" type="date" id="medPurchaseDate" required aria-describedby="errMedPurchaseDate"/>
+      <div class="ferr" id="errMedPurchaseDate">Date is required</div>
+    </div>
+    
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="medItemName">Item Name <span class="req-star">*</span></label>
+        <input class="fi" type="text" id="medItemName" placeholder="e.g. Super Probiotic" required aria-describedby="errMedItemName"/>
+        <div class="ferr" id="errMedItemName">Item name is required</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="medCategory">Category <span class="req-star">*</span></label>
+        <div class="sel-wrap">
+          <select class="fi" id="medCategory" required aria-describedby="errMedCategory">
+            <option value="" disabled selected>— Select Category —</option>
+            <option value="Probiotics">Probiotics</option>
+            <option value="Minerals">Minerals</option>
+            <option value="Lime">Lime</option>
+            <option value="Salt">Salt</option>
+            <option value="Molasses">Molasses</option>
+            <option value="Zeolite">Zeolite</option>
+            <option value="Chlorine">Chlorine</option>
+            <option value="Bleaching Powder">Bleaching Powder</option>
+            <option value="Vitamins">Vitamins</option>
+            <option value="Water Treatment">Water Treatment</option>
+          </select>
+          <span class="sel-arrow">▼</span>
+        </div>
+        <div class="ferr" id="errMedCategory">Category is required</div>
+      </div>
+    </div>
+    
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="medSupplier">Supplier <span class="req-star">*</span></label>
+        <input class="fi" type="text" id="medSupplier" placeholder="e.g. Aqua Pharma" required aria-describedby="errMedSupplier"/>
+        <div class="ferr" id="errMedSupplier">Supplier is required</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="medUnit">Unit <span class="req-star">*</span></label>
+        <div class="sel-wrap">
+          <select class="fi" id="medUnit" required aria-describedby="errMedUnit">
+            <option value="" disabled selected>— Select Unit —</option>
+            <option value="Bottle">Bottle</option>
+            <option value="Packet">Packet</option>
+            <option value="Kg">Kg</option>
+            <option value="Liter">Liter</option>
+            <option value="Bag">Bag</option>
+          </select>
+          <span class="sel-arrow">▼</span>
+        </div>
+        <div class="ferr" id="errMedUnit">Unit is required</div>
+      </div>
+    </div>
+    
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="medQty">Quantity <span class="req-star">*</span></label>
+        <input class="fi" type="number" id="medQty" min="0.01" step="any" placeholder="e.g. 5" required aria-describedby="errMedQty"/>
+        <div class="ferr" id="errMedQty">Quantity must be positive</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="medUnitPrice">Unit Price <span class="req-star">*</span></label>
+        <input class="fi" type="number" id="medUnitPrice" min="0" step="any" placeholder="e.g. 350" required aria-describedby="errMedUnitPrice"/>
+        <div class="ferr" id="errMedUnitPrice">Price cannot be negative</div>
+      </div>
+    </div>
+    
+    <div class="twin-fields">
+      <div class="field-wrap" style="grid-column: span 2;">
+        <label class="fl" for="medExpiryDate">Expiry Date <span class="opt-tag">optional</span></label>
+        <input class="fi" type="date" id="medExpiryDate"/>
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="fl" for="medNotes">Notes <span class="opt-tag">optional</span></label>
+      <textarea class="fi fi-ta" id="medNotes" rows="2" placeholder="Storage instructions..."></textarea>
+    </div>
+
+    <!-- Calculations Preview -->
+    <div class="calc-preview">
+      <div class="calc-stat" style="grid-column: span 2; text-align: center;">
+        <div class="calc-label">Total Purchase Cost</div>
+        <div class="calc-value" id="medCalcCost" style="font-size: 1.6rem; color: var(--teal);">0.00</div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="purchaseMedicineCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="purchaseMedicineSave">Save Purchase</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PURCHASE FUEL MODAL ═══ -->
+<div class="modal-overlay hidden" id="purchaseFuelModal" role="dialog" aria-modal="true" aria-labelledby="purchaseFuelTitle">
+  <div class="modal-sheet" style="max-height: 90svh; overflow-y: auto;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="purchaseFuelTitle">Purchase Fuel</div>
+    
+    <div class="field-wrap">
+      <label class="fl" for="fuelPurchaseDate">Purchase Date <span class="req-star">*</span></label>
+      <input class="fi" type="date" id="fuelPurchaseDate" required aria-describedby="errFuelPurchaseDate"/>
+      <div class="ferr" id="errFuelPurchaseDate">Date is required</div>
+    </div>
+    
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="fuelType">Fuel Type <span class="req-star">*</span></label>
+        <div class="sel-wrap">
+          <select class="fi" id="fuelType" required aria-describedby="errFuelType">
+            <option value="" disabled selected>— Select Fuel —</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Petrol">Petrol</option>
+            <option value="Engine Oil">Engine Oil</option>
+          </select>
+          <span class="sel-arrow">▼</span>
+        </div>
+        <div class="ferr" id="errFuelType">Fuel type is required</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="fuelSupplier">Supplier <span class="req-star">*</span></label>
+        <input class="fi" type="text" id="fuelSupplier" placeholder="e.g. HP Petrol Pump" required aria-describedby="errFuelSupplier"/>
+        <div class="ferr" id="errFuelSupplier">Supplier name is required</div>
+      </div>
+    </div>
+    
+    <div class="twin-fields">
+      <div class="field-wrap">
+        <label class="fl" for="fuelQty">Quantity (Liters) <span class="req-star">*</span></label>
+        <input class="fi" type="number" id="fuelQty" min="0.01" step="any" placeholder="e.g. 50" required aria-describedby="errFuelQty"/>
+        <div class="ferr" id="errFuelQty">Quantity must be positive</div>
+      </div>
+      <div class="field-wrap">
+        <label class="fl" for="fuelPricePerLiter">Price Per Liter <span class="req-star">*</span></label>
+        <input class="fi" type="number" id="fuelPricePerLiter" min="0" step="any" placeholder="e.g. 95.5" required aria-describedby="errFuelPricePerLiter"/>
+        <div class="ferr" id="errFuelPricePerLiter">Price must be positive</div>
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <label class="fl" for="fuelNotes">Notes <span class="opt-tag">optional</span></label>
+      <textarea class="fi fi-ta" id="fuelNotes" rows="2" placeholder="Generator fuel..."></textarea>
+    </div>
+
+    <!-- Calculations Preview -->
+    <div class="calc-preview">
+      <div class="calc-stat" style="grid-column: span 2; text-align: center;">
+        <div class="calc-label">Total Fuel Cost</div>
+        <div class="calc-value" id="fuelCalcCost" style="font-size: 1.6rem; color: var(--teal);">0.00</div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="pill-btn grey-btn" id="purchaseFuelCancel">Cancel</button>
+      <button class="pill-btn green-btn" id="purchaseFuelSave">Save Purchase</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ INVENTORY DETAIL MODAL ═══ -->
+<div class="modal-overlay hidden" id="inventoryDetailModal" role="dialog" aria-modal="true" aria-labelledby="inventoryDetailTitle">
+  <div class="modal-sheet" style="max-height: 90svh; overflow-y: auto; max-width: 500px;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="inventoryDetailTitle">Inventory Details</div>
+    <div class="inventory-detail-content" id="inventoryDetailContent" style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+      <!-- Dynamically populated list of transactions -->
+    </div>
+    <div class="modal-actions" style="margin-top: 16px;">
+      <button class="pill-btn grey-btn" id="inventoryDetailClose" style="width: 100%;">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="script.js"></script>
+<script src="ambient.js"></script>
+<script src="features.js"></script>
+<script src="extra-features.js"></script>
+<script>
+  if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('sw.js').catch(function(err) {
+        console.warn('[AquaLog] SW registration failed (non-fatal):', err);
+      });
+    });
+  }
+</script>
+</body>
+</html>

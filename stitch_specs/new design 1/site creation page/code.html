@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed": "#051f23", "surface": "#f2fbfd", "secondary-container": "#cde7ed", "tertiary": "#3a4664", "inverse-primary": "#85d2e2", "tertiary-fixed": "#d9e2ff", "on-primary": "#ffffff", "surface-container-low": "#ecf5f7", "on-secondary-container": "#50686d", "surface-container-highest": "#dbe4e6", "surface-tint": "#006876", "on-tertiary-container": "#ccd8fd", "on-tertiary-fixed-variant": "#3a4664", "inverse-surface": "#293234", "surface-container": "#e6eff1", "on-primary-fixed": "#001f25", "surface-container-high": "#e1eaec", "secondary": "#4a6267", "surface-bright": "#f2fbfd", "outline": "#6f797b", "on-primary-fixed-variant": "#004e59", "tertiary-container": "#525e7d", "secondary-fixed": "#cde7ed", "on-secondary-fixed-variant": "#334b4f", "error": "#ba1a1a", "on-primary-container": "#97e4f4", "error-container": "#ffdad6", "primary-fixed-dim": "#85d2e2", "on-tertiary": "#ffffff", "on-tertiary-fixed": "#0e1b36", "surface-variant": "#dbe4e6", "inverse-on-surface": "#e9f2f4", "on-secondary": "#ffffff", "primary-fixed": "a2efff", "on-error": "#ffffff", "on-surface-variant": "#3f484b", "tertiary-fixed-dim": "#bac6ea", "primary": "#004e59", "on-background": "#151d1f", "outline-variant": "#bec8cb", "primary-container": "#006876", "secondary-fixed-dim": "#b1cbd1", "background": "#f2fbfd", "surface-container-lowest": "#ffffff", "surface-dim": "#d3dcde", "on-surface": "#151d1f", "on-error-container": "#93000a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "spacing-16": "16px", "spacing-32": "32px", "spacing-4": "4px", "gutter-compact": "8px", "margin-expanded": "32px", "spacing-24": "24px", "margin-medium": "24px", "gutter-medium": "16px", "spacing-8": "8px", "spacing-12": "12px", "touch-target-min": "48px", "margin-compact": "16px" }, "fontFamily": { "headline-small": ["Roboto Flex"], "headline-large": ["Roboto Flex"], "title-large": ["Roboto Flex"], "display-medium": ["Roboto Flex"], "display-large": ["Roboto Flex"], "label-large": ["Roboto Flex"], "body-small": ["Roboto Flex"], "body-large": ["Roboto Flex"], "title-medium": ["Roboto Flex"], "display-small": ["Roboto Flex"], "label-small": ["Roboto Flex"], "title-small": ["Roboto Flex"], "headline-medium": ["Roboto Flex"], "label-medium": ["Roboto Flex"], "body-medium": ["Roboto Flex"] }, "fontSize": { "headline-small": ["24px", {"lineHeight": "32px", "letterSpacing": "0px", "fontWeight": "400"}], "headline-large": ["32px", {"lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "400"}], "title-large": ["22px", {"lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "500"}], "display-medium": ["45px", {"lineHeight": "52px", "letterSpacing": "0px", "fontWeight": "400"}], "display-large": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400"}], "label-large": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}], "body-small": ["12px", {"lineHeight": "16px", "letterSpacing": "0.4px", "fontWeight": "400"}], "body-large": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}], "title-medium": ["16px", {"lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "500"}], "display-small": ["36px", {"lineHeight": "44px", "letterSpacing": "0px", "fontWeight": "400"}], "label-small": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}], "title-small": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}], "headline-medium": ["28px", {"lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "400"}], "label-medium": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}], "body-medium": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}] } } } };</script></head><body class="bg-surface font-body-medium text-body-medium text-on-surface flex flex-col min-h-screen selection:bg-secondary-container"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-6 px-margin-compact flex items-center justify-between text-on-surface-variant font-label-small text-label-small select-none"><span class="font-label-medium text-label-medium text-on-surface font-medium">09:41</span><div class="flex items-center gap-spacing-4"><span class="material-symbols-outlined text-[15px]">signal_cellular_4_bar</span><span class="material-symbols-outlined text-[15px]">wifi</span><span class="material-symbols-outlined text-[16px]">battery_full</span></div></div><div class="h-16 px-margin-compact flex items-center justify-between"><div class="flex items-center gap-spacing-12 min-w-0"><h1 class="font-title-large text-title-large text-on-surface font-semibold tracking-tight truncate">AquaLog</h1><div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-small text-label-small"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span><span>Synced</span></div></div><div class="flex items-center gap-spacing-8"><button aria-label="Notifications" class="relative w-touch-target-min h-touch-target-min flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container active:bg-surface-container-high transition-colors" type="button"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full px-margin-compact pt-22 pb-28 bg-surface"><div class="flex flex-col w-full gap-y-spacing-16">
+<!-- Top App Bar Navigation & Hierarchy Title -->
+<div class="flex items-center justify-between min-h-[48px] -mx-margin-compact px-margin-compact py-spacing-8 bg-surface">
+<div class="flex items-center gap-spacing-8">
+<button aria-label="Go back to Sites management" class="w-touch-target-min h-touch-target-min -ml-spacing-8 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container active:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<h2 class="font-title-large text-title-large text-on-surface font-semibold tracking-tight leading-tight">Create Farm Site</h2>
+<span class="font-label-small text-label-small text-on-surface-variant">नया फार्म साइट • Root Estate Entity</span>
+</div>
+</div>
+<div class="flex items-center">
+<button aria-label="Hierarchy architecture info" class="w-touch-target-min h-touch-target-min flex items-center justify-center rounded-full text-secondary hover:bg-surface-container active:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">help_outline</span>
+</button>
+</div>
+</div>
+<!-- Contextual Informational Banner / Hierarchy Callout -->
+<section class="bg-surface-container-low rounded-xl p-spacing-16 flex items-start gap-spacing-12">
+<div class="w-10 h-10 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">radar</span>
+</div>
+<div class="flex flex-col gap-spacing-4 min-w-0">
+<div class="flex items-center gap-spacing-8 flex-wrap">
+<span class="font-title-small text-title-small text-on-surface font-medium">Authoritative Estate &amp; Weather Root</span>
+<span class="font-label-small text-label-small px-spacing-8 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-semibold">Tier 1 Master</span>
+</div>
+<p class="font-body-small text-body-small text-on-surface-variant leading-relaxed">
+        A Site is the master boundary for all child ponds, batches, and trays. The exact location coordinates established here auto-bind the official agrometeorological station for barometric pressure, precipitation, and thermal stress tracking.
+      </p>
+</div>
+</section>
+<!-- FORM CARD 1: Core Site Identity -->
+<section class="bg-surface-container-lowest rounded-xl p-spacing-16 flex flex-col gap-spacing-16 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="material-symbols-outlined text-primary text-[20px]">domain</span>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Site Identification</h3>
+</div>
+<span class="font-label-small text-label-small text-on-surface-variant">* Required Fields</span>
+</div>
+<!-- Site Name Input -->
+<div class="flex flex-col gap-spacing-4">
+<label class="font-label-medium text-label-medium text-on-surface font-medium" for="site-name">
+        Farm Site Name <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center bg-surface-container-lowest rounded-lg">
+<input class="w-full h-14 px-spacing-16 rounded-lg bg-transparent text-on-surface font-body-large text-body-large placeholder:text-outline focus:outline-none focus:bg-surface-container-low transition-all" id="site-name" placeholder="e.g., Green Aqua Farm Estuary" type="text" value="Kakinada Delta Marine Facility"/>
+</div>
+<span class="font-body-small text-body-small text-on-surface-variant">Legal or local commercial name registered for environmental permits.</span>
+</div>
+<!-- Site Code Input (Auto-generated hint) -->
+<div class="flex flex-col gap-spacing-4">
+<label class="font-label-medium text-label-medium text-on-surface font-medium" for="site-code">
+        Site Code / Facility ID <span class="text-on-surface-variant font-normal">(Optional)</span>
+</label>
+<div class="flex items-center gap-spacing-8">
+<div class="relative flex-1 flex items-center bg-surface-container-lowest rounded-lg">
+<input class="w-full h-14 px-spacing-16 rounded-lg bg-transparent text-on-surface font-body-large text-body-large placeholder:text-outline uppercase tracking-wider focus:outline-none focus:bg-surface-container-low transition-all" id="site-code" placeholder="e.g., GAF-8822" type="text" value="KDM-EST-01"/>
+</div>
+<button class="h-14 px-spacing-12 rounded-lg bg-surface-container text-primary font-label-medium text-label-medium flex items-center gap-1 active:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">autorenew</span>
+<span>Regen</span>
+</button>
+</div>
+<span class="font-body-small text-body-small text-on-surface-variant">Used as pond prefix (e.g. KDM-P01, KDM-P02).</span>
+</div>
+<!-- Water Source / Site Type Selector -->
+<div class="flex flex-col gap-spacing-8 pt-spacing-4">
+<label class="font-label-medium text-label-medium text-on-surface font-medium">
+        Ecological Water Source <span class="text-error">*</span>
+</label>
+<div class="grid grid-cols-1 gap-spacing-8">
+<!-- Option 1: Selected -->
+<label class="flex items-center justify-between p-spacing-12 rounded-xl bg-secondary-container/50 cursor-pointer select-none">
+<div class="flex items-center gap-spacing-12 min-w-0">
+<span class="material-symbols-outlined text-primary text-[22px]">water</span>
+<div class="flex flex-col">
+<span class="font-title-small text-title-small text-on-surface font-medium">Coastal Estuary / Brackish</span>
+<span class="font-body-small text-body-small text-on-secondary-container">Salinity 12–28 ppt • Tidal mangrove &amp; creek intake</span>
+</div>
+</div>
+<input checked="" class="w-5 h-5 accent-primary cursor-pointer" name="water-type" type="radio"/>
+</label>
+<!-- Option 2 -->
+<label class="flex items-center justify-between p-spacing-12 rounded-xl bg-surface-container-low hover:bg-surface-container cursor-pointer select-none transition-colors">
+<div class="flex items-center gap-spacing-12 min-w-0">
+<span class="material-symbols-outlined text-secondary text-[22px]">waves</span>
+<div class="flex flex-col">
+<span class="font-title-small text-title-small text-on-surface font-medium">Inland Freshwater</span>
+<span class="font-body-small text-body-small text-on-surface-variant">Salinity &lt; 2 ppt • Borewell, canal or river fed</span>
+</div>
+</div>
+<input class="w-5 h-5 accent-primary cursor-pointer" name="water-type" type="radio"/>
+</label>
+<!-- Option 3 -->
+<label class="flex items-center justify-between p-spacing-12 rounded-xl bg-surface-container-low hover:bg-surface-container cursor-pointer select-none transition-colors">
+<div class="flex items-center gap-spacing-12 min-w-0">
+<span class="material-symbols-outlined text-secondary text-[22px]">scuba_diving</span>
+<div class="flex flex-col">
+<span class="font-title-small text-title-small text-on-surface font-medium">Full Marine / Deep-sea Intake</span>
+<span class="font-body-small text-body-small text-on-surface-variant">Salinity 30–35 ppt • Offshore pumping system</span>
+</div>
+</div>
+<input class="w-5 h-5 accent-primary cursor-pointer" name="water-type" type="radio"/>
+</label>
+</div>
+</div>
+</section>
+<!-- FORM CARD 2: Physical Address & Location -->
+<section class="bg-surface-container-lowest rounded-xl p-spacing-16 flex flex-col gap-spacing-16 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="material-symbols-outlined text-primary text-[20px]">pin_drop</span>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Geographic Location &amp; Address</h3>
+</div>
+<span class="font-label-small text-label-small text-on-surface-variant">Postal Registry</span>
+</div>
+<!-- Quick Location Detection Trigger Button -->
+<div class="flex flex-col gap-spacing-4">
+<button class="w-full min-h-[48px] px-spacing-16 py-spacing-8 rounded-full bg-secondary-container text-on-secondary-container font-label-large text-label-large font-medium flex items-center justify-center gap-spacing-8 active:bg-secondary-fixed-dim transition-all" id="btn-detect-gps" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary">my_location</span>
+<span>Use Device GPS to Fill Location</span>
+</button>
+<div class="flex items-center gap-spacing-4 px-spacing-8">
+<span class="material-symbols-outlined text-[14px] text-secondary">info</span>
+<span class="font-label-small text-label-small text-on-surface-variant">Manual address entry is always supported. GPS detection is optional.</span>
+</div>
+</div>
+<!-- Street Address Field -->
+<div class="flex flex-col gap-spacing-4">
+<label class="font-label-medium text-label-medium text-on-surface font-medium" for="street-address">
+        Street Address / Survey Landmark
+      </label>
+<input class="w-full h-14 px-spacing-16 rounded-lg bg-surface-container-low text-on-surface font-body-large text-body-large placeholder:text-outline focus:outline-none focus:bg-surface-container transition-all" id="street-address" placeholder="e.g., Plot 12, Estuary Bank" type="text" value="Survey No. 42/3, Uppada Estuary Road"/>
+</div>
+<!-- 2-col: Village / Locality + District -->
+<div class="grid grid-cols-2 gap-spacing-12">
+<div class="flex flex-col gap-spacing-4 min-w-0">
+<label class="font-label-medium text-label-medium text-on-surface font-medium truncate" for="village-city">
+          Village / City <span class="text-error">*</span>
+</label>
+<input class="w-full h-14 px-spacing-12 rounded-lg bg-surface-container-low text-on-surface font-body-medium text-body-medium focus:outline-none focus:bg-surface-container transition-all" id="village-city" placeholder="e.g., Kakinada" type="text" value="Kakinada Rural"/>
+</div>
+<div class="flex flex-col gap-spacing-4 min-w-0">
+<label class="font-label-medium text-label-medium text-on-surface font-medium truncate" for="district-county">
+          District / County <span class="text-error">*</span>
+</label>
+<input class="w-full h-14 px-spacing-12 rounded-lg bg-surface-container-low text-on-surface font-body-medium text-body-medium focus:outline-none focus:bg-surface-container transition-all" id="district-county" placeholder="e.g., East Godavari" type="text" value="East Godavari"/>
+</div>
+</div>
+<!-- 3-col: State, Country, PIN -->
+<div class="grid grid-cols-3 gap-spacing-8">
+<div class="flex flex-col gap-spacing-4 min-w-0">
+<label class="font-label-small text-label-small text-on-surface font-medium truncate" for="state-province">
+          State / Prov <span class="text-error">*</span>
+</label>
+<input class="w-full h-14 px-spacing-8 rounded-lg bg-surface-container-low text-on-surface font-body-medium text-body-medium focus:outline-none focus:bg-surface-container transition-all" id="state-province" type="text" value="Andhra Pradesh"/>
+</div>
+<div class="flex flex-col gap-spacing-4 min-w-0">
+<label class="font-label-small text-label-small text-on-surface font-medium truncate" for="country-name">
+          Country
+        </label>
+<input class="w-full h-14 px-spacing-8 rounded-lg bg-surface-container-high text-on-surface-variant font-body-medium text-body-medium cursor-not-allowed select-none" id="country-name" readonly="" type="text" value="India"/>
+</div>
+<div class="flex flex-col gap-spacing-4 min-w-0">
+<label class="font-label-small text-label-small text-on-surface font-medium truncate" for="postal-code">
+          PIN / Postal <span class="text-error">*</span>
+</label>
+<input class="w-full h-14 px-spacing-8 rounded-lg bg-surface-container-low text-on-surface font-body-medium text-body-medium focus:outline-none focus:bg-surface-container transition-all" id="postal-code" pattern="[0-9]*" type="tel" value="533005"/>
+</div>
+</div>
+</section>
+<!-- FORM CARD 3: Geolocation Coordinates & Weather Station Link -->
+<section class="bg-surface-container-lowest rounded-xl p-spacing-16 flex flex-col gap-spacing-16 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="material-symbols-outlined text-primary text-[20px]">explore</span>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">GPS &amp; Live Weather Link</h3>
+</div>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-small text-label-small font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>Locked</span>
+</div>
+</div>
+<!-- Coordinate Pairs -->
+<div class="grid grid-cols-2 gap-spacing-12">
+<div class="flex flex-col gap-spacing-4 bg-surface-container-low p-spacing-12 rounded-lg">
+<div class="flex items-center justify-between">
+<span class="font-label-small text-label-small text-on-surface-variant">Latitude</span>
+<span class="font-label-small text-label-small text-primary font-medium">North</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="font-title-medium text-title-medium text-on-surface font-semibold">16.989042</span>
+<span class="font-body-small text-body-small text-on-surface-variant">°</span>
+</div>
+</div>
+<div class="flex flex-col gap-spacing-4 bg-surface-container-low p-spacing-12 rounded-lg">
+<div class="flex items-center justify-between">
+<span class="font-label-small text-label-small text-on-surface-variant">Longitude</span>
+<span class="font-label-small text-label-small text-primary font-medium">East</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="font-title-medium text-title-medium text-on-surface font-semibold">82.247518</span>
+<span class="font-body-small text-body-small text-on-surface-variant">°</span>
+</div>
+</div>
+</div>
+<!-- Static Map Preview with Satellite Pond Dykes Context -->
+<div class="relative w-full h-44 rounded-xl overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center" data-location="Uppada, Kakinada, Andhra Pradesh, India" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnFFzG5QTZv0O0s1YJ1g0iTpt65YaFOkGkobIWJGFiUSRx-mmSbWWEqgBoufgL-CH5VTzsduTSpKZuWV7HbquGb3T14kyfxuejxp5MCZx8uswO1iOXTqs8zSuTLQqDShcOvh6DeudOTFxqqqWcazhHd1UCAuG9KkwjM3MXqksEN-cj5LvffLeHTxR2tDP0RJVG3gDcg20kXSnxuw6t3hgS8eFTJ4zGlItSyBlyjWVds8VauABnFW8Ldw')"></div>
+<!-- Top Overlay: Verification Chip -->
+<div class="absolute top-spacing-8 left-spacing-8 px-2.5 py-1 rounded-full bg-surface/90 backdrop-blur-md text-on-surface font-label-small text-label-small flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-primary">verified</span>
+<span>GPS Accuracy ±4.2m</span>
+</div>
+<!-- Center Marker Simulation -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="relative flex items-center justify-center">
+<div class="w-8 h-8 rounded-full bg-primary/20 animate-ping absolute"></div>
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md z-10">
+<span class="material-symbols-outlined text-[18px]">anchor</span>
+</div>
+</div>
+</div>
+<!-- Bottom Map Action -->
+<div class="absolute bottom-spacing-8 right-spacing-8">
+<button class="h-8 px-spacing-12 rounded-full bg-surface/90 backdrop-blur-md text-primary font-label-small text-label-small font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[15px]">edit_location_alt</span>
+<span>Fine-tune Pin</span>
+</button>
+</div>
+</div>
+<!-- Weather Station Auto-Link Pill -->
+<div class="p-spacing-12 rounded-xl bg-surface-container-low flex items-center gap-spacing-12">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">cloudy_snowing</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-medium text-label-medium text-on-surface font-semibold truncate">Bay of Bengal Marine Weather Node #88</span>
+<span class="font-body-small text-body-small text-on-surface-variant">Live telemetry inheritance (DO risk, UV index, monsoon forecast)</span>
+</div>
+</div>
+</section>
+<!-- FORM CARD 4: Operational Defaults & Bio-security setup -->
+<section class="bg-surface-container-lowest rounded-xl p-spacing-16 flex flex-col gap-spacing-16 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="material-symbols-outlined text-primary text-[20px]">settop_component</span>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Operational Scope</h3>
+</div>
+<span class="font-label-small text-label-small text-on-surface-variant">Estate Scale</span>
+</div>
+<!-- Species Focus Filter Chips -->
+<div class="flex flex-col gap-spacing-8">
+<label class="font-label-medium text-label-medium text-on-surface font-medium">
+        Primary Stocking Species
+      </label>
+<div class="flex items-center gap-spacing-8 flex-wrap" id="species-chip-group">
+<button class="h-8 px-spacing-12 rounded-full bg-secondary-container text-on-secondary-container font-label-medium text-label-medium font-medium flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>L. vannamei (Whiteleg)</span>
+</button>
+<button class="h-8 px-spacing-12 rounded-full bg-secondary-container text-on-secondary-container font-label-medium text-label-medium font-medium flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>P. monodon (Black Tiger)</span>
+</button>
+<button class="h-8 px-spacing-12 rounded-full bg-surface-container text-on-surface-variant font-label-medium text-label-medium font-medium flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Tilapia / Carps</span>
+</button>
+</div>
+</div>
+<!-- Total Area & Pond Capacity Target -->
+<div class="grid grid-cols-2 gap-spacing-12 pt-spacing-4">
+<div class="flex flex-col gap-spacing-4 min-w-0">
+<label class="font-label-medium text-label-medium text-on-surface font-medium truncate" for="total-estate-area">
+          Total Estate Area
+        </label>
+<div class="flex items-center bg-surface-container-low rounded-lg overflow-hidden h-14">
+<input class="w-full px-spacing-12 bg-transparent text-on-surface font-body-large text-body-large focus:outline-none" id="total-estate-area" step="0.1" type="number" value="24.5"/>
+<span class="pr-spacing-12 font-label-medium text-label-medium text-on-surface-variant select-none">Acres</span>
+</div>
+</div>
+<div class="flex flex-col gap-spacing-4 min-w-0">
+<label class="font-label-medium text-label-medium text-on-surface font-medium truncate" for="target-pond-count">
+          Planned Ponds
+        </label>
+<div class="flex items-center bg-surface-container-low rounded-lg overflow-hidden h-14">
+<input class="w-full px-spacing-12 bg-transparent text-on-surface font-body-large text-body-large focus:outline-none" id="target-pond-count" max="64" min="1" type="number" value="8"/>
+<span class="pr-spacing-12 font-label-medium text-label-medium text-on-surface-variant select-none">Ponds</span>
+</div>
+</div>
+</div>
+<!-- Biosecurity Level Tonal Toggle -->
+<div class="p-spacing-12 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-spacing-8 min-w-0">
+<span class="material-symbols-outlined text-primary text-[22px]">shield</span>
+<div class="flex flex-col min-w-0">
+<span class="font-title-small text-title-small text-on-surface font-medium truncate">Strict Biosecurity Barrier</span>
+<span class="font-body-small text-body-small text-on-surface-variant">Requires bird netting &amp; crab fencing logs</span>
+</div>
+</div>
+<input checked="" class="w-5 h-5 accent-primary cursor-pointer shrink-0" type="checkbox"/>
+</div>
+</section>
+<!-- BOTTOM ACTION BAR / Sticky Form Submission -->
+<section class="flex flex-col gap-spacing-8 pt-spacing-8 pb-spacing-16">
+<button class="w-full h-[52px] rounded-full bg-primary text-on-primary font-label-large text-label-large font-semibold tracking-wide flex items-center justify-center gap-spacing-8 shadow-sm hover:bg-primary-container active:scale-[0.98] transition-all" id="btn-submit-site" type="button">
+<span class="material-symbols-outlined text-[20px]">add_location_alt</span>
+<span>Create Farm Site &amp; Setup Weather</span>
+</button>
+<button class="w-full h-[48px] rounded-full bg-transparent text-primary font-label-large text-label-large font-medium flex items-center justify-center hover:bg-surface-container active:bg-surface-container-high transition-colors" type="button">
+<span>Cancel &amp; Discard</span>
+</button>
+<div class="flex items-center justify-center gap-1.5 text-center px-spacing-16">
+<span class="material-symbols-outlined text-[14px] text-secondary">inventory_2</span>
+<p class="font-body-small text-body-small text-on-surface-variant">
+        You can register individual grow-out ponds immediately after site setup.
+      </p>
+</div>
+</section>
+</div>
+<script>
+  // Simple micro-interaction for GPS detection button feedback
+  const gpsButton = document.getElementById('btn-detect-gps');
+  if (gpsButton) {
+    gpsButton.addEventListener('click', () => {
+      const originalContent = gpsButton.innerHTML;
+      gpsButton.innerHTML = `
+        <span class="material-symbols-outlined text-[20px] animate-spin text-primary">sync</span>
+        <span>Acquiring RTK Satellite Fix...</span>
+      `;
+      setTimeout(() => {
+        gpsButton.innerHTML = `
+          <span class="material-symbols-outlined text-[20px] text-primary">check_circle</span>
+          <span>Coordinates Synced (16.9890° N, 82.2475° E)</span>
+        `;
+        setTimeout(() => {
+          gpsButton.innerHTML = originalContent;
+        }, 3200);
+      }, 900);
+    });
+  }
+
+  // Submit action feedback
+  const submitButton = document.getElementById('btn-submit-site');
+  if (submitButton) {
+    submitButton.addEventListener('click', () => {
+      submitButton.disabled = true;
+      submitButton.innerHTML = `
+        <span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span>
+        <span>Establishing Estate Hierarchy...</span>
+      `;
+      setTimeout(() => {
+        submitButton.innerHTML = `
+          <span class="material-symbols-outlined text-[20px]">verified</span>
+          <span>Site Created! Loading Ponds...</span>
+        `;
+      }, 1200);
+    });
+  }
+</script></main><div class="fixed bottom-24 right-margin-compact z-40"><button aria-label="Log feeding" class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-container text-on-primary shadow-[0_4px_12px_rgba(0,104,118,0.3)] hover:brightness-105 active:scale-95 transition-all" type="button"><span class="material-symbols-outlined text-[28px]">restaurant</span></button></div><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-1px_10px_rgba(0,0,0,0.04)]" data-active-classes="text-primary [&amp;&gt;div]:bg-secondary-container [&amp;&gt;div]:text-on-secondary-container"><div class="h-20 px-spacing-8 flex items-center justify-around"><a aria-current="page" class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min transition-colors text-primary [&amp;&gt;div]:bg-secondary-container [&amp;&gt;div]:text-on-secondary-container" data-path="overview" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">grid_view</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Overview</span></a><a class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min text-on-surface-variant transition-colors" data-path="feeding" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">restaurant</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Feeding</span></a><a class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min text-on-surface-variant transition-colors" data-path="sampling" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">monitor_weight</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Sampling</span></a><a class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min text-on-surface-variant transition-colors" data-path="water-quality" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">water_drop</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Water</span></a><a class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min text-on-surface-variant transition-colors" data-path="manage" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">tune</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Manage</span></a></div></nav></body></html>

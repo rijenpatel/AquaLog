@@ -1,0 +1,63 @@
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/google-services.json
+android/captures/
+android/.idea/
+android/*.iml
+
+# iOS
+ios/.symlinks/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+ios/Pods/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+
+# Symbols
+app.map
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.drift.dart
+
+# Local
+local.properties
+
+# Source code backup (local only)
+source code/
+
+# Agent/AI skill files (local tooling only)
+.agents/
+ux-ui-agent-skills-main/
+stitch_material_3_android_specification/
+AGENTS.md

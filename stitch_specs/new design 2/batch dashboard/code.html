@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed": "#051f23", "surface": "#f2fbfd", "secondary-container": "#cde7ed", "tertiary": "#3a4664", "inverse-primary": "#85d2e2", "tertiary-fixed": "#d9e2ff", "on-primary": "#ffffff", "surface-container-low": "#ecf5f7", "on-secondary-container": "#50686d", "surface-container-highest": "#dbe4e6", "surface-tint": "#006876", "on-tertiary-container": "#ccd8fd", "on-tertiary-fixed-variant": "#3a4664", "inverse-surface": "#293234", "surface-container": "#e6eff1", "on-primary-fixed": "#001f25", "surface-container-high": "#e1eaec", "secondary": "#4a6267", "surface-bright": "#f2fbfd", "outline": "#6f797b", "on-primary-fixed-variant": "#004e59", "tertiary-container": "#525e7d", "secondary-fixed": "#cde7ed", "on-secondary-fixed-variant": "#334b4f", "error": "#ba1a1a", "on-primary-container": "#97e4f4", "error-container": "#ffdad6", "primary-fixed-dim": "#85d2e2", "on-tertiary": "#ffffff", "on-tertiary-fixed": "#0e1b36", "surface-variant": "#dbe4e6", "inverse-on-surface": "#e9f2f4", "on-secondary": "#ffffff", "primary-fixed": "a2efff", "on-error": "#ffffff", "on-surface-variant": "#3f484b", "tertiary-fixed-dim": "#bac6ea", "primary": "#004e59", "on-background": "#151d1f", "outline-variant": "#bec8cb", "primary-container": "#006876", "secondary-fixed-dim": "#b1cbd1", "background": "#f2fbfd", "surface-container-lowest": "#ffffff", "surface-dim": "#d3dcde", "on-surface": "#151d1f", "on-error-container": "#93000a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "spacing-16": "16px", "spacing-32": "32px", "spacing-4": "4px", "gutter-compact": "8px", "margin-expanded": "32px", "spacing-24": "24px", "margin-medium": "24px", "gutter-medium": "16px", "spacing-8": "8px", "spacing-12": "12px", "touch-target-min": "48px", "margin-compact": "16px" }, "fontFamily": { "headline-small": ["Roboto Flex"], "headline-large": ["Roboto Flex"], "title-large": ["Roboto Flex"], "display-medium": ["Roboto Flex"], "display-large": ["Roboto Flex"], "label-large": ["Roboto Flex"], "body-small": ["Roboto Flex"], "body-large": ["Roboto Flex"], "title-medium": ["Roboto Flex"], "display-small": ["Roboto Flex"], "label-small": ["Roboto Flex"], "title-small": ["Roboto Flex"], "headline-medium": ["Roboto Flex"], "label-medium": ["Roboto Flex"], "body-medium": ["Roboto Flex"] }, "fontSize": { "headline-small": ["24px", {"lineHeight": "32px", "letterSpacing": "0px", "fontWeight": "400"}], "headline-large": ["32px", {"lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "400"}], "title-large": ["22px", {"lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "500"}], "display-medium": ["45px", {"lineHeight": "52px", "letterSpacing": "0px", "fontWeight": "400"}], "display-large": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400"}], "label-large": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}], "body-small": ["12px", {"lineHeight": "16px", "letterSpacing": "0.4px", "fontWeight": "400"}], "body-large": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}], "title-medium": ["16px", {"lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "500"}], "display-small": ["36px", {"lineHeight": "44px", "letterSpacing": "0px", "fontWeight": "400"}], "label-small": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}], "title-small": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}], "headline-medium": ["28px", {"lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "400"}], "label-medium": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}], "body-medium": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-medium text-body-medium text-on-surface flex flex-col min-h-screen selection:bg-secondary-container"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-6 px-margin-compact flex items-center justify-between text-on-surface-variant font-label-small text-label-small select-none"><span class="font-label-medium text-label-medium text-on-surface font-medium">09:41</span><div class="flex items-center gap-spacing-4"><span class="material-symbols-outlined text-[15px]">signal_cellular_4_bar</span><span class="material-symbols-outlined text-[15px]">wifi</span><span class="material-symbols-outlined text-[16px]">battery_full</span></div></div><div class="h-16 px-margin-compact flex items-center justify-between"><div class="flex items-center gap-spacing-12 min-w-0"><h1 class="font-title-large text-title-large text-on-surface font-semibold tracking-tight truncate">AquaLog</h1><div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-small text-label-small"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span><span>Synced</span></div></div><div class="flex items-center gap-spacing-8"><button aria-label="Notifications" class="relative w-touch-target-min h-touch-target-min flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container active:bg-surface-container-high transition-colors" type="button"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full px-margin-compact pt-22 pb-28 bg-surface"><div class="flex flex-col w-full gap-spacing-16 text-on-surface">
+<!-- TOP APP BAR (Material 3 Native) -->
+<div class="flex items-center justify-between py-spacing-8 px-spacing-4 bg-surface-container-low rounded-2xl shadow-sm">
+<div class="flex items-center gap-spacing-12 min-w-0">
+<button aria-label="Go back to pond list" class="w-touch-target-min h-touch-target-min flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container transition-colors active:scale-95" type="button">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-spacing-8">
+<h2 class="font-title-large text-title-large text-on-surface font-semibold truncate tracking-tight">Batch #03</h2>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-small text-label-small font-semibold">
+            ACTIVE
+          </span>
+</div>
+<p class="font-body-small text-body-small text-on-surface-variant truncate">Pond 04 · Green Aqua Farm</p>
+</div>
+</div>
+<div class="flex items-center">
+<button aria-label="Edit batch info" class="w-touch-target-min h-touch-target-min flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button aria-label="Harvest planner" class="w-touch-target-min h-touch-target-min flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">phishing</span>
+</button>
+<button aria-label="More options" class="w-touch-target-min h-touch-target-min flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- BATCH CONTEXT CARD & BIOLOGICAL STATE -->
+<div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-12">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-small text-label-small">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">location_on</span>
+          Green Aqua Farm (Kakinada Delta)
+        </span>
+<span class="font-medium text-on-surface">Growout 1.25 Ac</span>
+</div>
+<div class="flex items-center justify-between">
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">
+          Pond 04 · <span class="font-normal text-on-surface-variant">L. vannamei</span>
+</h3>
+<span class="text-label-small font-label-small px-2 py-0.5 rounded bg-surface-container text-on-secondary-container font-mono">
+          1.5m Depth · 6 Aerators
+        </span>
+</div>
+<p class="font-body-small text-body-small text-on-surface-variant">
+        Stocked DOC 1 (120k PL10) · Certified Specific Pathogen Free
+      </p>
+</div>
+<!-- Prominent Biological Gauge Banner -->
+<div class="bg-primary text-on-primary rounded-xl p-spacing-12 flex flex-col gap-spacing-8">
+<div class="grid grid-cols-3 gap-spacing-8 text-center divide-x divide-white/15">
+<div class="flex flex-col">
+<span class="font-label-small text-label-small text-on-primary/80">DOC</span>
+<span class="font-headline-small text-headline-small font-bold tracking-tight">68 <span class="font-label-small text-label-small font-normal">/105d</span></span>
+<span class="font-label-small text-label-small text-primary-fixed-dim">64.7% cycle</span>
+</div>
+<div class="flex flex-col pl-2">
+<span class="font-label-small text-label-small text-on-primary/80">Latest ABW</span>
+<span class="font-headline-small text-headline-small font-bold tracking-tight">18.77 <span class="font-label-small text-label-small font-normal">g</span></span>
+<span class="font-label-small text-label-small text-primary-fixed-dim">05 Sep · Net #3</span>
+</div>
+<div class="flex flex-col pl-2">
+<span class="font-label-small text-label-small text-on-primary/80">Count Tier</span>
+<span class="font-headline-small text-headline-small font-bold tracking-tight">53 <span class="font-label-small text-label-small font-normal">pcs</span></span>
+<span class="font-label-small text-label-small px-1.5 py-0.2 rounded bg-surface-container-lowest/20 text-on-primary">50-60 Export</span>
+</div>
+</div>
+<div class="bg-primary-container/60 rounded-lg px-2.5 py-1 flex items-center justify-between text-on-primary font-label-small text-label-small">
+<span class="flex items-center gap-1 truncate">
+<span class="material-symbols-outlined text-[14px]">calculate</span>
+          Formula: Count = 1,000 ÷ 18.77 g = 53.28 pcs/kg
+        </span>
+<span class="font-semibold text-primary-fixed shrink-0">Verified ✓</span>
+</div>
+</div>
+</div>
+<!-- PRIMARY KPI AREA -->
+<div class="grid grid-cols-2 gap-spacing-8">
+<!-- Card 1: ABW & ADG -->
+<div class="bg-surface-container-low p-spacing-12 rounded-2xl flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-label-small text-label-small">
+<span>Average Weight</span>
+<span class="material-symbols-outlined text-[18px] text-primary">scale</span>
+</div>
+<div class="my-1">
+<div class="font-headline-small text-headline-small font-semibold text-on-surface">18.77 <span class="font-label-medium text-label-medium text-on-surface-variant">g</span></div>
+<div class="inline-flex items-center gap-0.5 text-label-small font-label-small text-primary font-medium">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+          +0.30 g/d ADG
+        </div>
+</div>
+<span class="text-label-small font-label-small text-on-surface-variant">Target DOC 93: 25.0g</span>
+</div>
+<!-- Card 2: Count Tier -->
+<div class="bg-surface-container-low p-spacing-12 rounded-2xl flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-label-small text-label-small">
+<span>Current Count</span>
+<span class="material-symbols-outlined text-[18px] text-primary">numbers</span>
+</div>
+<div class="my-1">
+<div class="font-headline-small text-headline-small font-semibold text-on-surface">53 <span class="font-label-medium text-label-medium text-on-surface-variant">pcs/kg</span></div>
+<div class="inline-flex items-center px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary-container text-label-small font-label-small font-medium">
+          50–60 Count Grade
+        </div>
+</div>
+<span class="text-label-small font-label-small text-on-surface-variant">Strict scale derivative</span>
+</div>
+<!-- Card 3: Biomass & Population -->
+<div class="bg-surface-container-low p-spacing-12 rounded-2xl flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-label-small text-label-small">
+<span>Standing Biomass</span>
+<span class="material-symbols-outlined text-[18px] text-primary">inventory_2</span>
+</div>
+<div class="my-1">
+<div class="font-headline-small text-headline-small font-semibold text-on-surface">2.14 <span class="font-label-medium text-label-medium text-on-surface-variant">tons</span></div>
+<div class="text-label-small font-label-small text-on-surface-variant font-mono">
+          2,140 kg in basin
+        </div>
+</div>
+<span class="text-label-small font-label-small text-on-surface-variant">114,000 live pcs est.</span>
+</div>
+<!-- Card 4: Survival & FCR -->
+<div class="bg-surface-container-low p-spacing-12 rounded-2xl flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-label-small text-label-small">
+<span>Survival &amp; FCR</span>
+<span class="material-symbols-outlined text-[18px] text-primary">monitoring</span>
+</div>
+<div class="my-1">
+<div class="flex items-baseline justify-between">
+<span class="font-title-large text-title-large font-semibold text-on-surface">95.0%</span>
+<span class="font-label-medium text-label-medium font-bold text-primary">FCR 1.28</span>
+</div>
+<div class="text-label-small font-label-small text-on-secondary-container">
+          Target: 1.20 – 1.35
+        </div>
+</div>
+<span class="text-label-small font-label-small text-primary font-medium">● Optimal Performance</span>
+</div>
+</div>
+<!-- OPERATIONAL ALERTS & TELEMETRY -->
+<div class="flex flex-col gap-spacing-8">
+<div class="bg-error-container text-on-error-container rounded-2xl p-spacing-12 flex items-start gap-spacing-12 shadow-sm">
+<div class="w-10 h-10 rounded-full bg-error text-on-error flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">assignment_late</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-title-small text-title-small font-semibold truncate">Cast Net Sampling Due in 2 Days</h4>
+<span class="text-label-small font-label-small px-1.5 py-0.5 rounded bg-surface-container-lowest text-error font-medium">DOC 70</span>
+</div>
+<p class="font-body-small text-body-small mt-0.5 text-on-error-container">
+          Last verified sampling 6 days ago (DOC 62). Prepare 3 net throws on basin platforms #1, #3 &amp; #4.
+        </p>
+<div class="mt-spacing-8 flex items-center gap-spacing-8">
+<button class="h-8 px-3 rounded-full bg-error text-on-error font-label-small text-label-small font-medium hover:brightness-110 active:scale-95 transition-all flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+            Add Sampling
+          </button>
+<button class="h-8 px-3 rounded-full bg-surface-container-lowest text-on-error-container font-label-small text-label-small font-medium hover:bg-surface-container active:scale-95 transition-all" type="button">
+            Dismiss
+          </button>
+</div>
+</div>
+</div>
+<!-- Sensor Ribbon -->
+<div class="bg-surface-container-low rounded-xl px-spacing-12 py-2 flex items-center justify-between text-on-surface-variant font-label-small text-label-small">
+<div class="flex items-center gap-1.5 truncate">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0"></span>
+<span class="font-medium text-on-surface">Basin Telemetry:</span>
+<span>DO 5.8 mg/L · 28.5°C · 18 ppt</span>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary-container font-medium shrink-0">Safe Band</span>
+</div>
+</div>
+<!-- TODAY'S FEED SESSION PROGRESS (Timeline) -->
+<div class="flex flex-col gap-spacing-8"><div class="flex items-center bg-surface-container p-1 rounded-2xl"><button class="flex-1 py-2 px-3 rounded-xl text-on-surface-variant font-label-medium text-label-medium font-semibold hover:text-on-surface transition-all flex items-center justify-center gap-1.5" type="button"><span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard Overview</span></button><button class="flex-1 py-2 px-3 rounded-xl bg-primary text-on-primary font-label-medium text-label-medium font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5" type="button"><span class="material-symbols-outlined text-[18px]">calendar_month</span><span>Date-Wise Feed Viewer</span></button></div></div><div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-12">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Today's Feed Progress</h3>
+<p class="font-body-small text-body-small text-on-surface-variant">DOC 68 · 38.0 / 42.0 kg Allocated</p>
+</div>
+<div class="text-right">
+<span class="font-title-medium text-title-medium text-primary font-bold">90.5%</span>
+<span class="block font-label-small text-label-small text-on-surface-variant">1 meal left</span>
+</div>
+</div>
+<!-- Progress Meter -->
+<div class="w-full bg-surface-container-highest rounded-full h-2.5 overflow-hidden">
+<div class="bg-primary h-2.5 rounded-full" style="width: 90.5%"></div>
+</div>
+<!-- Feed Sessions List -->
+<div class="flex flex-col gap-spacing-8 pt-spacing-4">
+<!-- Meal 1 -->
+<div class="flex items-center justify-between p-spacing-8 bg-surface-container rounded-xl">
+<div class="flex items-center gap-spacing-8">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-title-small text-title-small font-semibold text-on-surface">07:00 AM</span>
+<span class="text-label-small font-label-small text-on-surface-variant">(Meal #1)</span>
+</div>
+<span class="font-body-small text-body-small text-on-surface-variant">Check Tray: 0% Clean (100% Consumed)</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-small text-title-small font-semibold text-primary">12.5 kg</span>
+<span class="block font-label-small text-label-small text-on-surface-variant">Pellet 1.6mm</span>
+</div>
+</div>
+<!-- Meal 2 -->
+<div class="flex items-center justify-between p-spacing-8 bg-surface-container rounded-xl">
+<div class="flex items-center gap-spacing-8">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-title-small text-title-small font-semibold text-on-surface">11:00 AM</span>
+<span class="text-label-small font-label-small text-on-surface-variant">(Meal #2)</span>
+</div>
+<span class="font-body-small text-body-small text-on-surface-variant">Check Tray: 10% Normal trace</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-small text-title-small font-semibold text-primary">12.5 kg</span>
+<span class="block font-label-small text-label-small text-on-surface-variant">Pellet 1.6mm</span>
+</div>
+</div>
+<!-- Meal 3 -->
+<div class="flex items-center justify-between p-spacing-8 bg-surface-container rounded-xl">
+<div class="flex items-center gap-spacing-8">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-title-small text-title-small font-semibold text-on-surface">04:00 PM</span>
+<span class="text-label-small font-label-small text-on-surface-variant">(Meal #3)</span>
+</div>
+<span class="font-body-small text-body-small text-on-surface-variant">In Water / Checked at 06:15 PM</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-small text-title-small font-semibold text-primary">13.0 kg</span>
+<span class="block font-label-small text-label-small text-on-surface-variant">Pellet 1.6mm</span>
+</div>
+</div>
+<!-- Meal 4 (Pending) -->
+<div class="flex items-center justify-between p-spacing-8 bg-surface-container-high rounded-xl">
+<div class="flex items-center gap-spacing-8">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-title-small text-title-small font-semibold text-on-surface">07:00 PM</span>
+<span class="text-label-small font-label-small text-on-surface-variant">(Meal #4)</span>
+</div>
+<span class="font-body-small text-body-small text-on-surface-variant">Scheduled Pending · 4.0 kg</span>
+</div>
+</div>
+<button class="h-9 px-3 rounded-full bg-primary text-on-primary font-label-small text-label-small font-medium hover:brightness-105 active:scale-95 transition-all flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">done</span>
+          Log Meal
+        </button>
+</div>
+</div>
+</div>
+<!-- CHECK-TRAY RESPONSE & INTELLIGENCE -->
+<div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-16 border-2 border-primary/20"><div class="flex items-center justify-between border-b border-outline-variant/30 pb-spacing-12"><div class="flex items-center gap-spacing-8"><div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-[24px]">receipt_long</span></div><div><h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Date-Wise Feed Ledger</h3><p class="font-body-small text-body-small text-on-surface-variant">Granular meal logs &amp; tray audit trail</p></div></div><div class="flex items-center gap-1"><button aria-label="Search meals" class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all" type="button"><span class="material-symbols-outlined text-[20px]">search</span></button><button aria-label="Export Date Log" class="w-9 h-9 flex items-center justify-center rounded-full text-primary hover:bg-surface-container active:scale-95 transition-all" type="button"><span class="material-symbols-outlined text-[20px]">download</span></button></div></div><div class="flex flex-col gap-spacing-8"><div class="flex items-center justify-between bg-surface-container rounded-xl px-spacing-8 py-1.5"><button aria-label="Previous day" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high active:scale-95 transition-all" type="button"><span class="material-symbols-outlined text-[20px]">chevron_left</span></button><div class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest shadow-sm text-on-surface font-label-medium text-label-medium font-semibold"><span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span><span>Thu, 05 Sep 2026</span><span class="px-1.5 py-0.2 rounded bg-secondary-container text-on-secondary-container font-mono text-label-small font-bold">DOC 68</span></div><button aria-label="Next day" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant/40 cursor-not-allowed" disabled="" type="button"><span class="material-symbols-outlined text-[20px]">chevron_right</span></button></div><div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5"><button class="px-3 py-1 rounded-full bg-primary text-on-primary font-label-small text-label-small font-semibold shrink-0 shadow-sm" type="button">Today (DOC 68)</button><button class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-small text-label-small font-medium hover:text-on-surface shrink-0" type="button">Yesterday (DOC 67)</button><button class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-small text-label-small font-medium hover:text-on-surface shrink-0" type="button">03 Sep (DOC 66)</button><button class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-small text-label-small font-medium hover:text-on-surface shrink-0" type="button">02 Sep (DOC 65)</button><button class="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-small text-label-small font-medium flex items-center gap-1 shrink-0" type="button"><span class="material-symbols-outlined text-[14px]">date_range</span><span>Pick Date</span></button></div></div><div class="grid grid-cols-2 gap-spacing-8 bg-surface-container rounded-xl p-spacing-12"><div class="flex flex-col gap-0.5"><span class="font-label-small text-label-small text-on-surface-variant">Total Feed Broadcast</span><div class="font-title-medium text-title-medium font-bold text-on-surface">38.0 <span class="font-label-small text-label-small font-normal text-on-surface-variant">/ 42.0 kg</span></div><span class="font-label-small text-label-small text-primary font-medium">90.5% compliance</span></div><div class="flex flex-col gap-0.5"><span class="font-label-small text-label-small text-on-surface-variant">Meals Completed</span><div class="font-title-medium text-title-medium font-bold text-on-surface">3 <span class="font-label-small text-label-small font-normal text-on-surface-variant">of 4 logged</span></div><span class="font-label-small text-label-small text-on-surface-variant">1 pending (07:00 PM)</span></div><div class="flex flex-col gap-0.5 pt-2 border-t border-outline-variant/30"><span class="font-label-small text-label-small text-on-surface-variant">Check Tray Status</span><div class="flex items-center gap-1.5 mt-0.5"><span class="px-1.5 py-0.2 rounded bg-primary/10 text-primary font-label-small text-label-small font-semibold">2 Clean</span><span class="px-1.5 py-0.2 rounded bg-secondary-container text-on-secondary-container font-label-small text-label-small font-semibold">1 Normal</span></div></div><div class="flex flex-col gap-0.5 pt-2 border-t border-outline-variant/30"><span class="font-label-small text-label-small text-on-surface-variant">Est. Daily Feed Cost</span><div class="font-title-medium text-title-medium font-bold text-on-surface">₹3,230</div><span class="font-label-small text-label-small text-on-surface-variant">@ ₹85/kg avg</span></div></div><div class="flex flex-col gap-spacing-12"><div class="flex items-center justify-between"><span class="font-title-small text-title-small font-semibold text-on-surface">Meal-by-Meal Feed Breakdown</span><span class="font-label-small text-label-small text-primary font-medium">4 Broadcast Windows</span></div><div class="flex flex-col gap-spacing-8"><div class="bg-surface-container p-spacing-12 rounded-xl flex flex-col gap-spacing-8 border-l-4 border-primary"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-small text-label-small font-bold">Meal #1</span><span class="font-title-small text-title-small font-semibold text-on-surface">07:00 AM</span></div><span class="font-title-small text-title-small font-bold text-primary">12.5 kg</span></div><div class="flex flex-col gap-1 text-body-small font-body-small text-on-surface-variant"><div class="flex items-center gap-1.5 text-on-surface"><span class="material-symbols-outlined text-[16px] text-primary">inventory_2</span><span>CP Classic Grower 1.6mm (Lot #4892)</span></div><div class="flex items-center gap-1.5 text-primary font-medium"><span class="material-symbols-outlined text-[16px]">medication</span><span>+ 500g Vannamin Micro-Minerals premix</span></div><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">fact_check</span><span>Check Tray: <strong class="text-primary">0% Clean (100% Consumed)</strong></span></div></div><div class="flex items-center justify-between pt-spacing-4 border-t border-outline-variant/30 text-label-small font-label-small text-on-surface-variant"><span>Broadcast Platforms #1, #2, #3, #4</span><span>Logged by <strong>Ramu K.</strong></span></div></div><div class="bg-surface-container p-spacing-12 rounded-xl flex flex-col gap-spacing-8 border-l-4 border-primary"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-small text-label-small font-bold">Meal #2</span><span class="font-title-small text-title-small font-semibold text-on-surface">11:00 AM</span></div><span class="font-title-small text-title-small font-bold text-primary">12.5 kg</span></div><div class="flex flex-col gap-1 text-body-small font-body-small text-on-surface-variant"><div class="flex items-center gap-1.5 text-on-surface"><span class="material-symbols-outlined text-[16px] text-primary">inventory_2</span><span>CP Classic Grower 1.6mm (Lot #4892)</span></div><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-secondary">device_thermostat</span><span>Basin Temp: 28.5°C · DO: 5.8 mg/L (Normal)</span></div><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">fact_check</span><span>Check Tray: <strong class="text-on-surface">10% Normal trace</strong></span></div></div><div class="flex items-center justify-between pt-spacing-4 border-t border-outline-variant/30 text-label-small font-label-small text-on-surface-variant"><span>Even broadcast on perimeter</span><span>Logged by <strong>Ramu K.</strong></span></div></div><div class="bg-surface-container p-spacing-12 rounded-xl flex flex-col gap-spacing-8 border-l-4 border-primary"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-small text-label-small font-bold">Meal #3</span><span class="font-title-small text-title-small font-semibold text-on-surface">04:00 PM</span></div><span class="font-title-small text-title-small font-bold text-primary">13.0 kg</span></div><div class="flex flex-col gap-1 text-body-small font-body-small text-on-surface-variant"><div class="flex items-center gap-1.5 text-on-surface"><span class="material-symbols-outlined text-[16px] text-primary">inventory_2</span><span>CP Classic Grower 1.6mm (Lot #4892)</span></div><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-secondary">scatter_plot</span><span>Pellets broadcast across platforms #1, #3 &amp; #4</span></div><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-primary">hourglass_top</span><span>Check Tray: <strong class="text-primary">In Water · Tray Check @ 06:15 PM</strong></span></div></div><div class="flex items-center justify-between pt-spacing-4 border-t border-outline-variant/30 text-label-small font-label-small text-on-surface-variant"><span>Auto-aeration active during feed</span><span>Logged by <strong>Ramu K.</strong></span></div></div><div class="bg-surface-container-high p-spacing-12 rounded-xl flex flex-col gap-spacing-8 border-l-4 border-outline-variant"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-small text-label-small font-bold">Meal #4</span><span class="font-title-small text-title-small font-semibold text-on-surface">07:00 PM</span></div><span class="font-title-small text-title-small font-bold text-on-surface-variant">4.0 kg</span></div><div class="flex items-center justify-between"><div class="flex items-center gap-1.5 text-body-small font-body-small text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">schedule</span><span>Scheduled Pending · Evening ration</span></div><button class="h-8 px-3 rounded-full bg-primary text-on-primary font-label-small text-label-small font-medium hover:brightness-105 active:scale-95 transition-all flex items-center gap-1 shadow-sm" type="button"><span class="material-symbols-outlined text-[16px]">done</span><span>Log This Feed</span></button></div></div></div></div><div class="bg-surface-container rounded-xl p-spacing-12 flex items-start gap-spacing-12"><span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5">inventory</span><div class="flex flex-col gap-0.5 text-body-small font-body-small"><div class="flex items-center justify-between"><span class="font-title-small text-title-small font-semibold text-on-surface">Inventory Stock Deduction</span><span class="font-label-small text-label-small text-error font-mono font-semibold">-38.0 kg</span></div><p class="text-on-surface-variant">Auto-deducted from warehouse batch <strong>CP Classic 1.6mm (Lot #4892)</strong>. Remaining stock balance: <strong>107.5 kg</strong>.</p></div></div><div class="flex items-center gap-spacing-8"><button class="flex-1 h-9 rounded-full bg-surface-container text-primary font-label-small text-label-small font-semibold hover:bg-surface-container-high active:scale-98 transition-all flex items-center justify-center gap-1.5" type="button"><span class="material-symbols-outlined text-[16px]">file_download</span><span>Export Date CSV / PDF</span></button><button class="h-9 px-4 rounded-full bg-secondary-container text-on-secondary-container font-label-small text-label-small font-semibold hover:brightness-95 active:scale-98 transition-all flex items-center justify-center gap-1.5" type="button"><span class="material-symbols-outlined text-[16px]">filter_list</span><span>Filter Logs</span></button></div></div><div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="material-symbols-outlined text-primary text-[22px]">fact_check</span>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Check-Tray Intelligence</h3>
+</div>
+<span class="font-label-small text-label-small text-on-surface-variant">4 Trays Monitored</span>
+</div>
+<!-- Check Tray List -->
+<div class="grid grid-cols-3 gap-spacing-8">
+<div class="p-spacing-8 rounded-xl bg-surface-container flex flex-col gap-1">
+<span class="font-label-small text-label-small text-on-surface-variant">Today 11:00 AM</span>
+<span class="font-title-small text-title-small font-semibold text-on-surface">Normal</span>
+<span class="font-label-small text-label-small text-secondary font-medium">10% leftover</span>
+</div>
+<div class="p-spacing-8 rounded-xl bg-surface-container flex flex-col gap-1">
+<span class="font-label-small text-label-small text-on-surface-variant">Today 07:00 AM</span>
+<span class="font-title-small text-title-small font-semibold text-primary">Clean</span>
+<span class="font-label-small text-label-small text-primary font-medium">0% consumed fast</span>
+</div>
+<div class="p-spacing-8 rounded-xl bg-surface-container flex flex-col gap-1">
+<span class="font-label-small text-label-small text-on-surface-variant">06 Sep 07:00 PM</span>
+<span class="font-title-small text-title-small font-semibold text-error">Surplus</span>
+<span class="font-label-small text-label-small text-error font-medium">25% leftover</span>
+</div>
+</div>
+<!-- Actionable Guidance Box -->
+<div class="bg-secondary-container text-on-secondary-container rounded-xl p-spacing-12 flex items-start gap-spacing-12">
+<span class="material-symbols-outlined text-primary text-[22px] mt-0.5">tips_and_updates</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-title-small text-title-small font-semibold text-on-secondary-fixed">Maintain Current Ration</span>
+<p class="font-body-small text-body-small text-on-secondary-container">
+          Feed consumption velocity is stable after morning adjustment. Continue 42.0 kg daily allocation with Tray audit at 08:30 PM.
+        </p>
+</div>
+</div>
+</div>
+<!-- GRAPH 1: GROWTH / ABW TREND (SVG Chart) -->
+<div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-12">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Growth Trend (ABW vs Target)</h3>
+<p class="font-body-small text-body-small text-on-surface-variant">Pacific White Shrimp Standard Growth Model</p>
+</div>
+<span class="font-label-medium text-label-medium font-bold text-primary">+0.30 g/d</span>
+</div>
+<!-- Chart Visual with Inline SVG -->
+<div class="relative w-full bg-surface-container rounded-xl p-spacing-12 pt-spacing-16 flex flex-col">
+<div class="h-44 w-full">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 320 160">
+<!-- Background Grid Lines -->
+<line stroke="#bec8cb" stroke-dasharray="2 2" stroke-opacity="0.35" stroke-width="1" x1="25" x2="310" y1="20" y2="20"></line>
+<line stroke="#bec8cb" stroke-dasharray="2 2" stroke-opacity="0.35" stroke-width="1" x1="25" x2="310" y1="60" y2="60"></line>
+<line stroke="#bec8cb" stroke-dasharray="2 2" stroke-opacity="0.35" stroke-width="1" x1="25" x2="310" y1="100" y2="100"></line>
+<line stroke="#bec8cb" stroke-opacity="0.5" stroke-width="1" x1="25" x2="310" y1="140" y2="140"></line>
+<!-- Y Axis Labels -->
+<text fill="#6f797b" font-family="Roboto Flex" font-size="9" x="5" y="24">25g</text>
+<text fill="#6f797b" font-family="Roboto Flex" font-size="9" x="5" y="64">18g</text>
+<text fill="#6f797b" font-family="Roboto Flex" font-size="9" x="5" y="104">10g</text>
+<text fill="#6f797b" font-family="Roboto Flex" font-size="9" x="5" y="143">0g</text>
+<!-- Standard Model Curve (Dotted Grey) -->
+<path d="M 30 140 C 90 135, 150 115, 200 80 C 240 50, 275 35, 305 20" fill="none" stroke="#6f797b" stroke-dasharray="3 3" stroke-width="1.5"></path>
+<!-- Projected ABW Line from DOC 68 to DOC 93 (Dashed Cyan) -->
+<path d="M 210 56 L 285 20" fill="none" stroke="#85d2e2" stroke-dasharray="4 3" stroke-width="2.5"></path>
+<!-- Actual ABW Line (Solid Primary Teal) -->
+<!-- Coordinates: D1(30, 140), D14(60, 133), D28(100, 114), D45(145, 82), D58(180, 68), D68(210, 56) -->
+<path d="M 30 140 Q 60 133, 100 114 T 145 82 T 180 68 T 210 56" fill="none" stroke="#006876" stroke-linecap="round" stroke-width="3"></path>
+<!-- Data Points -->
+<circle cx="30" cy="140" fill="#006876" r="3"></circle>
+<circle cx="60" cy="133" fill="#006876" r="3"></circle>
+<circle cx="100" cy="114" fill="#006876" r="3"></circle>
+<circle cx="145" cy="82" fill="#006876" r="3"></circle>
+<circle cx="180" cy="68" fill="#006876" r="3"></circle>
+<!-- Active Highlight DOC 68 Point -->
+<circle cx="210" cy="56" fill="#004e59" r="5" stroke="#ffffff" stroke-width="2"></circle>
+<!-- Target Point DOC 93 -->
+<circle cx="285" cy="20" fill="#ffffff" r="4" stroke="#006876" stroke-width="2"></circle>
+</svg>
+</div>
+<!-- X Axis Labels -->
+<div class="flex justify-between pl-6 pr-2 pt-1 font-label-small text-label-small text-on-surface-variant font-mono">
+<span>D1</span>
+<span>D14</span>
+<span>D28</span>
+<span>D45</span>
+<span>D58</span>
+<span class="font-bold text-primary">D68</span>
+<span>D80</span>
+<span>D93</span>
+</div>
+<!-- Live Sampling Callout Tooltip -->
+<div class="mt-spacing-12 p-spacing-8 bg-surface-container-lowest rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<div class="flex flex-col">
+<span class="font-label-small text-label-small font-semibold text-on-surface">DOC 68 (05 Sep) · 18.77 g</span>
+<span class="font-body-small text-body-small text-on-surface-variant">Cast Net #3 (25 pcs, 475.5g verified)</span>
+</div>
+</div>
+<span class="font-label-small text-label-small font-bold text-primary px-2 py-0.5 rounded bg-secondary-container">On Target</span>
+</div>
+</div>
+<!-- Chart Legend -->
+<div class="flex items-center justify-around font-label-small text-label-small text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-1 bg-primary rounded-full"></span>
+<span>Actual ABW</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-0.5 bg-inverse-primary border-t-2 border-dashed border-primary"></span>
+<span>Projected Target</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-0.5 border-t border-dotted border-outline"></span>
+<span>Standard Model</span>
+</div>
+</div>
+</div>
+<!-- GRAPH 2: DAILY FEED CONSUMPTION (Bar Chart) -->
+<div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-12">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Feed Consumption (kg/day)</h3>
+<p class="font-body-small text-body-small text-on-surface-variant">7-day average: 37.4 kg/day</p>
+</div>
+<!-- Time Range Chips -->
+<div class="flex items-center gap-1 bg-surface-container p-1 rounded-full">
+<button class="px-2.5 py-0.5 rounded-full bg-primary text-on-primary font-label-small text-label-small font-semibold" type="button">7D</button>
+<button class="px-2.5 py-0.5 rounded-full text-on-surface-variant font-label-small text-label-small font-medium hover:text-on-surface" type="button">14D</button>
+<button class="px-2.5 py-0.5 rounded-full text-on-surface-variant font-label-small text-label-small font-medium hover:text-on-surface" type="button">30D</button>
+</div>
+</div>
+<!-- Bar Chart SVG Container -->
+<div class="bg-surface-container rounded-xl p-spacing-12 flex flex-col gap-spacing-8">
+<div class="h-36 w-full flex items-end justify-between gap-2 pt-4 px-1">
+<!-- Day 1 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-small text-label-small text-on-surface-variant font-mono">34</span>
+<div class="w-full max-w-[28px] bg-primary/70 rounded-t-md transition-all hover:bg-primary" style="height: 70%;"></div>
+<span class="font-label-small text-label-small text-on-surface-variant">01</span>
+</div>
+<!-- Day 2 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-small text-label-small text-on-surface-variant font-mono">35.5</span>
+<div class="w-full max-w-[28px] bg-primary/70 rounded-t-md transition-all hover:bg-primary" style="height: 74%;"></div>
+<span class="font-label-small text-label-small text-on-surface-variant">02</span>
+</div>
+<!-- Day 3 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-small text-label-small text-on-surface-variant font-mono">36</span>
+<div class="w-full max-w-[28px] bg-primary/70 rounded-t-md transition-all hover:bg-primary" style="height: 76%;"></div>
+<span class="font-label-small text-label-small text-on-surface-variant">03</span>
+</div>
+<!-- Day 4 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-small text-label-small text-on-surface-variant font-mono">37.5</span>
+<div class="w-full max-w-[28px] bg-primary/70 rounded-t-md transition-all hover:bg-primary" style="height: 80%;"></div>
+<span class="font-label-small text-label-small text-on-surface-variant">04</span>
+</div>
+<!-- Day 5 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-small text-label-small text-on-surface-variant font-mono">39</span>
+<div class="w-full max-w-[28px] bg-primary/80 rounded-t-md transition-all hover:bg-primary" style="height: 84%;"></div>
+<span class="font-label-small text-label-small text-on-surface-variant">05</span>
+</div>
+<!-- Day 6 (Surplus Tray event) -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-small text-label-small text-error font-mono font-bold">41.5</span>
+<div class="w-full max-w-[28px] bg-error rounded-t-md" style="height: 94%;"></div>
+<span class="font-label-small text-label-small text-error font-semibold">06</span>
+</div>
+<!-- Day 7 (Today, In progress) -->
+<div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+<span class="font-label-small text-label-small text-primary font-mono font-bold">38*</span>
+<div class="w-full max-w-[28px] bg-primary rounded-t-md pattern-diagonal" style="height: 82%;"></div>
+<span class="font-label-small text-label-small text-primary font-bold">Today</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-spacing-4 border-t border-outline-variant/30 text-label-small font-label-small text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+          06 Sep: Surplus tray led to ration cut
+        </span>
+<span class="font-medium text-on-surface">Total Week: 261.5 kg</span>
+</div>
+</div>
+</div>
+<!-- FCR PERFORMANCE & RANGE -->
+<div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="material-symbols-outlined text-primary text-[22px]">ssid_chart</span>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">FCR Performance</h3>
+</div>
+<span class="font-title-large text-title-large text-primary font-bold">1.28</span>
+</div>
+<!-- M3 Range Indicator Bar -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between font-label-small text-label-small text-on-surface-variant">
+<span>Low 1.10</span>
+<span class="text-primary font-semibold">Target Zone: 1.20 – 1.35</span>
+<span>High 1.50</span>
+</div>
+<div class="relative w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<!-- Target Band Range (1.20 to 1.35 is roughly 25% to 62.5% of 1.10-1.50 range) -->
+<div class="absolute left-[25%] right-[37.5%] h-full bg-secondary-container"></div>
+<!-- Pointer Needle for 1.28 (45% position) -->
+<div class="absolute top-0 bottom-0 left-[45%] w-1.5 bg-primary rounded-full shadow-sm"></div>
+</div>
+<div class="flex items-center justify-between text-label-small font-label-small">
+<span class="text-primary font-semibold">● In Optimal Band</span>
+<span class="text-on-surface-variant">Trend: Stable (Prev: 1.26)</span>
+</div>
+</div>
+<!-- Mini FCR Milestone Stepper -->
+<div class="grid grid-cols-4 gap-2 text-center bg-surface-container p-spacing-8 rounded-xl">
+<div class="flex flex-col">
+<span class="font-label-small text-label-small text-on-surface-variant">DOC 28</span>
+<span class="font-title-small text-title-small font-semibold text-on-surface">1.18</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-small text-label-small text-on-surface-variant">DOC 45</span>
+<span class="font-title-small text-title-small font-semibold text-on-surface">1.22</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-small text-label-small text-on-surface-variant">DOC 58</span>
+<span class="font-title-small text-title-small font-semibold text-on-surface">1.26</span>
+</div>
+<div class="flex flex-col bg-secondary-container/60 rounded-lg py-0.5">
+<span class="font-label-small text-label-small text-on-secondary-container font-semibold">DOC 68</span>
+<span class="font-title-small text-title-small font-bold text-primary">1.28</span>
+</div>
+</div>
+<p class="font-body-small text-body-small text-on-surface-variant bg-surface-container-lowest p-spacing-8 rounded-lg">
+<span class="font-medium text-on-surface">Period DOC 58–68 Audit:</span> Total Feed 380 kg consumed · Standing Biomass Gain 300 kg · Delta FCR 1.27.
+    </p>
+</div>
+<!-- HARVEST OUTLOOK & PREDICTOR -->
+<div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="material-symbols-outlined text-primary text-[22px]">event_available</span>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Harvest Outlook</h3>
+</div>
+<span class="font-label-small text-label-small px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-semibold">
+        ~25 Days Remaining
+      </span>
+</div>
+<!-- Milestone Roadmap -->
+<div class="flex flex-col gap-spacing-8">
+<div class="flex items-center justify-between text-label-small font-label-small font-medium">
+<span class="text-primary font-bold">Current: 18.77 g (DOC 68)</span>
+<span class="text-on-surface-variant">Target: 25.0 g (DOC 93)</span>
+</div>
+<div class="relative w-full h-2.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 73%"></div>
+</div>
+</div>
+<!-- Outlook Metrics Grid -->
+<div class="grid grid-cols-2 gap-spacing-8 pt-1">
+<div class="p-spacing-12 rounded-xl bg-surface-container">
+<span class="font-label-small text-label-small text-on-surface-variant">Projected Harvest Date</span>
+<div class="font-title-small text-title-small font-semibold text-on-surface mt-0.5">02 Oct 2026</div>
+<span class="font-label-small text-label-small text-primary font-medium">At DOC 93 target</span>
+</div>
+<div class="p-spacing-12 rounded-xl bg-surface-container">
+<span class="font-label-small text-label-small text-on-surface-variant">Expected Biomass</span>
+<div class="font-title-small text-title-small font-semibold text-on-surface mt-0.5">2,750 kg</div>
+<span class="font-label-small text-label-small text-on-surface-variant">Export tier 30-40</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-label-small font-label-small text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px] text-primary">info</span>
+<span>Calculated via 7-day rolling ADG (+0.30 g/d) with 95.0% survival baseline.</span>
+</div>
+</div>
+<!-- BATCH FINANCIAL PERFORMANCE -->
+<div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-12">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-spacing-8">
+<span class="material-symbols-outlined text-primary text-[22px]">account_balance_wallet</span>
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Batch Financial Overview</h3>
+</div>
+<span class="font-label-small text-label-small text-primary font-bold">21.6% Proj. Margin</span>
+</div>
+<!-- 4-Stat Grid -->
+<div class="grid grid-cols-2 gap-spacing-8">
+<div class="p-spacing-12 bg-surface-container rounded-xl flex flex-col">
+<span class="font-label-small text-label-small text-on-surface-variant">Incurred Cost</span>
+<span class="font-title-large text-title-large font-bold text-on-surface mt-0.5">₹4.82 L</span>
+<span class="font-label-small text-label-small text-on-surface-variant">Feed 64% · Seed 18%</span>
+</div>
+<div class="p-spacing-12 bg-surface-container rounded-xl flex flex-col">
+<span class="font-label-small text-label-small text-on-surface-variant">Projected Revenue</span>
+<span class="font-title-large text-title-large font-bold text-primary mt-0.5">₹6.15 L</span>
+<span class="font-label-small text-label-small text-on-surface-variant">Mandi @ ₹290/kg</span>
+</div>
+<div class="p-spacing-12 bg-surface-container rounded-xl flex flex-col">
+<span class="font-label-small text-label-small text-on-surface-variant">Estimated Profit</span>
+<span class="font-title-large text-title-large font-bold text-on-surface mt-0.5">₹1.33 L</span>
+<span class="font-label-small text-label-small text-primary font-medium">+18.2% vs Batch #02</span>
+</div>
+<div class="p-spacing-12 bg-surface-container rounded-xl flex flex-col">
+<span class="font-label-small text-label-small text-on-surface-variant">Break-Even Price</span>
+<span class="font-title-large text-title-large font-bold text-on-surface mt-0.5">₹225 <span class="font-label-small text-label-small font-normal">/kg</span></span>
+<span class="font-label-small text-label-small text-primary font-medium">Safe Margin (+₹65)</span>
+</div>
+</div>
+<button class="w-full h-10 rounded-full bg-surface-container text-primary font-label-medium text-label-medium font-medium hover:bg-surface-container-high active:scale-98 transition-all flex items-center justify-center gap-1" type="button">
+<span>View Detailed Cost Ledger</span>
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<!-- RECENT BATCH ACTIVITY & ACTIONS -->
+<div class="bg-surface-container-low rounded-2xl p-spacing-16 shadow-sm flex flex-col gap-spacing-12">
+<div class="flex items-center justify-between">
+<h3 class="font-title-medium text-title-medium text-on-surface font-semibold">Recent Operational Logs</h3>
+<span class="font-label-small text-label-small text-on-surface-variant">Auto-synced</span>
+</div>
+<!-- Timeline Entries -->
+<div class="flex flex-col gap-spacing-8">
+<div class="flex items-start gap-spacing-12 p-spacing-8 bg-surface-container rounded-xl">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">restaurant</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-small text-title-small font-semibold text-on-surface">Meal Logged (12.5 kg)</span>
+<span class="font-label-small text-label-small text-on-surface-variant">Today 07:08 AM</span>
+</div>
+<p class="font-body-small text-body-small text-on-surface-variant truncate">
+            CP Classic 1.6mm · Feed Lot #4892 · Broadcast by Ravi K.
+          </p>
+</div>
+</div>
+<div class="flex items-start gap-spacing-12 p-spacing-8 bg-surface-container rounded-xl">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">scale</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-small text-title-small font-semibold text-on-surface">Sampling Confirmed</span>
+<span class="font-label-small text-label-small text-on-surface-variant">Yesterday 10:30 AM</span>
+</div>
+<p class="font-body-small text-body-small text-on-surface-variant truncate">
+            Cast Net #3 · 25 count sample (475.5 g) · ABW 18.77 g recorded
+          </p>
+</div>
+</div>
+<div class="flex items-start gap-spacing-12 p-spacing-8 bg-surface-container rounded-xl">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">water_drop</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-small text-title-small font-semibold text-on-surface">Water Quality Test</span>
+<span class="font-label-small text-label-small text-on-surface-variant">05 Sep 06:15 PM</span>
+</div>
+<p class="font-body-small text-body-small text-on-surface-variant truncate">
+            DO 5.8 mg/L · pH 7.9 · Temp 28.5°C · Salinity 18 ppt · Optical probe
+          </p>
+</div>
+</div>
+</div>
+<!-- Quick Action Chips -->
+<div class="flex items-center gap-spacing-8 overflow-x-auto py-1 no-scrollbar">
+<button class="h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-small text-label-small font-medium whitespace-nowrap hover:bg-surface-container-high active:scale-95 transition-all flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">water_drop</span>
+        Log Water Test
+      </button>
+<button class="h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-small text-label-small font-medium whitespace-nowrap hover:bg-surface-container-high active:scale-95 transition-all flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">medication</span>
+        Add Treatment
+      </button>
+<button class="h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-small text-label-small font-medium whitespace-nowrap hover:bg-surface-container-high active:scale-95 transition-all flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">tune</span>
+        Adjust Stock
+      </button>
+</div>
+</div>
+<!-- BOTTOM PRIMARY ACTIONS CONTAINER -->
+<div class="flex items-center gap-spacing-12 pt-spacing-4 pb-spacing-8">
+<button class="flex-1 h-touch-target-min rounded-full bg-primary text-on-primary font-label-large text-label-large font-semibold hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-2 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px]">restaurant</span>
+      Log Feeding Session
+    </button>
+<button class="h-touch-target-min px-spacing-16 rounded-full bg-secondary-container text-on-secondary-container font-label-large text-label-large font-semibold hover:brightness-95 active:scale-98 transition-all flex items-center justify-center gap-2 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px]">scale</span>
+      Add Sampling
+    </button>
+</div>
+</div>
+<script>
+  // Simple micro-interaction for chips and action feedbacks
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      // Haptic visual cue
+      this.classList.add('brightness-95');
+      setTimeout(() => this.classList.remove('brightness-95'), 150);
+    });
+  });
+</script></main><div class="fixed bottom-24 right-margin-compact z-40"><button aria-label="Log feeding" class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-container text-on-primary shadow-[0_4px_12px_rgba(0,104,118,0.3)] hover:brightness-105 active:scale-95 transition-all" type="button"><span class="material-symbols-outlined text-[28px]">restaurant</span></button></div><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-1px_10px_rgba(0,0,0,0.04)]" data-active-classes="text-primary [&amp;&gt;div]:bg-secondary-container [&amp;&gt;div]:text-on-secondary-container"><div class="h-20 px-spacing-8 flex items-center justify-around"><a aria-current="page" class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min transition-colors text-primary [&amp;&gt;div]:bg-secondary-container [&amp;&gt;div]:text-on-secondary-container" data-path="overview" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">grid_view</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Overview</span></a><a class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min text-on-surface-variant transition-colors" data-path="feeding" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">restaurant</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Feeding</span></a><a class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min text-on-surface-variant transition-colors" data-path="sampling" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">monitor_weight</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Sampling</span></a><a class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min text-on-surface-variant transition-colors" data-path="water-quality" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">water_drop</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Water</span></a><a class="group flex flex-col items-center justify-center flex-1 min-w-0 h-touch-target-min text-on-surface-variant transition-colors" data-path="manage" href="#"><div class="flex items-center justify-center w-16 h-8 rounded-full transition-colors"><span class="material-symbols-outlined text-[22px]">tune</span></div><span class="font-label-small text-label-small font-medium tracking-wide mt-1 truncate">Manage</span></a></div></nav></body></html>

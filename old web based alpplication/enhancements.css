@@ -1,0 +1,4477 @@
+/* ════════════════════════════════════════════════════════════════════
+   AquaLog — Enhancement Layer (loaded AFTER style.css)
+   Broad polish, bug fixes, and animation improvements.
+   Uses !important to override heavy !important usage in style.css.
+   Reference design tokens defined in :root of style.css:
+     --bg, --bg-2, --bg-3, --teal, --teal-dim, --teal-glow, --cyan,
+     --amber, --red, --green, --t1, --t2, --t3, --t4 (added here),
+     --fh (Outfit), --fb (Plus Jakarta Sans), --r-sm/md/lg/xl/pill,
+     --tr, --tr-fast, --tr-med, --tr-spring, --glass, --glass-border.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════════════
+   1. TOKEN FIX — Define missing --t4 referenced by calendar cells
+   ════════════════════════════════════════════════════════════════════ */
+:root {
+  /* --t4 is one step darker than --t3 (#475569) in the dark palette.
+     Used by .cal-day.sibling-month and .cal-day.disabled. */
+  --t4: #334155 !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   2. SMOOTH PAGE TRANSITIONS — fade + slide-up when switching pages
+   ════════════════════════════════════════════════════════════════════ */
+.page {
+  opacity: 0 !important;
+  transform: translateY(8px) !important;
+  transition: opacity .3s ease, transform .3s ease !important;
+}
+.page.active {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  animation: aqPageIn .4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+/* Preserve the exit animation style — slide out cleanly. */
+.page.page-exit {
+  opacity: 0 !important;
+  transform: translateY(-8px) !important;
+}
+@keyframes aqPageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   3. BETTER EMPTY STATE STYLING — polished, centered, with subtle icon
+   ════════════════════════════════════════════════════════════════════ */
+.empty-state,
+.no-records,
+.no-data {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 44px 24px !important;
+  margin: 12px 16px !important;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.04) 0%, rgba(0,229,245,.025) 100%) !important;
+  border: 1px dashed rgba(0,229,245,.22) !important;
+  border-radius: var(--r-xl) !important;
+  gap: 10px !important;
+  animation: aqEmptyIn .4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+.empty-state .empty-icon,
+.no-records .empty-icon,
+.no-data .empty-icon,
+.no-records::before,
+.no-data::before {
+  font-size: 2.4rem !important;
+  width: 64px !important;
+  height: 64px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  background: rgba(0,229,245,.08) !important;
+  border: 1px solid rgba(0,229,245,.18) !important;
+  margin: 0 auto 4px !important;
+  opacity: .9 !important;
+  filter: drop-shadow(0 0 10px rgba(0,229,245,.15)) !important;
+}
+.empty-state .empty-text,
+.no-records .empty-text,
+.no-data .empty-text,
+.no-records .nr-text,
+.no-data .nd-text {
+  font-weight: 700 !important;
+  color: var(--t1) !important;
+  font-size: .95rem !important;
+  letter-spacing: .1px !important;
+}
+.empty-state .empty-sub,
+.no-records .empty-sub,
+.no-data .empty-sub {
+  font-size: .78rem !important;
+  color: var(--t2) !important;
+  max-width: 280px !important;
+  line-height: 1.55 !important;
+}
+@keyframes aqEmptyIn {
+  from { opacity: 0; transform: translateY(10px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   4. ENHANCED SCROLLBAR STYLING — thin teal-tinted thumb, transparent track
+   ════════════════════════════════════════════════════════════════════ */
+.page-scroll,
+.page,
+.page-scroll *,
+[class*="overflow-y-auto"],
+[class*="overflow-auto"],
+.sessions-list,
+.batches-list,
+.inventory-detail-content,
+.cc-body.open,
+#completedBatchesBody.open,
+.report-table-wrap,
+.modal-sheet {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(0,229,245,.35) transparent !important;
+}
+.page-scroll::-webkit-scrollbar,
+.page::-webkit-scrollbar,
+.sessions-list::-webkit-scrollbar,
+.batches-list::-webkit-scrollbar,
+.inventory-detail-content::-webkit-scrollbar,
+.cc-body.open::-webkit-scrollbar,
+#completedBatchesBody.open::-webkit-scrollbar,
+.report-table-wrap::-webkit-scrollbar,
+.modal-sheet::-webkit-scrollbar,
+[class*="overflow-y-auto"]::-webkit-scrollbar,
+[class*="overflow-auto"]::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+.page-scroll::-webkit-scrollbar-track,
+.page::-webkit-scrollbar-track,
+.sessions-list::-webkit-scrollbar-track,
+.batches-list::-webkit-scrollbar-track,
+.inventory-detail-content::-webkit-scrollbar-track,
+.cc-body.open::-webkit-scrollbar-track,
+#completedBatchesBody.open::-webkit-scrollbar-track,
+.report-table-wrap::-webkit-scrollbar-track,
+.modal-sheet::-webkit-scrollbar-track,
+[class*="overflow-y-auto"]::-webkit-scrollbar-track,
+[class*="overflow-auto"]::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+.page-scroll::-webkit-scrollbar-thumb,
+.page::-webkit-scrollbar-thumb,
+.sessions-list::-webkit-scrollbar-thumb,
+.batches-list::-webkit-scrollbar-thumb,
+.inventory-detail-content::-webkit-scrollbar-thumb,
+.cc-body.open::-webkit-scrollbar-thumb,
+#completedBatchesBody.open::-webkit-scrollbar-thumb,
+.report-table-wrap::-webkit-scrollbar-thumb,
+.modal-sheet::-webkit-scrollbar-thumb,
+[class*="overflow-y-auto"]::-webkit-scrollbar-thumb,
+[class*="overflow-auto"]::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(0,229,245,.45), rgba(56,189,248,.35)) !important;
+  border-radius: 6px !important;
+  border: 1px solid transparent !important;
+  background-clip: padding-box !important;
+}
+.page-scroll::-webkit-scrollbar-thumb:hover,
+.page::-webkit-scrollbar-thumb:hover,
+.sessions-list::-webkit-scrollbar-thumb:hover,
+.modal-sheet::-webkit-scrollbar-thumb:hover,
+[class*="overflow-y-auto"]::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(0,229,245,.7), rgba(56,189,248,.55)) !important;
+  background-clip: padding-box !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   5. BUTTON MICRO-INTERACTIONS — scale(0.96) on active, smooth transitions
+   ════════════════════════════════════════════════════════════════════ */
+.pill-btn,
+.primary-btn,
+.fab-btn,
+.nav-fab button {
+  transition:
+    transform var(--tr-fast),
+    box-shadow var(--tr-fast),
+    background var(--tr-fast),
+    border-color var(--tr-fast),
+    opacity var(--tr-fast) !important;
+}
+.pill-btn:active,
+.primary-btn:active,
+.fab-btn:active,
+.nav-fab button:active {
+  transform: scale(0.96) !important;
+}
+.pill-btn:hover,
+.primary-btn:hover,
+.fab-btn:hover {
+  transform: translateY(-1px) !important;
+}
+/* FAB ripple/glow emphasis on hover */
+.nav-fab button:hover {
+  box-shadow:
+    0 6px 22px rgba(0,229,245,.35),
+    0 0 0 4px rgba(0,229,245,.12) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   6. BETTER MODAL / SHEET ANIMATIONS — spring slide-up + fade overlay
+   ════════════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  animation: aqOverlayIn .28s ease-out !important;
+}
+.modal-card,
+.modal-sheet {
+  animation: aqSheetUp .42s cubic-bezier(0.34, 1.4, 0.64, 1) !important;
+}
+@keyframes aqOverlayIn {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to   { opacity: 1; backdrop-filter: blur(12px); }
+}
+@keyframes aqModalIn {
+  from { opacity: 0; transform: translateY(40px) scale(.96); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.01); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes aqSheetUp {
+  0%   { opacity: 0; transform: translateY(60px) scale(.98); }
+  55%  { opacity: 1; transform: translateY(-6px) scale(1.005); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* When a modal-card variant is used (centered dialog) apply modal spring. */
+.modal-card {
+  animation: aqModalIn .4s cubic-bezier(0.34, 1.4, 0.64, 1) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   7. TOAST NOTIFICATION POLISH — glass, glow border, progress shimmer
+   ════════════════════════════════════════════════════════════════════ */
+.toast {
+  /* The iOS Dynamic Island variant in style.css uses top-center; we add
+     subtle glow border + glass enhancement. */
+  box-shadow:
+    0 16px 48px rgba(0,0,0,.55),
+    0 0 0 1px rgba(0,229,245,.10) inset,
+    0 0 28px rgba(0,229,245,.10) !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+.toast::after {
+  /* Subtle top sheen line for glass effect */
+  content: '' !important;
+  position: absolute !important;
+  top: 0; left: 12%; right: 12%;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent) !important;
+  pointer-events: none !important;
+}
+.toast.show {
+  animation: aqToastSlideIn .45s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+@keyframes aqToastSlideIn {
+  0%   { opacity: 0; transform: translate3d(-50%, -60px, 0) scale(.85); }
+  60%  { opacity: 1; transform: translate3d(-50%, 4px, 0) scale(1.02); }
+  100% { opacity: 1; transform: translate3d(-50%, 0, 0) scale(1); }
+}
+/* Progress bar shimmer polish */
+.toast-progress {
+  background: linear-gradient(90deg, var(--teal), var(--cyan), var(--teal)) !important;
+  background-size: 200% 100% !important;
+  animation:
+    aqToastProgressShimmer 2.8s linear forwards,
+    aqBarSweep 1.2s linear infinite !important;
+  box-shadow: 0 0 6px rgba(0,229,245,.5) !important;
+}
+@keyframes aqToastProgressShrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+@keyframes aqBarSweep {
+  from { background-position: 0% 0; }
+  to   { background-position: 200% 0; }
+}
+/* Ensure toast-progress uses the proper shrink animation (style.css already
+   defines toastProgress keyframes; we alias it to ensure both run). */
+.toast-progress {
+  animation-name: toastProgress, aqBarSweep !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   8. CARD HOVER REFINEMENT — lift + teal glow border
+   ════════════════════════════════════════════════════════════════════ */
+.pond-card,
+.batch-card,
+.session-card {
+  transition:
+    transform var(--tr-med),
+    box-shadow var(--tr-med),
+    border-color var(--tr-med) !important;
+}
+.pond-card:hover,
+.batch-card:hover,
+.session-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(0,229,245,.28) !important;
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.42),
+    0 0 0 1px rgba(0,229,245,.10) inset,
+    0 0 22px rgba(0,229,245,.10) !important;
+}
+/* Keep small-screen hover subtle to preserve perf (matches existing media query philosophy). */
+@media (max-width: 420px) {
+  .pond-card:hover,
+  .batch-card:hover,
+  .session-card:hover {
+    transform: translateY(-1px) !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   9. SKELETON LOADING SHIMMER — left-to-right sweep
+   ════════════════════════════════════════════════════════════════════ */
+.skeleton,
+.aq-skeleton {
+  background:
+    linear-gradient(90deg,
+      rgba(255,255,255,.04) 0%,
+      rgba(0,229,245,.10) 20%,
+      rgba(255,255,255,.16) 40%,
+      rgba(0,229,245,.10) 60%,
+      rgba(255,255,255,.04) 100%) !important;
+  background-size: 250% 100% !important;
+  animation: aqSkeletonSweep 1.5s linear infinite !important;
+  border-radius: var(--r-sm) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+@keyframes aqSkeletonSweep {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -50% 0; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   10. INPUT FOCUS RING ENHANCEMENT — teal glow ring
+   ════════════════════════════════════════════════════════════════════ */
+.fi:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: rgba(0,229,245,.5) !important;
+  box-shadow:
+    0 0 0 3px rgba(0,229,245,.15),
+    0 0 0 1px rgba(0,229,245,.25) inset !important;
+  transition: box-shadow var(--tr-fast), border-color var(--tr-fast) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   11. TAB INDICATOR ANIMATION — smooth slide-in underline
+   ════════════════════════════════════════════════════════════════════ */
+.tab-btn,
+.rep-tab {
+  position: relative !important;
+}
+.tab-btn.active::after,
+.rep-tab.active::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 18% !important;
+  right: 18% !important;
+  bottom: 4px !important;
+  height: 2px !important;
+  border-radius: 2px !important;
+  background: linear-gradient(90deg, var(--teal), var(--cyan)) !important;
+  box-shadow: 0 0 8px rgba(0,229,245,.5) !important;
+  animation: aqTabUnderline .32s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+@keyframes aqTabUnderline {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: 1; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   12. REDUCED MOTION SUPPORT — disable all animations/transitions
+   ════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .page,
+  .page.active,
+  .modal-overlay,
+  .modal-card,
+  .modal-sheet,
+  .toast,
+  .toast.show {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .skeleton,
+  .aq-skeleton,
+  .toast-progress {
+    animation: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   13. TEXT TRUNCATION UTILITIES
+   ════════════════════════════════════════════════════════════════════ */
+.aq-truncate {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+}
+.aq-clamp-2 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.aq-clamp-3 {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   14. DASHBOARD QUICK-STAT CARD FIX — flex layout: icon left, value right
+   The dashboard "THIS WEEK" / "THIS MONTH" / "Active Ponds" / "Active
+   Batches" cards (`.qs-card`) currently center-stack icon → value → label,
+   which causes large values (e.g. "12.4kg") to visually crowd the icon.
+   Switch to a horizontal flex layout so the icon sits to the LEFT of the
+   value+label cluster with proper spacing.
+   ════════════════════════════════════════════════════════════════════ */
+.qs-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 14px 14px !important;
+  text-align: left !important;
+}
+.qs-card .qs-icon {
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+  width: 42px !important;
+  height: 42px !important;
+  font-size: 1.3rem !important;
+}
+.qs-card .qs-val,
+.qs-card .qs-lbl {
+  text-align: left !important;
+  width: 100% !important;
+}
+.qs-card .qs-val {
+  margin-bottom: 1px !important;
+  line-height: 1.15 !important;
+}
+.qs-card .qs-lbl {
+  letter-spacing: .3px !important;
+}
+/* Allow value to shrink/truncate gracefully if very long. */
+.qs-card .qs-val { min-width: 0; }
+/* Wrapper so the val+lbl cluster takes remaining width. */
+.qs-card > .qs-val {
+  display: block;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   15. BOTTOM NAV SAFE AREA — respect safe-area-inset-bottom + content padding
+   ════════════════════════════════════════════════════════════════════ */
+.bottom-nav-wrap {
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+  padding-left: max(12px, env(safe-area-inset-left, 0px)) !important;
+  padding-right: max(12px, env(safe-area-inset-right, 0px)) !important;
+}
+/* Ensure scrollable page content clears the bottom nav (suspended dock). */
+.page-scroll,
+.page {
+  padding-bottom: calc(var(--nav-h, 110px) + env(safe-area-inset-bottom, 0px) + 16px) !important;
+}
+/* Also ensure any direct page child wrapper has breathing room. */
+.page > .page-scroll:last-child,
+.page > *:last-child {
+  padding-bottom: calc(var(--nav-h, 110px) + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   16. STATUS BAR POLISH — proper time/online spacing + backdrop blur
+   ════════════════════════════════════════════════════════════════════ */
+.status-bar {
+  backdrop-filter: blur(20px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+  gap: 12px !important;
+}
+.status-time {
+  letter-spacing: -.2px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.status-right,
+.status-bar > *:last-child {
+  gap: 8px !important;
+}
+.status-dot {
+  flex-shrink: 0 !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   17. CHART CONTAINER — min-height to prevent collapse, responsive
+   ════════════════════════════════════════════════════════════════════ */
+.chart-card canvas,
+.chart-wrap canvas {
+  min-height: 180px !important;
+  max-height: 360px !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+}
+/* ── Fix: hero-trend-chart canvas needs DIFFERENT rules from other charts ──
+   The 7-day feed trend chart is a small inline chart (height: 110px set by JS).
+   The generic chart-card/chart-wrap rules above force min-height: 180px which
+   stretches it vertically. Exclude it from those rules — it has its own
+   dedicated styles in the "Fix #2" block later in this file. */
+.hero-trend-chart-wrap canvas {
+  min-height: 90px !important;
+  max-height: 130px !important;
+  width: auto !important;
+  height: auto !important;
+  display: block !important;
+}
+.chart-card,
+.chart-wrap {
+  min-height: 220px !important;
+  position: relative !important;
+}
+.hero-trend-chart-wrap {
+  min-height: 160px !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   18. NUMBER / STAT DISPLAY — tabular-nums for aligned digits
+   ════════════════════════════════════════════════════════════════════ */
+.stat-value,
+.big-number,
+.hero-stat,
+.hero-stat-value,
+.qs-val,
+.fin-kpi-val,
+.fin-price-val,
+.batch-stat-val,
+.cbc-stat-val,
+.pond-card-stat-val,
+.cal-day,
+.sabw-value {
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: 'tnum' 1, 'lnum' 1 !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   19. BADGE CONSISTENCY — uniform padding/radius/font across variants
+   ════════════════════════════════════════════════════════════════════ */
+.badge,
+.pill-badge,
+.tag,
+.batch-status-badge,
+.pca-badge,
+.pca-no-badge,
+.session-pond-badge,
+.tx-badge,
+.batch-status-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 4px 10px !important;
+  border-radius: var(--r-pill) !important;
+  font-size: .68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .3px !important;
+  line-height: 1.4 !important;
+  white-space: nowrap !important;
+  border: 1px solid transparent !important;
+  gap: 4px !important;
+}
+/* Type accents — subtle bg + matching border. */
+.badge-success, .pill-badge.success, .tag.success,
+.tx-badge.badge-purchase {
+  background: rgba(16,185,129,.14) !important;
+  border-color: rgba(16,185,129,.32) !important;
+  color: #34d399 !important;
+}
+.badge-warning, .pill-badge.warning, .tag.warning {
+  background: rgba(251,191,36,.14) !important;
+  border-color: rgba(251,191,36,.32) !important;
+  color: var(--amber) !important;
+}
+.badge-danger, .pill-badge.danger, .tag.danger,
+.tx-badge.badge-consumption {
+  background: rgba(244,63,94,.14) !important;
+  border-color: rgba(244,63,94,.32) !important;
+  color: #fb7185 !important;
+}
+.badge-info, .pill-badge.info, .tag.info {
+  background: rgba(56,189,248,.14) !important;
+  border-color: rgba(56,189,248,.32) !important;
+  color: var(--cyan) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   20. GLOBAL :focus-visible — keyboard accessibility outline
+   ════════════════════════════════════════════════════════════════════ */
+*:focus-visible {
+  outline: 2px solid var(--teal) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
+}
+/* Some elements need a tighter offset to avoid clipping. */
+.pill-btn:focus-visible,
+.tab-btn:focus-visible,
+.nav-item:focus-visible,
+.icon-btn:focus-visible {
+  outline-offset: 2px !important;
+}
+/* Inputs already get a teal ring from §10 — keep outline but make it subtle. */
+.fi:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   END ENHANCEMENTS — loaded last; safe to extend further above this line.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════════════
+   Task 3-e: Visual QA Fixes
+   ────────────────────────────────────────────────────────────────────
+   Findings from full-page visual QA across Dashboard / Manage / Stock
+   / Finance / Reports / Settings / Log Feed (390×844 mobile viewport):
+     • Dashboard .page-scroll reports 2px horizontal overflow
+       (scrollWidth 392 vs clientWidth 390) — caused by a decorative
+       .hero-bg-blob extending 1px past the right edge and by
+       .ps-chip rows (pond selector chips) being laid out as a long
+       non-wrapping row that depends on a parent overflow-x:auto.
+       The .page already clips overflow-x, so this is invisible to
+       the user, but we add defensive overflow-x:hidden on
+       .page-scroll to keep the layout clean.
+     • Finance KPI value "₹-20,37,69,503" is truncated by 1px inside
+       its 144px-wide .fin-kpi-val container. Use clamp() responsive
+       font sizing + word-break so very large negative INR values
+       never clip.
+     • All 7 pages already have 110-126px padding-bottom on
+       .page-scroll / .page (from §15) so last content clears the
+       84px bottom nav by ~234px when scrolled to bottom — verified
+       no overlap on any page.
+     • Manage "Complete Batch" / "View Batch" button text verified
+       NOT truncated (scrollWidth ≤ clientWidth).
+     • Finance "Medicine" / "Seed / Post-larvae" labels verified
+       NOT truncated (white-space:normal, fits in 174-200px
+       .fin-cost-info container).
+     • Reports "📊 Reports" title verified NOT overlapping status
+       bar (title at viewport 60-95, status bar 0-44).
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── 3-e.1  Defensive horizontal-overflow guard on .page-scroll ────
+   Prevents the 2px overflow measured on the Dashboard (and any future
+   decorative element that slips past the right edge) from ever
+   producing a horizontal scroll. The .page already clips overflow-x,
+   but this gives .page-scroll its own clip so the layout is clean at
+   every layer. */
+.page-scroll {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+}
+
+/* ── 3-e.2  Large finance KPI value — responsive clamp + break ────
+   The .fin-kpi-val class renders ₹ amounts up to 9-10 digits with a
+   minus sign. At 20px font-size these can clip by 1-2px in their
+   144px container. Use clamp() to scale down on narrow containers and
+   allow word-break so the value never overflows. */
+.fin-kpi-val {
+  font-size: clamp(.95rem, 5.2vw, 1.25rem) !important;
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.3px !important;
+}
+/* Hero / big-number variants get the same treatment for very long
+   digit strings. */
+.big-number,
+.hero-stat,
+.hero-stat-value {
+  font-size: clamp(1.4rem, 8vw, 2.2rem) !important;
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.5px !important;
+}
+
+/* ── 3-e.3  Stagger card entrance when a page becomes active ──────
+   When .page.active, stagger the entrance animation of its direct
+   .page-scroll children. Uses `backwards` fill-mode so children
+   start invisible during their delay, then animate in. This
+   overrides the existing style.css `elementCascade` rule (same
+   specificity, but our !important + later source order wins). The
+   page-level animation (§2 aqPageIn) runs on .page itself and is
+   independent of this children stagger. */
+.page.active > .page-scroll > * {
+  animation: aqStaggerIn .4s cubic-bezier(0.25, 1, 0.5, 1) backwards !important;
+}
+.page.active > .page-scroll > *:nth-child(1) { animation-delay: 0.02s !important; }
+.page.active > .page-scroll > *:nth-child(2) { animation-delay: 0.06s !important; }
+.page.active > .page-scroll > *:nth-child(3) { animation-delay: 0.10s !important; }
+.page.active > .page-scroll > *:nth-child(4) { animation-delay: 0.14s !important; }
+.page.active > .page-scroll > *:nth-child(5) { animation-delay: 0.18s !important; }
+.page.active > .page-scroll > *:nth-child(6) { animation-delay: 0.22s !important; }
+.page.active > .page-scroll > *:nth-child(7) { animation-delay: 0.26s !important; }
+.page.active > .page-scroll > *:nth-child(8) { animation-delay: 0.30s !important; }
+.page.active > .page-scroll > *:nth-child(n+9) { animation-delay: 0.34s !important; }
+@keyframes aqStaggerIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Hidden / empty children (display:none, .hidden, .bottom-spacer)
+   should NOT animate — they'd flash visible-then-hidden during the
+   delay. Force their animation off. */
+.page.active > .page-scroll > .hidden,
+.page.active > .page-scroll > .bottom-spacer,
+.page.active > .page-scroll > *[style*="display: none"],
+.page.active > .page-scroll > *[style*="display:none"] {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ── 3-e.4  .aq-countup hook (no-op CSS, JS may animate later) ────
+   This class does nothing by itself — it is a hook so features.js
+   (or future code) can query `[data-countup]` / `.aq-countup` and
+   animate the number from 0 → target. We define it here so the
+   selector exists in CSS and so font-variant-numeric:tabular-nums
+   keeps digits aligned during the count-up. */
+.aq-countup,
+[data-countup] {
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: 'tnum' 1, 'lnum' 1 !important;
+}
+
+/* ── 3-e.5  Subtle teal left-border accent on interactive cards ──
+   On hover, the pond / batch / inventory-item / session cards gain
+   a 3px inset teal left border — a quiet "selected" feel without
+   overwhelming the existing translateY(-2px) lift + teal glow from
+   §8. We extend §8's hover set to also include .inv-item. */
+.pond-card:hover,
+.batch-card:hover,
+.inv-item:hover,
+.session-card:hover {
+  box-shadow:
+    inset 3px 0 0 var(--teal),
+    0 12px 32px rgba(0,0,0,.42),
+    0 0 0 1px rgba(0,229,245,.10) inset,
+    0 0 22px rgba(0,229,245,.10) !important;
+}
+/* Same left-border accent but as a focus-visible affordance for
+   keyboard users. */
+.pond-card:focus-visible,
+.batch-card:focus-visible,
+.inv-item:focus-visible,
+.session-card:focus-visible {
+  box-shadow:
+    inset 3px 0 0 var(--teal),
+    0 0 0 2px var(--teal) !important;
+  outline: none !important;
+}
+
+/* ── 3-e.6  Better disabled state for buttons ─────────────────────
+   Disabled buttons should look disabled and not respond to hover. */
+.pill-btn:disabled,
+.primary-btn:disabled,
+.fab-btn:disabled,
+.nav-fab button:disabled,
+button:disabled,
+button[disabled],
+.btn:disabled,
+input[type="submit"]:disabled,
+input[type="button"]:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: auto !important; /* allow tooltip/title but block submit */
+  filter: saturate(.6) !important;
+}
+.pill-btn:disabled:hover,
+.primary-btn:disabled:hover,
+.fab-btn:disabled:hover,
+.nav-fab button:disabled:hover,
+button:disabled:hover,
+.btn:disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  filter: saturate(.6) !important;
+}
+.pill-btn:disabled:active,
+.primary-btn:disabled:active,
+.fab-btn:disabled:active,
+button:disabled:active {
+  transform: none !important;
+}
+
+/* ── 3-e.7  Improved focus-visible on nav items ───────────────────
+   The global `*:focus-visible` rule from §20 already applies a
+   2px teal outline, but nav items have a small hit-area and the
+   default offset can clip. Give them an explicit, slightly more
+   visible ring with an inset teal glow so keyboard users see
+   clearly which nav item is focused. */
+.nav-item:focus-visible {
+  outline: 2px solid var(--teal) !important;
+  outline-offset: 2px !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 0 0 4px rgba(0,229,245,.18),
+    inset 0 0 0 1px rgba(0,229,245,.35) !important;
+}
+
+/* ── 3-e.8  Badge / tag wrapping — prevent awkward single wraps ──
+   Badges inside a card header or row should wrap onto multiple
+   lines as a group, not break mid-badge. Applies to known badge
+   container classes; the badges themselves already have
+   white-space:nowrap from §19. */
+.pond-card-header,
+.batch-card-header,
+.pca-header,
+.session-header,
+.fin-kpi-card,
+.fin-cost-row,
+.badge-row,
+.tag-row,
+.card-header,
+.section-header-row {
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+/* ── 3-e.9  Modal-card / modal-sheet mobile overflow guard ───────
+   The .modal-sheet already has max-height:92vh + overflow-y:auto
+   (verified). We add a max-height:85vh + overflow-y:auto on
+   .modal-card (centered dialogs) per the task spec. We do NOT
+   reposition .modal-sheet (it is intentionally bottom-docked in
+   style.css for the iOS-sheet look) — we only ensure it can scroll
+   internally if content is very tall. */
+.modal-card {
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+.modal-sheet {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+/* Ensure the .modal-actions row stays visible at the bottom of the
+   sheet even when content scrolls (sticky footer pattern). */
+.modal-sheet > .modal-actions {
+  position: sticky !important;
+  bottom: 0 !important;
+  background: linear-gradient(180deg, rgba(8,16,42,0), rgba(8,16,42,.95) 30%) !important;
+  padding-top: 12px !important;
+  z-index: 2 !important;
+}
+
+/* ── 3-e.10  Form field alignment — consistent block + 100% width ─
+   Some custom form rows in style.css use inline-block labels and
+   inputs that don't fill the column. Force block + 100% width on
+   .fi inputs/selects/textareas so they always align under their
+   labels. */
+.fi input,
+.fi select,
+.fi textarea,
+.field input,
+.field select,
+.field textarea,
+.form-card input,
+.form-card select,
+.form-card textarea,
+.modal-sheet input,
+.modal-sheet select,
+.modal-sheet textarea {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.fi label,
+.field label,
+.form-card label {
+  display: block !important;
+  width: 100% !important;
+  margin-bottom: 6px !important;
+}
+
+/* ── 3-e.11  Chart canvas min/max height guard ────────────────────
+   Section 17 already enforces min-height on chart canvases. Add a
+   max-width:100% guard so wide canvases never cause horizontal
+   overflow on small screens. */
+canvas {
+  max-width: 100% !important;
+}
+.chart-card,
+.chart-wrap,
+.hero-trend-chart-wrap,
+.bar-chart-wrap,
+.dual-axis-chart-wrap {
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* ── 3-e.12  Card spacing normalization ───────────────────────────
+   Some pages mix card types with different margin-bottoms, giving
+   an uneven rhythm. Normalize all top-level cards inside
+   .page-scroll to a consistent 14px bottom margin. */
+.page-scroll > .card,
+.page-scroll > .pond-card,
+.page-scroll > .batch-card,
+.page-scroll > .session-card,
+.page-scroll > .chart-card,
+.page-scroll > .form-card,
+.page-scroll > .hero-card,
+.page-scroll > .qs-card,
+.page-scroll > .aql-dist-card,
+.page-scroll > .analytics-panel,
+.page-scroll > .sampling-card,
+.page-scroll > .context-selector-card {
+  margin-bottom: 14px !important;
+}
+.page-scroll > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* ── 3-e.13  Status bar overlap guard ─────────────────────────────
+   Verified there is no overlap on any page (status bar 0-44,
+   .page starts at top:44). But add a defensive 4px extra top
+   padding on the FIRST card inside .page-scroll in case any
+   future page positions content closer to the status bar. */
+.page.active > .page-scroll > *:first-child:not(.bottom-spacer) {
+  padding-top: 4px !important;
+}
+
+/* ── 3-e.14  Reduced motion — disable stagger for users who want it
+   Extends §12 to also kill the new stagger animation. */
+@media (prefers-reduced-motion: reduce) {
+  .page.active > .page-scroll > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   END Task 3-e additions
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 4 Additions — Styling polish for new features
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Settings: Data Backup & Restore card polish ── */
+.settings-card #aqExportJsonBtn,
+.settings-card #aqExportCsvBtn,
+.settings-card #aqImportBtn,
+.settings-card #aqNotifTestBtn {
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease !important;
+}
+.settings-card #aqExportJsonBtn:hover,
+.settings-card #aqExportCsvBtn:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 4px 16px rgba(0,229,245,0.25) !important;
+}
+.settings-card #aqImportBtn:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 4px 16px rgba(244,63,94,0.25) !important;
+}
+.settings-card button:active {
+  transform: scale(0.97) !important;
+}
+
+/* ── Notification toggle "on" state (teal track) ── */
+#aqNotifFeedTrack.on,
+#aqNotifLowStockTrack.on,
+#aqNotifSamplingTrack.on {
+  background: linear-gradient(135deg, var(--teal), var(--teal-dim)) !important;
+}
+#aqNotifFeedTrack.on .toggle-thumb,
+#aqNotifLowStockTrack.on .toggle-thumb,
+#aqNotifSamplingTrack.on .toggle-thumb {
+  transform: translateX(24px) !important;
+}
+
+/* ── Search trigger button in status bar ── */
+.aq-search-trigger {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em;
+  transition: all .2s ease !important;
+}
+.aq-search-trigger:active { transform: scale(0.94); }
+
+/* ── Restore status box animation ── */
+#aqRestoreStatus {
+  animation: aqRestoreSlideIn .3s cubic-bezier(0.25,1,0.5,1) !important;
+}
+@keyframes aqRestoreSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Section header icons: subtle bounce on page enter ── */
+.page.active .settings-section-icon {
+  animation: aqIconBounce .5s cubic-bezier(0.34,1.56,0.64,1) backwards;
+}
+.page.active .settings-section-icon:nth-child(1) { animation-delay: 0.1s; }
+@keyframes aqIconBounce {
+  0%   { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+  60%  { transform: scale(1.15) rotate(5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+/* ── Settings card entrance stagger (extends 3-e stagger) ── */
+.page.active .settings-card,
+.page.active .settings-section-header {
+  animation: aqSettingsIn .45s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+.page.active .settings-section-header:nth-of-type(1) { animation-delay: 0.05s; }
+.page.active .settings-card:nth-of-type(1)           { animation-delay: 0.10s; }
+.page.active .settings-section-header:nth-of-type(2) { animation-delay: 0.15s; }
+.page.active .settings-card:nth-of-type(2)           { animation-delay: 0.20s; }
+.page.active .settings-section-header:nth-of-type(3) { animation-delay: 0.25s; }
+.page.active .settings-card:nth-of-type(3)           { animation-delay: 0.30s; }
+.page.active .settings-section-header:nth-of-type(4) { animation-delay: 0.35s; }
+.page.active .settings-card:nth-of-type(4)           { animation-delay: 0.40s; }
+@keyframes aqSettingsIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Quick Stats widget: subtle pulse on the toggle when collapsed ── */
+.aq-quickstats:not(.aq-quickstats-expanded) .aq-quickstats-toggle {
+  animation: aqQsPulse 3s ease-in-out infinite;
+}
+@keyframes aqQsPulse {
+  0%, 100% { box-shadow: 0 6px 20px rgba(0,229,245,0.4), 0 0 0 1px rgba(255,255,255,0.1) inset; }
+  50%      { box-shadow: 0 6px 28px rgba(0,229,245,0.6), 0 0 0 1px rgba(255,255,255,0.15) inset, 0 0 16px rgba(0,229,245,0.3); }
+}
+
+/* ── Global search result: slide-in stagger ── */
+.aq-search-result {
+  animation: aqSearchResultIn .25s ease backwards;
+}
+.aq-search-result:nth-child(1)  { animation-delay: 0.01s; }
+.aq-search-result:nth-child(2)  { animation-delay: 0.03s; }
+.aq-search-result:nth-child(3)  { animation-delay: 0.05s; }
+.aq-search-result:nth-child(4)  { animation-delay: 0.07s; }
+.aq-search-result:nth-child(5)  { animation-delay: 0.09s; }
+.aq-search-result:nth-child(6)  { animation-delay: 0.11s; }
+.aq-search-result:nth-child(7)  { animation-delay: 0.13s; }
+.aq-search-result:nth-child(8)  { animation-delay: 0.15s; }
+.aq-search-result:nth-child(n+9){ animation-delay: 0.17s; }
+@keyframes aqSearchResultIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Version footer polish ── */
+.settings-version-footer {
+  position: relative;
+  overflow: hidden;
+}
+.settings-version-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0,229,245,0.08), transparent);
+  animation: aqVersionShine 4s ease-in-out infinite;
+}
+@keyframes aqVersionShine {
+  0%   { left: -100%; }
+  50%  { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* ── Reduced motion: disable all round-4 animations ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-quickstats-toggle,
+  .aq-search-result,
+  .page.active .settings-section-icon,
+  .page.active .settings-card,
+  .page.active .settings-section-header,
+  .settings-version-footer::before,
+  #aqRestoreStatus {
+    animation: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 5 Additions — Theme System, Tasks Widget, Insights Card
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Theme badge & toggle buttons ── */
+.aq-theme-badge {
+  font-size: 0.62rem !important;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: rgba(0,229,245,0.15);
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all .25s ease;
+}
+.aq-theme-btn {
+  transition: all .22s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.aq-theme-btn:active { transform: scale(0.94); }
+
+/* ── Today's Tasks Card ── */
+.aq-tasks-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(0,229,245,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqTasksIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqTasksIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-tasks-inner { padding: 14px 16px 12px; }
+.aq-tasks-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.aq-tasks-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.92rem; font-weight: 700;
+  color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-tasks-icon { font-size: 1.1rem; }
+.aq-tasks-count {
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--amber);
+  background: rgba(251,191,36,0.12);
+  padding: 3px 10px; border-radius: 100px;
+  transition: all .3s ease;
+}
+.aq-tasks-count.aq-tasks-done {
+  color: var(--green);
+  background: rgba(16,185,129,0.12);
+}
+.aq-tasks-list {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.aq-task-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: all .2s ease;
+  animation: aqTaskItemIn .3s ease backwards;
+}
+.aq-task-item:nth-child(1) { animation-delay: 0.05s; }
+.aq-task-item:nth-child(2) { animation-delay: 0.10s; }
+.aq-task-item:nth-child(3) { animation-delay: 0.15s; }
+.aq-task-item:nth-child(4) { animation-delay: 0.20s; }
+.aq-task-item:nth-child(5) { animation-delay: 0.25s; }
+.aq-task-item:nth-child(n+6) { animation-delay: 0.30s; }
+@keyframes aqTaskItemIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.aq-task-item:hover {
+  background: rgba(0,229,245,0.06);
+  border-color: rgba(0,229,245,0.15);
+  transform: translateX(2px);
+}
+.aq-task-item:active { transform: scale(0.98); }
+.aq-task-item.aq-task-high {
+  border-left: 3px solid var(--red);
+  background: rgba(244,63,94,0.05);
+}
+.aq-task-item.aq-task-medium {
+  border-left: 3px solid var(--amber);
+}
+.aq-task-item.aq-task-low {
+  border-left: 3px solid var(--teal);
+}
+.aq-task-item.aq-task-completed {
+  opacity: 0.55;
+  border-left: 3px solid var(--green);
+}
+.aq-task-icon {
+  font-size: 1.3rem; flex-shrink: 0;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+}
+.aq-task-info { flex: 1; min-width: 0; }
+.aq-task-title {
+  font-size: 0.86rem; font-weight: 600; color: var(--t1);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.aq-task-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.aq-task-arrow {
+  color: var(--teal); font-size: 0.9rem; font-weight: 600;
+  opacity: 0.6; transition: all .2s;
+}
+.aq-task-item:hover .aq-task-arrow { opacity: 1; transform: translateX(2px); }
+.aq-task-check {
+  color: var(--green); font-size: 1rem; font-weight: 700;
+}
+.aq-tasks-empty {
+  padding: 20px 14px; text-align: center;
+  color: var(--t2); font-size: 0.85rem;
+}
+
+/* ── Smart Insights Card ── */
+.aq-insights-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(0,229,245,0.04) 100%);
+  border: 1px solid rgba(99,102,241,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqInsightsIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+  animation-delay: 0.1s;
+}
+@keyframes aqInsightsIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-insights-inner { padding: 14px 16px 12px; }
+.aq-insights-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.92rem; font-weight: 700;
+  color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-insights-icon { font-size: 1.1rem; }
+.aq-insights-list {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.aq-insight-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  animation: aqInsightItemIn .3s ease backwards;
+}
+.aq-insight-item:nth-child(1) { animation-delay: 0.08s; }
+.aq-insight-item:nth-child(2) { animation-delay: 0.14s; }
+.aq-insight-item:nth-child(3) { animation-delay: 0.20s; }
+.aq-insight-item:nth-child(4) { animation-delay: 0.26s; }
+@keyframes aqInsightItemIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-insight-item.aq-insight-up    { border-left: 3px solid var(--amber); }
+.aq-insight-item.aq-insight-down  { border-left: 3px solid var(--green); }
+.aq-insight-item.aq-insight-stable{ border-left: 3px solid var(--cyan); }
+.aq-insight-item.aq-insight-good  { border-left: 3px solid var(--green); background: rgba(16,185,129,0.05); }
+.aq-insight-item.aq-insight-warn  { border-left: 3px solid var(--red); background: rgba(244,63,94,0.05); }
+.aq-insight-item.aq-insight-info  { border-left: 3px solid var(--cyan); }
+.aq-insight-item.aq-insight-tip   { border-left: 3px solid var(--fs5); background: rgba(167,139,250,0.05); }
+.aq-insight-icon {
+  font-size: 1.2rem; flex-shrink: 0;
+  margin-top: 1px;
+}
+.aq-insight-body { flex: 1; min-width: 0; }
+.aq-insight-title {
+  font-size: 0.82rem; font-weight: 700; color: var(--t1);
+  margin-bottom: 2px;
+}
+.aq-insight-sub {
+  font-size: 0.76rem; color: var(--t2); line-height: 1.4;
+}
+.aq-insights-empty {
+  padding: 20px 14px; text-align: center;
+  color: var(--t2); font-size: 0.85rem;
+}
+
+/* ── Theme transition smoothness ── */
+body, .hero-card, .qs-card, .pond-card, .batch-card, .settings-card,
+.form-card, .chart-card, .modal-sheet, .bottom-nav, .aq-tasks-card,
+.aq-insights-card, .aq-quickstats-panel, .aq-search-box {
+  transition: background-color .35s ease, border-color .35s ease, color .35s ease !important;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-tasks-card, .aq-insights-card, .aq-task-item, .aq-insight-item,
+  .aq-theme-badge, .aq-theme-btn {
+    animation: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 6 Additions — Pond Health Score, Feed Cost Calc, Activity Timeline
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Pond Health Score Badge (on pond cards) ── */
+.aq-health-badge {
+  display: flex; align-items: center; gap: 10px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.aq-health-badge:hover {
+  background: rgba(0,229,245,0.08);
+  border-color: rgba(0,229,245,0.2);
+  transform: scale(1.03);
+}
+.aq-health-badge:active { transform: scale(0.97); }
+.aq-health-ring {
+  position: relative;
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+}
+.aq-health-ring svg {
+  width: 100%; height: 100%;
+  transform: rotate(0deg);
+}
+.aq-health-fg {
+  transition: stroke-dasharray .8s cubic-bezier(0.34,1.56,0.64,1);
+  filter: drop-shadow(0 0 4px var(--health-color));
+}
+.aq-health-score {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.82rem; font-weight: 800;
+  color: var(--t1);
+  font-variant-numeric: tabular-nums;
+}
+.aq-health-info {
+  display: flex; flex-direction: column; gap: 1px;
+  min-width: 0;
+}
+.aq-health-label {
+  font-size: 0.75rem; font-weight: 700;
+  white-space: nowrap;
+}
+.aq-health-detail {
+  font-size: 0.65rem; color: var(--t2);
+  white-space: nowrap;
+}
+
+/* ── Pond Health Breakdown Modal ── */
+.aq-health-overlay {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(4,9,20,0.7);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; transition: opacity .25s ease;
+}
+.aq-health-overlay.aq-health-open { opacity: 1; }
+.aq-health-modal {
+  width: 100%; max-width: 380px;
+  background: linear-gradient(180deg, rgba(18,26,48,0.98), rgba(10,16,36,0.98));
+  border: 1px solid rgba(0,229,245,0.2);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  overflow: hidden;
+  transform: scale(0.9); transition: transform .3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.aq-health-overlay.aq-health-open .aq-health-modal { transform: scale(1); }
+.aq-health-modal-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.aq-health-modal-icon { font-size: 1.8rem; }
+.aq-health-modal-title {
+  font-size: 0.95rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-health-modal-score {
+  font-size: 0.78rem; font-weight: 600; margin-top: 2px;
+}
+.aq-health-modal-close {
+  margin-left: auto;
+  background: rgba(255,255,255,0.06); border: none; color: var(--t2);
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+  font-size: 0.9rem; transition: all .2s;
+}
+.aq-health-modal-close:hover { background: rgba(244,63,94,0.2); color: var(--red); }
+.aq-health-modal-body { padding: 14px 16px; }
+.aq-health-bar-item { margin-bottom: 12px; }
+.aq-health-bar-item:last-child { margin-bottom: 0; }
+.aq-health-bar-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 4px;
+}
+.aq-health-bar-label {
+  font-size: 0.8rem; font-weight: 600; color: var(--t1);
+}
+.aq-health-bar-pts {
+  font-size: 0.76rem; font-weight: 700; color: var(--t2);
+  font-variant-numeric: tabular-nums;
+}
+.aq-health-bar-track {
+  height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.aq-health-bar-fill {
+  height: 100%; border-radius: 3px;
+  transition: width .6s cubic-bezier(0.25,1,0.5,1);
+}
+.aq-health-bar-detail {
+  font-size: 0.7rem; color: var(--t2); margin-top: 3px;
+}
+.aq-health-modal-footer {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.72rem; color: var(--t3); line-height: 1.4;
+}
+
+/* ── Feed Cost Calculator (on Log Feed page) ── */
+.aq-cost-calc {
+  margin: 12px 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.06) 0%, rgba(0,229,245,0.04) 100%);
+  border: 1px solid rgba(16,185,129,0.15);
+  overflow: hidden;
+  animation: aqCostCalcIn .35s cubic-bezier(0.25,1,0.5,1);
+}
+@keyframes aqCostCalcIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-cost-calc-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 0.85rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-cost-calc-icon { font-size: 1rem; }
+.aq-cost-calc-body { padding: 10px 14px; }
+.aq-cost-calc-row {
+  display: flex; flex-direction: column; gap: 4px;
+  margin-bottom: 8px;
+}
+.aq-cost-line {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 0;
+  font-size: 0.78rem;
+  border-bottom: 1px dashed rgba(255,255,255,0.04);
+  animation: aqCostLineIn .2s ease;
+}
+@keyframes aqCostLineIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.aq-cost-line:last-child { border-bottom: none; }
+.aq-cost-line-label {
+  font-weight: 600; color: var(--t1);
+  min-width: 60px;
+}
+.aq-cost-line-qty {
+  color: var(--t2); flex: 1; text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.aq-cost-line-price {
+  font-weight: 700; color: var(--teal);
+  min-width: 70px; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.aq-cost-empty {
+  text-align: center; color: var(--t3);
+  font-size: 0.76rem; padding: 8px;
+}
+.aq-cost-calc-total {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px;
+  background: rgba(0,229,245,0.06);
+  border-radius: 10px;
+  margin-top: 6px;
+}
+.aq-cost-calc-total-label {
+  font-size: 0.82rem; font-weight: 600; color: var(--t2);
+}
+.aq-cost-calc-total-value {
+  font-size: 1.1rem; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  transition: color .3s ease;
+}
+
+/* ── Activity Timeline (on Dashboard) ── */
+.aq-timeline-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+  border: 1px solid rgba(56,189,248,0.12);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqTimelineIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+  animation-delay: 0.15s;
+}
+@keyframes aqTimelineIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-timeline-inner { padding: 14px 16px 12px; }
+.aq-timeline-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-timeline-icon { font-size: 1.1rem; }
+.aq-timeline-list {
+  display: flex; flex-direction: column;
+  max-height: 400px; overflow-y: auto;
+  position: relative;
+}
+.aq-timeline-list::-webkit-scrollbar { width: 4px; }
+.aq-timeline-list::-webkit-scrollbar-thumb { background: rgba(0,229,245,0.2); border-radius: 2px; }
+.aq-timeline-item {
+  display: flex; gap: 12px;
+  padding: 8px 0;
+  position: relative;
+  animation: aqTimelineItemIn .3s ease backwards;
+}
+@keyframes aqTimelineItemIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.aq-timeline-item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 17px; top: 38px; bottom: -4px;
+  width: 2px;
+  background: rgba(255,255,255,0.06);
+}
+.aq-timeline-dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  z-index: 1;
+  border: 2px solid rgba(255,255,255,0.06);
+}
+.aq-timeline-feed     { background: rgba(0,229,245,0.12); border-color: rgba(0,229,245,0.2); }
+.aq-timeline-batch    { background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.2); }
+.aq-timeline-harvest  { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.2); }
+.aq-timeline-expense  { background: rgba(244,63,94,0.12); border-color: rgba(244,63,94,0.2); }
+.aq-timeline-revenue  { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.2); }
+.aq-timeline-purchase { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.2); }
+.aq-timeline-content { flex: 1; min-width: 0; padding-top: 2px; }
+.aq-timeline-title {
+  font-size: 0.82rem; font-weight: 600; color: var(--t1);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.aq-timeline-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.aq-timeline-time {
+  font-size: 0.68rem; color: var(--t3); margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.aq-timeline-empty {
+  padding: 20px 14px; text-align: center;
+  color: var(--t2); font-size: 0.85rem;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-health-badge, .aq-health-modal, .aq-cost-calc, .aq-cost-line,
+  .aq-timeline-card, .aq-timeline-item, .aq-health-bar-fill {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 7 Additions — Harvest Predictor, Batch Comparison, Weather Advisory
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Harvest Predictor Card ── */
+.aq-harvest-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(0,229,245,0.04) 100%);
+  border: 1px solid rgba(16,185,129,0.2);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqHarvestIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqHarvestIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-harvest-inner { padding: 14px 16px 12px; }
+.aq-harvest-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 14px;
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-harvest-icon { font-size: 1.1rem; }
+.aq-harvest-body {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 14px;
+}
+.aq-harvest-progress-ring {
+  position: relative;
+  width: 60px; height: 60px;
+  flex-shrink: 0;
+}
+.aq-harvest-progress-ring svg { width: 100%; height: 100%; }
+.aq-harvest-progress-ring circle:last-child {
+  transition: stroke-dasharray .8s cubic-bezier(0.34,1.56,0.64,1);
+  filter: drop-shadow(0 0 4px var(--teal));
+}
+.aq-harvest-progress-val {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.88rem; font-weight: 800;
+  color: var(--t1);
+  font-variant-numeric: tabular-nums;
+}
+.aq-harvest-stats {
+  flex: 1;
+  display: flex; gap: 16px;
+}
+.aq-harvest-stat {
+  flex: 1;
+}
+.aq-harvest-stat-label {
+  font-size: 0.68rem; color: var(--t2);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+.aq-harvest-stat-value {
+  font-size: 1rem; font-weight: 700; color: var(--t1);
+  font-variant-numeric: tabular-nums;
+}
+.aq-harvest-prediction {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.aq-harvest-pred-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.aq-harvest-pred-icon {
+  font-size: 1.2rem; flex-shrink: 0;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  background: rgba(0,229,245,0.08);
+}
+.aq-harvest-pred-label {
+  font-size: 0.7rem; color: var(--t2);
+}
+.aq-harvest-pred-value {
+  font-size: 0.9rem; font-weight: 700; color: var(--t1);
+  font-variant-numeric: tabular-nums;
+}
+.aq-harvest-pred-badge {
+  margin-left: auto;
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--teal);
+  background: rgba(0,229,245,0.1);
+  padding: 4px 10px; border-radius: 100px;
+  white-space: nowrap;
+}
+.aq-harvest-trajectory {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.15);
+}
+.aq-harvest-traj-label {
+  font-size: 0.72rem; font-weight: 600; color: var(--t2);
+  margin-bottom: 8px;
+}
+.aq-harvest-traj-chart {
+  display: flex; align-items: flex-end; gap: 8px;
+  height: 70px;
+  padding-bottom: 4px;
+}
+.aq-harvest-traj-bar {
+  flex: 1;
+  min-height: 8px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, var(--teal), var(--teal-dim));
+  display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 2px;
+  position: relative;
+  transition: height .5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.aq-harvest-traj-bar.aq-harvest-traj-target {
+  background: linear-gradient(180deg, var(--green), #059669);
+  border: 1px dashed rgba(16,185,129,0.5);
+}
+.aq-harvest-traj-val {
+  font-size: 0.6rem; font-weight: 700; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+.aq-harvest-traj-axis {
+  display: flex; gap: 8px; margin-top: 4px;
+}
+.aq-harvest-traj-axis span {
+  flex: 1; text-align: center;
+  font-size: 0.6rem; color: var(--t3);
+}
+
+/* ── Batch Comparison Button & Modal ── */
+.aq-compare-btn-wrap {
+  margin: 12px 16px 0;
+}
+.aq-compare-btn {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(0,229,245,0.08) 100%);
+  border: 1px solid rgba(99,102,241,0.2);
+  color: var(--t1);
+  font-size: 0.88rem; font-weight: 700;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-family: 'Outfit', sans-serif;
+}
+.aq-compare-btn:hover {
+  background: linear-gradient(135deg, rgba(99,102,241,0.18) 0%, rgba(0,229,245,0.12) 100%);
+  border-color: rgba(99,102,241,0.35);
+  transform: translateY(-1px);
+}
+.aq-compare-btn:active { transform: scale(0.98); }
+.aq-compare-btn-icon { font-size: 1.1rem; }
+
+.aq-compare-overlay {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(4,9,20,0.7);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  opacity: 0; transition: opacity .25s ease;
+}
+.aq-compare-overlay.aq-compare-open { opacity: 1; }
+.aq-compare-modal {
+  width: 100%; max-width: 420px;
+  max-height: 85vh;
+  background: linear-gradient(180deg, rgba(18,26,48,0.98), rgba(10,16,36,0.98));
+  border: 1px solid rgba(0,229,245,0.2);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transform: scale(0.9); transition: transform .3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.aq-compare-overlay.aq-compare-open .aq-compare-modal { transform: scale(1); }
+.aq-compare-modal-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+.aq-compare-modal-icon { font-size: 1.5rem; }
+.aq-compare-modal-title {
+  font-size: 0.95rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-compare-modal-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 1px;
+}
+.aq-compare-modal-close {
+  margin-left: auto;
+  background: rgba(255,255,255,0.06); border: none; color: var(--t2);
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+  font-size: 0.9rem; transition: all .2s;
+}
+.aq-compare-modal-close:hover { background: rgba(244,63,94,0.2); color: var(--red); }
+.aq-compare-modal-body {
+  overflow-x: auto; overflow-y: auto;
+  padding: 12px;
+  flex: 1;
+}
+.aq-compare-modal-body::-webkit-scrollbar { width: 6px; height: 6px; }
+.aq-compare-modal-body::-webkit-scrollbar-thumb { background: rgba(0,229,245,0.2); border-radius: 3px; }
+.aq-compare-table {
+  min-width: 100%;
+}
+.aq-compare-row {
+  display: flex; gap: 2px;
+  padding: 8px 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.aq-compare-row:last-child { border-bottom: none; }
+.aq-compare-header {
+  border-bottom: 2px solid rgba(0,229,245,0.15);
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+}
+.aq-compare-cell {
+  flex: 1;
+  min-width: 80px;
+  padding: 4px 6px;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--t1);
+  font-variant-numeric: tabular-nums;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.aq-compare-cell-label {
+  flex: 0 0 90px;
+  min-width: 90px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--t2);
+  font-size: 0.74rem;
+  align-items: flex-start;
+}
+.aq-compare-cell-pond {
+  font-size: 0.7rem; color: var(--t1); font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 80px;
+}
+.aq-compare-cell-batch {
+  font-size: 0.64rem; color: var(--t3);
+}
+.aq-compare-best {
+  background: rgba(16,185,129,0.08);
+  border-radius: 8px;
+  color: var(--green);
+  font-weight: 700;
+}
+.aq-compare-star {
+  color: var(--amber);
+  font-size: 0.7rem;
+}
+.aq-compare-health {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.aq-compare-health-ring {
+  position: relative;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 800; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  flex-shrink: 0;
+}
+.aq-compare-health-ring::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(10,16,36,0.95);
+  z-index: 0;
+}
+.aq-compare-health-ring span {
+  position: relative; z-index: 1;
+}
+.aq-compare-health-label {
+  font-size: 0.6rem; font-weight: 600;
+}
+
+/* ── Weather Feed Advisory Card ── */
+.aq-weather-rec-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(56,189,248,0.08) 0%, rgba(0,229,245,0.04) 100%);
+  border: 1px solid rgba(56,189,248,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqWeatherRecIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+  animation-delay: 0.1s;
+}
+.aq-weather-rec-card.aq-weather-rec-high {
+  background: linear-gradient(135deg, rgba(244,63,94,0.08) 0%, rgba(251,191,36,0.04) 100%);
+  border-color: rgba(244,63,94,0.2);
+}
+.aq-weather-rec-card.aq-weather-rec-medium {
+  background: linear-gradient(135deg, rgba(251,191,36,0.08) 0%, rgba(56,189,248,0.04) 100%);
+  border-color: rgba(251,191,36,0.2);
+}
+@keyframes aqWeatherRecIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-weather-rec-inner { padding: 14px 16px 12px; }
+.aq-weather-rec-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.aq-weather-rec-title-wrap {
+  display: flex; align-items: center; gap: 10px;
+}
+.aq-weather-rec-icon { font-size: 1.4rem; }
+.aq-weather-rec-title {
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-weather-rec-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 1px;
+}
+.aq-weather-rec-temp {
+  display: flex; flex-direction: column; align-items: flex-end;
+}
+.aq-weather-rec-temp-val {
+  font-size: 1.4rem; font-weight: 800; color: var(--t1);
+  font-variant-numeric: tabular-nums;
+}
+.aq-weather-rec-temp-sub {
+  font-size: 0.68rem; color: var(--t2);
+}
+.aq-weather-rec-body {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 12px;
+}
+.aq-weather-rec-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  font-size: 0.78rem; line-height: 1.4; color: var(--t1);
+}
+.aq-weather-rec-item-high {
+  background: rgba(244,63,94,0.06);
+  border-left: 3px solid var(--red);
+}
+.aq-weather-rec-item-medium {
+  background: rgba(251,191,36,0.06);
+  border-left: 3px solid var(--amber);
+}
+.aq-weather-rec-item-low {
+  border-left: 3px solid var(--cyan);
+}
+.aq-weather-rec-item-good {
+  background: rgba(16,185,129,0.06);
+  border-left: 3px solid var(--green);
+}
+.aq-weather-rec-item-icon {
+  font-size: 1rem; flex-shrink: 0; margin-top: 1px;
+}
+.aq-weather-rec-item-text {
+  flex: 1;
+}
+.aq-weather-rec-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0,229,245,0.06);
+}
+.aq-weather-rec-adjust-label {
+  font-size: 0.72rem; color: var(--t2); font-weight: 600;
+}
+.aq-weather-rec-adjust-val {
+  font-size: 0.85rem; font-weight: 700; color: var(--teal);
+}
+.aq-weather-rec-adjust-val.aq-weather-rec-reduce { color: var(--red); }
+.aq-weather-rec-adjust-val.aq-weather-rec-increase { color: var(--green); }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-harvest-card, .aq-weather-rec-card, .aq-harvest-traj-bar,
+  .aq-harvest-progress-ring circle:last-child {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 8 Additions — Cost Analytics, Growth Alerts, Pond Comparison
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Cost Analytics Dashboard (Finance page) ── */
+.aq-cost-analytics {
+  margin: 0 0 16px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(0,229,245,0.06) 0%, rgba(16,185,129,0.04) 100%);
+  border: 1px solid rgba(0,229,245,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqCostAnalyticsIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqCostAnalyticsIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-ca-inner { padding: 14px 16px 12px; }
+.aq-ca-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 14px;
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-ca-icon { font-size: 1.1rem; }
+.aq-ca-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+@media (min-width: 480px) {
+  .aq-ca-kpi-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.aq-ca-kpi {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.aq-ca-kpi-label {
+  font-size: 0.65rem; color: var(--t2);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.aq-ca-kpi-value {
+  font-size: 1rem; font-weight: 800; color: var(--t1);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.aq-ca-kpi-sub {
+  font-size: 0.66rem; color: var(--t3); margin-top: 3px;
+}
+.aq-ca-kpi.aq-ca-positive .aq-ca-kpi-value { color: var(--green); }
+.aq-ca-kpi.aq-ca-negative .aq-ca-kpi-value { color: var(--red); }
+.aq-ca-section {
+  margin-bottom: 14px;
+}
+.aq-ca-section:last-child { margin-bottom: 0; }
+.aq-ca-section-title {
+  font-size: 0.76rem; font-weight: 700; color: var(--t2);
+  margin-bottom: 8px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.aq-ca-trend-chart {
+  display: flex; align-items: flex-end; gap: 6px;
+  height: 60px;
+  padding: 4px 0;
+}
+.aq-ca-trend-bar {
+  flex: 1;
+  min-height: 6px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, var(--teal), var(--teal-dim));
+  display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 2px;
+  position: relative;
+  transition: height .5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.aq-ca-trend-val {
+  font-size: 0.55rem; font-weight: 700; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+.aq-ca-trend-axis {
+  display: flex; gap: 6px; margin-top: 4px;
+}
+.aq-ca-trend-axis span {
+  flex: 1; text-align: center;
+  font-size: 0.62rem; color: var(--t3);
+}
+.aq-ca-cat-list {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.aq-ca-cat-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 0;
+}
+.aq-ca-cat-label {
+  width: 70px; font-size: 0.74rem; font-weight: 600; color: var(--t1);
+  text-transform: capitalize;
+}
+.aq-ca-cat-bar-wrap {
+  flex: 1; height: 8px; border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.aq-ca-cat-bar {
+  height: 100%; border-radius: 4px;
+  transition: width .6s cubic-bezier(0.25,1,0.5,1);
+}
+.aq-ca-cat-val {
+  font-size: 0.72rem; font-weight: 700; color: var(--t2);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.aq-ca-footer {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0,229,245,0.04);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.aq-ca-footer-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.76rem;
+}
+.aq-ca-footer-row span:first-child { color: var(--t2); }
+.aq-ca-footer-row span:last-child { font-weight: 700; color: var(--t1); font-variant-numeric: tabular-nums; }
+.aq-ca-positive { color: var(--green) !important; }
+.aq-ca-negative { color: var(--red) !important; }
+
+/* ── Growth Rate Alerts Card (Dashboard) ── */
+.aq-growth-alert-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(244,63,94,0.08) 0%, rgba(251,191,36,0.04) 100%);
+  border: 1px solid rgba(244,63,94,0.2);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqGrowthAlertIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqGrowthAlertIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-growth-alert-inner { padding: 14px 16px 12px; }
+.aq-growth-alert-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.aq-growth-alert-header-icon { font-size: 1.4rem; }
+.aq-growth-alert-header-title {
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-growth-alert-header-sub {
+  font-size: 0.72rem; color: var(--red); margin-top: 1px;
+}
+.aq-growth-alert-list {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 10px;
+}
+.aq-growth-alert-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(244,63,94,0.06);
+  border: 1px solid rgba(244,63,94,0.1);
+  animation: aqGrowthAlertItemIn .3s ease backwards;
+}
+.aq-growth-alert-item:nth-child(1) { animation-delay: 0.05s; }
+.aq-growth-alert-item:nth-child(2) { animation-delay: 0.10s; }
+.aq-growth-alert-item:nth-child(3) { animation-delay: 0.15s; }
+@keyframes aqGrowthAlertItemIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.aq-growth-alert-icon {
+  font-size: 1.2rem; flex-shrink: 0;
+}
+.aq-growth-alert-info { flex: 1; min-width: 0; }
+.aq-growth-alert-title {
+  font-size: 0.82rem; font-weight: 700; color: var(--t1);
+}
+.aq-growth-alert-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 2px;
+  line-height: 1.3;
+}
+.aq-growth-alert-badge {
+  font-size: 0.65rem; font-weight: 700;
+  color: var(--red);
+  background: rgba(244,63,94,0.12);
+  padding: 4px 10px; border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.aq-growth-alert-footer {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(251,191,36,0.06);
+  font-size: 0.72rem; color: var(--amber);
+  line-height: 1.4;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-cost-analytics, .aq-growth-alert-card, .aq-growth-alert-item,
+  .aq-ca-trend-bar, .aq-ca-cat-bar {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 9 Additions — Water Quality Tracking, Batch Timeline
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Water Quality Tracking Section (Manage page) ── */
+.aq-wq-section {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(56,189,248,0.06) 0%, rgba(0,229,245,0.04) 100%);
+  border: 1px solid rgba(56,189,248,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqWqIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqWqIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-wq-inner { padding: 14px 16px 12px; }
+.aq-wq-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.aq-wq-icon { font-size: 1.4rem; }
+.aq-wq-title {
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-wq-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 1px;
+}
+.aq-wq-toggle-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+  color: #fff;
+  border: none;
+  font-size: 0.78rem; font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  white-space: nowrap;
+}
+.aq-wq-toggle-btn:active { transform: scale(0.95); }
+.aq-wq-form {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.15);
+  margin-bottom: 12px;
+  animation: aqWqFormIn .3s ease;
+}
+@keyframes aqWqFormIn {
+  from { opacity: 0; max-height: 0; }
+  to   { opacity: 1; max-height: 500px; }
+}
+.aq-wq-form.hidden { display: none; }
+.aq-wq-form-row {
+  display: flex; gap: 8px;
+  margin-bottom: 10px;
+}
+.aq-wq-select, .aq-wq-date {
+  flex: 1;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--t1);
+  font-size: 0.82rem;
+  font-family: inherit;
+}
+.aq-wq-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+@media (min-width: 480px) {
+  .aq-wq-inputs { grid-template-columns: repeat(3, 1fr); }
+}
+.aq-wq-input-group {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.aq-wq-input-label {
+  font-size: 0.68rem; color: var(--t2); font-weight: 600;
+}
+.aq-wq-input {
+  height: 38px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--t1);
+  font-size: 0.82rem;
+  font-family: inherit;
+}
+.aq-wq-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 2px rgba(0,229,245,0.15);
+  outline: none;
+}
+.aq-wq-input-range {
+  font-size: 0.6rem; color: var(--t3);
+}
+.aq-wq-form-actions {
+  display: flex; gap: 8px; justify-content: flex-end;
+}
+.aq-wq-form-actions button {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.8rem; font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all .2s;
+  font-family: inherit;
+}
+.aq-wq-form-actions .grey-btn {
+  background: rgba(255,255,255,0.06); color: var(--t2);
+}
+.aq-wq-form-actions .green-btn {
+  background: linear-gradient(135deg, var(--green), #059669); color: #fff;
+}
+.aq-wq-form-actions button:active { transform: scale(0.96); }
+
+.aq-wq-alerts { margin-bottom: 8px; }
+.aq-wq-alert-banner {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(244,63,94,0.08);
+  border: 1px solid rgba(244,63,94,0.2);
+  font-size: 0.76rem; color: var(--t1);
+  line-height: 1.4;
+}
+.aq-wq-alert-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+.aq-wq-readings {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: 300px; overflow-y: auto;
+}
+.aq-wq-readings::-webkit-scrollbar { width: 4px; }
+.aq-wq-readings::-webkit-scrollbar-thumb { background: rgba(0,229,245,0.2); border-radius: 2px; }
+.aq-wq-reading {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  animation: aqWqReadingIn .25s ease backwards;
+}
+.aq-wq-reading:nth-child(1) { animation-delay: 0.02s; }
+.aq-wq-reading:nth-child(2) { animation-delay: 0.06s; }
+.aq-wq-reading:nth-child(3) { animation-delay: 0.10s; }
+.aq-wq-reading:nth-child(4) { animation-delay: 0.14s; }
+.aq-wq-reading:nth-child(5) { animation-delay: 0.18s; }
+@keyframes aqWqReadingIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.aq-wq-reading-info { flex-shrink: 0; }
+.aq-wq-reading-pond {
+  font-size: 0.8rem; font-weight: 700; color: var(--t1);
+}
+.aq-wq-reading-date {
+  font-size: 0.68rem; color: var(--t3); margin-top: 1px;
+}
+.aq-wq-reading-chips {
+  display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end;
+}
+.aq-wq-chip {
+  font-size: 0.66rem; font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.aq-wq-chip-normal {
+  background: rgba(16,185,129,0.12);
+  color: var(--green);
+}
+.aq-wq-chip-warning {
+  background: rgba(251,191,36,0.12);
+  color: var(--amber);
+}
+.aq-wq-chip-critical {
+  background: rgba(244,63,94,0.12);
+  color: var(--red);
+  animation: aqWqChipPulse 2s ease-in-out infinite;
+}
+@keyframes aqWqChipPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244,63,94,0.3); }
+  50%      { box-shadow: 0 0 0 4px rgba(244,63,94,0); }
+}
+.aq-wq-empty {
+  padding: 20px 14px; text-align: center;
+  color: var(--t2); font-size: 0.82rem;
+}
+
+/* ── Batch Timeline Card (Dashboard batch view) ── */
+.aq-batch-timeline-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(167,139,250,0.06) 0%, rgba(0,229,245,0.04) 100%);
+  border: 1px solid rgba(167,139,250,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqBtIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqBtIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-bt-inner { padding: 14px 16px 12px; }
+.aq-bt-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-bt-icon { font-size: 1.1rem; }
+.aq-bt-progress {
+  margin-bottom: 14px;
+}
+.aq-bt-progress-info {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+  font-size: 0.76rem; color: var(--t2); font-weight: 600;
+}
+.aq-bt-progress-track {
+  height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.aq-bt-progress-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--green));
+  transition: width .6s cubic-bezier(0.25,1,0.5,1);
+}
+.aq-bt-list {
+  display: flex; flex-direction: column;
+  position: relative;
+  max-height: 400px; overflow-y: auto;
+}
+.aq-bt-list::-webkit-scrollbar { width: 4px; }
+.aq-bt-list::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.2); border-radius: 2px; }
+.aq-bt-event {
+  display: flex; gap: 12px;
+  padding: 8px 0;
+  position: relative;
+  animation: aqBtEventIn .3s ease backwards;
+}
+@keyframes aqBtEventIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.aq-bt-event:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 17px; top: 40px; bottom: -4px;
+  width: 2px;
+  background: rgba(255,255,255,0.06);
+}
+.aq-bt-dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  z-index: 1;
+  border: 2px solid rgba(255,255,255,0.06);
+}
+.aq-bt-dot-stocking { background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.2); }
+.aq-bt-dot-sampling { background: rgba(167,139,250,0.12); border-color: rgba(167,139,250,0.2); }
+.aq-bt-dot-growth   { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.2); }
+.aq-bt-dot-feed     { background: rgba(0,229,245,0.12); border-color: rgba(0,229,245,0.2); }
+.aq-bt-dot-harvest  { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.2); }
+.aq-bt-content { flex: 1; min-width: 0; padding-top: 2px; }
+.aq-bt-title {
+  font-size: 0.82rem; font-weight: 600; color: var(--t1);
+}
+.aq-bt-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 2px;
+  line-height: 1.3;
+}
+.aq-bt-date {
+  font-size: 0.66rem; color: var(--t3); margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-wq-section, .aq-wq-form, .aq-wq-reading, .aq-wq-chip-critical,
+  .aq-batch-timeline-card, .aq-bt-event, .aq-bt-progress-fill {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 10 Additions — WQ Trends Chart, Feed Schedule Templates
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Water Quality Trends Chart (Manage page) ── */
+.aq-wq-trends-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.06) 0%, rgba(56,189,248,0.04) 100%);
+  border: 1px solid rgba(16,185,129,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqWqTrendsIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqWqTrendsIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-wq-trends-inner { padding: 14px 16px 12px; }
+.aq-wq-trends-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.aq-wq-trends-icon { font-size: 1.4rem; }
+.aq-wq-trends-title {
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-wq-trends-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 1px;
+}
+.aq-wq-trends-select {
+  margin-left: auto;
+  height: 36px; padding: 0 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--t1);
+  font-size: 0.78rem;
+  font-family: inherit;
+  max-width: 140px;
+}
+.aq-wq-trends-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+@media (min-width: 480px) {
+  .aq-wq-trends-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.aq-wq-trend-item {
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  animation: aqWqTrendItemIn .3s ease backwards;
+}
+.aq-wq-trend-item:nth-child(1) { animation-delay: 0.05s; }
+.aq-wq-trend-item:nth-child(2) { animation-delay: 0.10s; }
+.aq-wq-trend-item:nth-child(3) { animation-delay: 0.15s; }
+.aq-wq-trend-item:nth-child(4) { animation-delay: 0.20s; }
+.aq-wq-trend-item:nth-child(5) { animation-delay: 0.25s; }
+@keyframes aqWqTrendItemIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.aq-wq-trend-label {
+  font-size: 0.72rem; font-weight: 700; color: var(--t1);
+  margin-bottom: 6px;
+}
+.aq-wq-trend-chart {
+  width: 100%; height: 50px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.aq-wq-trend-empty {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; color: var(--t3); font-size: 0.68rem;
+}
+.aq-wq-trend-range {
+  font-size: 0.6rem; color: var(--t3); margin-top: 4px;
+}
+.aq-wq-trend-latest {
+  font-size: 0.66rem; color: var(--t2); margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.aq-wq-trend-latest strong { color: var(--t1); }
+
+/* ── Feed Schedule Templates (Log Feed page) ── */
+.aq-templates-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(167,139,250,0.06) 0%, rgba(0,229,245,0.04) 100%);
+  border: 1px solid rgba(167,139,250,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqTemplatesIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqTemplatesIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-templates-inner { padding: 14px 16px 12px; }
+.aq-templates-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.aq-templates-icon { font-size: 1.4rem; }
+.aq-templates-title {
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-templates-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 1px;
+}
+.aq-templates-save-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--fs5), #7c3aed);
+  color: #fff;
+  border: none;
+  font-size: 0.76rem; font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  white-space: nowrap;
+}
+.aq-templates-save-btn:active { transform: scale(0.95); }
+.aq-templates-list {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: 250px; overflow-y: auto;
+}
+.aq-templates-list::-webkit-scrollbar { width: 4px; }
+.aq-templates-list::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.2); border-radius: 2px; }
+.aq-templates-empty {
+  padding: 20px 14px; text-align: center;
+  color: var(--t2); font-size: 0.82rem;
+  line-height: 1.4;
+}
+.aq-tpl-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  animation: aqTplItemIn .25s ease backwards;
+}
+.aq-tpl-item:nth-child(1) { animation-delay: 0.02s; }
+.aq-tpl-item:nth-child(2) { animation-delay: 0.06s; }
+.aq-tpl-item:nth-child(3) { animation-delay: 0.10s; }
+.aq-tpl-item:nth-child(4) { animation-delay: 0.14s; }
+.aq-tpl-item:nth-child(5) { animation-delay: 0.18s; }
+@keyframes aqTplItemIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.aq-tpl-info { flex: 1; min-width: 0; }
+.aq-tpl-name {
+  font-size: 0.82rem; font-weight: 700; color: var(--t1);
+}
+.aq-tpl-chips {
+  display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
+}
+.aq-tpl-chip {
+  font-size: 0.64rem; font-weight: 600;
+  padding: 2px 7px; border-radius: 100px;
+  background: rgba(0,229,245,0.1);
+  color: var(--teal);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.aq-tpl-date {
+  font-size: 0.64rem; color: var(--t3); margin-top: 3px;
+}
+.aq-tpl-actions {
+  display: flex; gap: 6px; flex-shrink: 0;
+}
+.aq-tpl-apply {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--green), #059669);
+  color: #fff;
+  border: none;
+  font-size: 0.74rem; font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.aq-tpl-apply:active { transform: scale(0.94); }
+.aq-tpl-delete {
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(244,63,94,0.1);
+  color: var(--red);
+  border: 1px solid rgba(244,63,94,0.2);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.aq-tpl-delete:active { transform: scale(0.94); }
+.aq-tpl-delete:hover { background: rgba(244,63,94,0.2); }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-wq-trends-card, .aq-wq-trend-item, .aq-templates-card,
+  .aq-tpl-item {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 11 Additions — Configurable Thresholds, Farm Overview Dashboard
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Configurable Alert Thresholds (Settings page) ── */
+.aq-thresholds-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(251,191,36,0.06) 0%, rgba(0,229,245,0.04) 100%);
+  border: 1px solid rgba(251,191,36,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqThrIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqThrIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-thr-inner { padding: 14px 16px 12px; }
+.aq-thr-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.aq-thr-icon { font-size: 1.4rem; }
+.aq-thr-title {
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-thr-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 1px;
+}
+.aq-thr-section {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+}
+.aq-thr-section-title {
+  font-size: 0.76rem; font-weight: 700; color: var(--t2);
+  margin-bottom: 8px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.aq-thr-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0;
+  gap: 10px;
+}
+.aq-thr-label {
+  font-size: 0.78rem; font-weight: 600; color: var(--t1);
+  flex-shrink: 0;
+}
+.aq-thr-inputs {
+  display: flex; align-items: center; gap: 4px;
+}
+.aq-thr-input {
+  width: 55px;
+  height: 34px;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--t1);
+  font-size: 0.78rem;
+  text-align: center;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.aq-thr-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 2px rgba(0,229,245,0.15);
+  outline: none;
+}
+.aq-thr-sep {
+  color: var(--t3); font-size: 0.8rem;
+}
+.aq-thr-unit {
+  font-size: 0.68rem; color: var(--t3);
+  min-width: 35px;
+}
+.aq-thr-hint {
+  font-size: 0.68rem; color: var(--t3); margin-top: 6px;
+  line-height: 1.3;
+}
+.aq-thr-actions {
+  display: flex; gap: 8px; justify-content: flex-end;
+  margin-top: 10px;
+}
+.aq-thr-actions button {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.78rem; font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all .2s;
+  font-family: inherit;
+}
+.aq-thr-actions .grey-btn {
+  background: rgba(255,255,255,0.06); color: var(--t2);
+}
+.aq-thr-actions .green-btn {
+  background: linear-gradient(135deg, var(--green), #059669); color: #fff;
+}
+.aq-thr-actions button:active { transform: scale(0.96); }
+
+/* ── Farm Overview Dashboard (Dashboard farm view) ── */
+.aq-farm-overview-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.06) 0%, rgba(56,189,248,0.04) 100%);
+  border: 1px solid rgba(16,185,129,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqFoIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqFoIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-fo-inner { padding: 14px 16px 12px; }
+.aq-fo-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.aq-fo-icon { font-size: 1.4rem; }
+.aq-fo-title {
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-fo-sub {
+  font-size: 0.72rem; color: var(--t2); margin-top: 1px;
+}
+.aq-fo-totals {
+  display: flex; gap: 8px;
+  margin-bottom: 12px;
+}
+.aq-fo-total {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(0,229,245,0.06);
+  text-align: center;
+}
+.aq-fo-total-label {
+  display: block; font-size: 0.6rem; color: var(--t2);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.aq-fo-total-val {
+  display: block; font-size: 0.88rem; font-weight: 800; color: var(--t1);
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.aq-fo-ponds-grid {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.aq-fo-pond {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  animation: aqFoPondIn .3s ease backwards;
+}
+.aq-fo-pond:nth-child(1) { animation-delay: 0.05s; }
+.aq-fo-pond:nth-child(2) { animation-delay: 0.10s; }
+.aq-fo-pond:nth-child(3) { animation-delay: 0.15s; }
+.aq-fo-pond:nth-child(4) { animation-delay: 0.20s; }
+.aq-fo-pond:nth-child(5) { animation-delay: 0.25s; }
+@keyframes aqFoPondIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.aq-fo-pond-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+}
+.aq-fo-pond-name {
+  font-size: 0.82rem; font-weight: 700; color: var(--t1);
+}
+.aq-fo-pond-health {
+  display: flex; align-items: center; gap: 4px;
+}
+.aq-fo-health-ring {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.66rem; font-weight: 800; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  position: relative;
+}
+.aq-fo-health-ring::after {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(10,16,36,0.9);
+  z-index: 0;
+}
+.aq-fo-health-ring span {
+  position: relative; z-index: 1;
+}
+.aq-fo-pond-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.aq-fo-stat {
+  display: flex; flex-direction: column; align-items: center;
+}
+.aq-fo-stat-label {
+  font-size: 0.58rem; color: var(--t3);
+  text-transform: uppercase;
+}
+.aq-fo-stat-val {
+  font-size: 0.74rem; font-weight: 700; color: var(--t1);
+  font-variant-numeric: tabular-nums;
+  margin-top: 1px;
+}
+.aq-fo-pond-feed {
+  display: flex; align-items: center; gap: 8px;
+}
+.aq-fo-feed-label {
+  font-size: 0.62rem; color: var(--t2);
+  flex-shrink: 0;
+}
+.aq-fo-feed-bar-wrap {
+  flex: 1; height: 5px; border-radius: 3px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.aq-fo-feed-bar {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--green));
+  transition: width .6s cubic-bezier(0.25,1,0.5,1);
+}
+.aq-fo-feed-val {
+  font-size: 0.66rem; font-weight: 700; color: var(--teal);
+  min-width: 35px; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-thresholds-card, .aq-farm-overview-card, .aq-fo-pond,
+  .aq-fo-feed-bar {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 12 Additions — Template Naming Modal, Growth Comparison Button
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Template Naming Modal ── */
+.aq-naming-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(4,9,20,0.7);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; transition: opacity .25s ease;
+}
+.aq-naming-overlay.aq-naming-open { opacity: 1; }
+.aq-naming-modal {
+  width: 100%; max-width: 360px;
+  background: linear-gradient(180deg, rgba(18,26,48,0.98), rgba(10,16,36,0.98));
+  border: 1px solid rgba(167,139,250,0.2);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  overflow: hidden;
+  transform: scale(0.9); transition: transform .3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.aq-naming-overlay.aq-naming-open .aq-naming-modal { transform: scale(1); }
+.aq-naming-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-naming-icon { font-size: 1.3rem; }
+.aq-naming-close {
+  margin-left: auto;
+  background: rgba(255,255,255,0.06); border: none; color: var(--t2);
+  width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+  font-size: 0.85rem; transition: all .2s;
+}
+.aq-naming-close:hover { background: rgba(244,63,94,0.2); color: var(--red); }
+.aq-naming-body { padding: 16px; }
+.aq-naming-label {
+  display: block; font-size: 0.74rem; font-weight: 600; color: var(--t2);
+  margin-bottom: 6px;
+}
+.aq-naming-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(167,139,250,0.2);
+  color: var(--t1);
+  font-size: 0.88rem;
+  font-family: inherit;
+  margin-bottom: 14px;
+}
+.aq-naming-input:focus {
+  border-color: var(--fs5);
+  box-shadow: 0 0 0 2px rgba(167,139,250,0.15);
+  outline: none;
+}
+.aq-naming-preview {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(167,139,250,0.05);
+  border: 1px solid rgba(167,139,250,0.1);
+}
+.aq-naming-preview-label {
+  font-size: 0.68rem; font-weight: 600; color: var(--t2);
+  margin-bottom: 6px;
+}
+.aq-naming-preview-chips {
+  display: flex; flex-wrap: wrap; gap: 4px;
+}
+.aq-naming-actions {
+  display: flex; gap: 8px; justify-content: flex-end;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.aq-naming-actions button {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.8rem; font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all .2s;
+  font-family: inherit;
+}
+.aq-naming-actions .grey-btn { background: rgba(255,255,255,0.06); color: var(--t2); }
+.aq-naming-actions .green-btn { background: linear-gradient(135deg, var(--green), #059669); color: #fff; }
+.aq-naming-actions button:active { transform: scale(0.96); }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-naming-modal, .aq-naming-overlay {
+    transition: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Round 13 Additions — FCR Tracker, Batch Lifecycle Stages
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── FCR Tracker Card (Dashboard batch view) ── */
+.aq-fcr-card {
+  margin: 12px 16px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(251,191,36,0.06) 0%, rgba(0,229,245,0.04) 100%);
+  border: 1px solid rgba(251,191,36,0.15);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  animation: aqFcrIn .4s cubic-bezier(0.25,1,0.5,1) backwards;
+}
+@keyframes aqFcrIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aq-fcr-inner { padding: 14px 16px 12px; }
+.aq-fcr-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 14px;
+  font-size: 0.92rem; font-weight: 700; color: var(--t1);
+  font-family: 'Outfit', sans-serif;
+}
+.aq-fcr-icon { font-size: 1.1rem; }
+.aq-fcr-body {
+  display: flex; gap: 16px;
+  margin-bottom: 14px;
+}
+.aq-fcr-main {
+  flex: 0 0 100px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+}
+.aq-fcr-value {
+  font-size: 2rem; font-weight: 800; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.aq-fcr-status {
+  font-size: 0.72rem; font-weight: 700; margin-top: 6px;
+}
+.aq-fcr-details {
+  flex: 1;
+  display: flex; flex-direction: column; gap: 4px;
+  justify-content: center;
+}
+.aq-fcr-detail-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.76rem;
+  padding: 3px 0;
+  border-bottom: 1px dashed rgba(255,255,255,0.04);
+}
+.aq-fcr-detail-row:last-child { border-bottom: none; }
+.aq-fcr-detail-row span:first-child { color: var(--t2); }
+.aq-fcr-detail-row span:last-child { font-weight: 700; color: var(--t1); font-variant-numeric: tabular-nums; }
+.aq-fcr-scale {
+  margin-bottom: 10px;
+}
+.aq-fcr-scale-label {
+  font-size: 0.68rem; font-weight: 600; color: var(--t2);
+  margin-bottom: 6px;
+}
+.aq-fcr-scale-bar {
+  position: relative;
+  height: 10px; border-radius: 5px;
+  display: flex; overflow: hidden;
+}
+.aq-fcr-scale-seg { flex: 1; }
+.aq-fcr-scale-seg.aq-fcr-excellent { background: rgba(16,185,129,0.3); flex: 1.2; }
+.aq-fcr-scale-seg.aq-fcr-good { background: rgba(0,229,245,0.3); flex: 0.4; }
+.aq-fcr-scale-seg.aq-fcr-fair { background: rgba(251,191,36,0.3); flex: 0.4; }
+.aq-fcr-scale-seg.aq-fcr-poor { background: rgba(244,63,94,0.3); flex: 0.5; }
+.aq-fcr-scale-marker {
+  position: absolute;
+  top: -3px;
+  width: 4px; height: 16px;
+  border-radius: 2px;
+  box-shadow: 0 0 8px currentColor;
+  transition: left .5s cubic-bezier(0.34,1.56,0.64,1);
+  transform: translateX(-50%);
+}
+.aq-fcr-scale-labels {
+  display: flex; justify-content: space-between;
+  margin-top: 4px;
+  font-size: 0.58rem; color: var(--t3);
+  font-variant-numeric: tabular-nums;
+}
+.aq-fcr-tip {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(0,229,245,0.05);
+  font-size: 0.72rem; color: var(--t2);
+  line-height: 1.4;
+}
+
+/* ── Batch Lifecycle Stage Badge (on pond cards) ── */
+.aq-lifecycle-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid;
+  border-left-width: 3px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  animation: aqLifecycleIn .3s ease backwards;
+}
+@keyframes aqLifecycleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.aq-lifecycle-icon {
+  font-size: 0.9rem;
+}
+.aq-lifecycle-stage {
+  font-size: 0.68rem; font-weight: 700;
+  white-space: nowrap;
+}
+.aq-lifecycle-doc {
+  font-size: 0.62rem; color: var(--t2);
+  font-variant-numeric: tabular-nums;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  padding-left: 6px;
+  margin-left: 2px;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .aq-fcr-card, .aq-lifecycle-badge, .aq-fcr-scale-marker {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   ══ DASHBOARD FIXES (Round 14) ══
+   Fixes #2, #4, #5, #6, #9 — see commit messages for each fix.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ──────────────────────────────────────────────────────────────────
+   Fix #4 — Section grouping with distinct visual containers
+   Each dashboard module gets its own glass card with a clear header.
+─────────────────────────────────────────────────────────────────── */
+.dash-section {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-xl);
+  padding: 14px 14px 16px;
+  margin: 14px 0;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.dash-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.025), transparent 60%);
+  pointer-events: none;
+}
+.dash-section-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 2px 4px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  margin-bottom: 12px;
+  position: relative;
+}
+.dash-section-icon {
+  font-size: 1.05rem;
+  width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(0,212,170,.1);
+  border-radius: var(--r-md);
+  border: 1px solid rgba(0,212,170,.18);
+  flex-shrink: 0;
+}
+.dash-section-title {
+  font-family: var(--fh);
+  font-size: .95rem;
+  font-weight: 800;
+  color: var(--t1);
+  letter-spacing: -.2px;
+  flex: 1;
+  min-width: 0;
+}
+.dash-section-sub {
+  font-size: .68rem;
+  color: var(--t3);
+  font-weight: 500;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 8px;
+}
+.dash-section--operations { border-left: 3px solid rgba(0,212,170,.4); }
+.dash-section--finance    { border-left: 3px solid rgba(245,158,11,.4); }
+.dash-section--finance .dash-section-icon {
+  background: rgba(245,158,11,.12);
+  border-color: rgba(245,158,11,.22);
+}
+.dash-section--sessions   { border-left: 3px solid rgba(56,189,248,.4); }
+.dash-section--sessions .dash-section-icon {
+  background: rgba(56,189,248,.12);
+  border-color: rgba(56,189,248,.22);
+}
+.dash-section--sessions .dash-section-header { flex-wrap: wrap; }
+.dash-section--sessions .see-all-btn {
+  font-size: .72rem; color: var(--teal);
+  background: rgba(0,212,170,.08); border: 1px solid rgba(0,212,170,.18);
+  border-radius: var(--r-pill); padding: 4px 10px;
+  cursor: pointer; font-weight: 600;
+  margin-left: auto; flex-shrink: 0;
+  transition: background var(--tr-fast);
+}
+.dash-section--sessions .see-all-btn:active { transform: scale(.94); }
+
+/* When the section header contains the session title (date-aware),
+   we want it to flex naturally with the See All button */
+.dash-section--sessions .dash-section-title { flex: 0 1 auto; }
+
+/* Tighten the section header rows that live INSIDE dash-section cards */
+.dash-section .section-header-row {
+  padding: 4px 4px 8px;
+  margin: 0;
+}
+.dash-section .section-title-sm { font-size: .72rem; }
+
+/* The sampling warning + active batch cards now live inside .dash-section--operations;
+   remove their outer margins since the section provides its own padding */
+.dash-section--operations #samplingWarningWrap { margin: 0; }
+.dash-section--operations .active-batch-cards-wrap { margin: 0; padding: 0; }
+
+/* Finance quick access button now lives inside .dash-section--finance */
+.dash-section--finance .fin-quick-access { margin: 0 !important; }
+
+/* Today's Sessions strip + nav now live inside .dash-section--sessions */
+.dash-section--sessions .pond-session-strip { padding: 4px 0 8px; }
+.dash-section--sessions #sessionDateNav { padding: 0; }
+.dash-section--sessions .pond-session-summary-wrap { padding: 0; }
+
+/* ──────────────────────────────────────────────────────────────────
+   Fix #2 — 7-Day Feed Trend chart: mobile-first, rounded bars,
+   lighter grid, proper padding, responsive dimensions.
+   We override the inline-drawn chart's wrap to provide better padding
+   and ensure the chart card fits naturally inside the hero card.
+─────────────────────────────────────────────────────────────────── */
+.hero-trend-section {
+  margin-top: 16px !important;
+  padding: 14px 12px 10px !important;
+  border-top: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.025);
+}
+.hero-trend-header {
+  font-size: .68rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55) !important;
+  letter-spacing: .6px;
+  margin-bottom: 10px !important;
+  display: flex; align-items: center; gap: 6px;
+}
+.hero-trend-header::before {
+  content: '📈';
+  font-size: .8rem;
+  opacity: .8;
+}
+.hero-trend-chart-wrap {
+  position: relative;
+  width: 100%;
+  padding: 4px 0 6px;
+  min-height: 90px;
+}
+/* ── Fix: DO NOT force width:100% or max-height on the canvas ──
+   The JS drawBarChart() sets canvas.style.width and canvas.style.height
+   in pixels (based on parent.clientWidth - 36). Forcing width:100% !important
+   (as style.css line 3282 does) overrides that and stretches the drawing
+   buffer horizontally, which makes the chart look vertically stretched
+   (bars become tall and thin relative to their width).
+   We explicitly counter-override style.css with width:auto !important
+   so the JS-controlled pixel dimensions win. */
+.hero-trend-chart-wrap canvas {
+  display: block;
+  width: auto !important;
+  max-width: 100%;
+  height: auto !important;
+}
+.chart-summary-box {
+  margin-top: 10px !important;
+  padding: 8px 10px !important;
+  background: rgba(0,212,170,.05) !important;
+  border: 1px solid rgba(0,212,170,.12) !important;
+  border-radius: var(--r-md) !important;
+  font-size: .72rem !important;
+  color: var(--t2) !important;
+  line-height: 1.45 !important;
+}
+.chart-summary-box .summary-highlight {
+  color: var(--teal) !important;
+  font-weight: 700 !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Fix #5 — Pond selector strip: scrollable chips with edge fade hints,
+   compact chip sizing so all chips are visible. Adds a small
+   "scroll indicator" so users know more chips exist off-screen.
+─────────────────────────────────────────────────────────────────── */
+.pond-session-strip {
+  position: relative;
+  display: flex; gap: 8px;
+  padding: 6px 4px 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+  scroll-padding-left: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.pond-session-strip::-webkit-scrollbar { display: none; }
+.pond-session-strip::after {
+  /* Fade hint on the right edge when more chips exist */
+  content: '';
+  position: absolute; top: 0; right: 0; bottom: 10px;
+  width: 24px;
+  background: linear-gradient(270deg, var(--bg-2), transparent);
+  pointer-events: none;
+  opacity: .8;
+}
+.pond-session-strip.is-scrolled-end::after { opacity: 0; }
+
+.ps-chip,
+.pss-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 14px !important;
+  border-radius: var(--r-md) !important;
+  scroll-snap-align: start;
+  min-width: 110px;
+  max-width: 160px;
+}
+.ps-chip-name {
+  font-size: .82rem !important;
+  font-weight: 800 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.ps-chip-batch { font-size: .65rem !important; }
+.ps-chip-doc { font-size: .68rem !important; padding: 1px 8px !important; }
+
+/* Scroll hint dots below the strip */
+.ps-scroll-hint {
+  display: flex; justify-content: center; gap: 4px;
+  padding: 2px 0 4px;
+  margin-top: -2px;
+}
+.ps-scroll-hint-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  transition: background var(--tr-fast), width var(--tr-fast);
+}
+.ps-scroll-hint-dot.active {
+  background: var(--teal);
+  width: 14px;
+  border-radius: 2px;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Fix #6 — Daily Feed Timeline: 4 standard sessions + custom sessions
+   The .pss-slots grid now auto-flows: 2 cols on narrow phones,
+   up to 4 cols when there's room. Each slot is touch-friendly.
+─────────────────────────────────────────────────────────────────── */
+.pss-card {
+  padding: 14px 16px !important;
+}
+.pss-slots {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-top: 4px !important;
+}
+@media (min-width: 420px) {
+  .pss-slots { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+/* For 3 slots (3 standard sessions + custom): use 3 cols at wider screens */
+.pss-slots.pss-slots--count-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.pss-slots.pss-slots--count-5 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+@media (min-width: 480px) {
+  .pss-slots.pss-slots--count-5 { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+}
+.pss-slot {
+  background: rgba(255,255,255,.035) !important;
+  border: 1px solid rgba(255,255,255,.06) !important;
+  border-radius: var(--r-md) !important;
+  padding: 10px 8px 9px !important;
+  text-align: center;
+  transition: background var(--tr-fast), border-color var(--tr-fast), transform var(--tr-fast);
+  position: relative;
+  overflow: hidden;
+}
+.pss-slot:active { transform: scale(.97); }
+.pss-slot.has-data {
+  background: linear-gradient(180deg, rgba(0,212,170,.08), rgba(0,212,170,.03)) !important;
+  border-color: rgba(0,212,170,.25) !important;
+}
+.pss-slot.has-data::after {
+  content: '';
+  position: absolute; top: 6px; right: 6px;
+  width: 6px; height: 6px;
+  background: var(--teal);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--teal);
+}
+.pss-slot-icon {
+  font-size: 1rem !important;
+  margin-bottom: 4px !important;
+  display: block;
+  opacity: .75;
+}
+.pss-slot-lbl {
+  font-size: .6rem !important;
+  font-weight: 700 !important;
+  color: var(--t3) !important;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  display: block;
+  margin-bottom: 4px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pss-slot-time {
+  font-size: .58rem !important;
+  color: var(--t4) !important;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+  letter-spacing: .2px;
+}
+.pss-slot-val {
+  font-family: var(--fh) !important;
+  font-size: .92rem !important;
+  font-weight: 800 !important;
+  color: var(--t2) !important;
+  line-height: 1.1 !important;
+}
+.pss-slot.has-data .pss-slot-val { color: var(--teal) !important; }
+.pss-slot-unit {
+  font-size: .58rem !important;
+  font-weight: 700;
+  color: var(--t3);
+}
+.pss-slot.has-data .pss-slot-unit { color: rgba(0,212,170,.8); }
+
+.pss-timeline-total {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 10px 12px;
+  background: linear-gradient(90deg, rgba(0,212,170,.08), rgba(56,189,248,.04));
+  border: 1px solid rgba(0,212,170,.18);
+  border-radius: var(--r-md);
+  margin-top: 10px;
+}
+.pss-timeline-total-lbl {
+  font-size: .68rem; font-weight: 700;
+  color: var(--t2); text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.pss-timeline-total-val {
+  font-family: var(--fh); font-size: 1.1rem; font-weight: 900;
+  color: var(--teal); letter-spacing: -.5px;
+}
+.pss-timeline-total-val .pss-timeline-total-unit {
+  font-size: .7rem; font-weight: 700; color: rgba(0,212,170,.7); margin-left: 2px;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Fix #9 — Collapsible Visual Weight card (collapsed by default)
+─────────────────────────────────────────────────────────────────── */
+#growthTrackingCard.gt-collapsed {
+  padding: 0 !important;
+}
+#growthTrackingCard.gt-collapsed .gt-card-empty,
+#growthTrackingCard.gt-collapsed .weight-history-scroll-wrap,
+#growthTrackingCard.gt-collapsed .gt-view-all-btn,
+#growthTrackingCard.gt-collapsed .wh-btn-add-row {
+  display: none !important;
+}
+.gt-collapse-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
+  background: rgba(255,255,255,.025);
+  border: none;
+  width: 100%;
+  text-align: left;
+  border-radius: var(--r-md);
+  transition: background var(--tr-fast);
+}
+.gt-collapse-header:hover,
+.gt-collapse-header:active {
+  background: rgba(255,255,255,.045);
+}
+.gt-collapse-header-icon {
+  font-size: 1.05rem;
+  width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(0,212,170,.1);
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(0,212,170,.18);
+}
+.gt-collapse-header-title {
+  flex: 1;
+  font-family: var(--fh);
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--t1);
+}
+.gt-collapse-header-meta {
+  font-size: .68rem;
+  color: var(--t3);
+  font-weight: 600;
+  margin-right: 6px;
+}
+.gt-collapse-header-chevron {
+  font-size: .8rem;
+  color: var(--t3);
+  transition: transform var(--tr-med);
+}
+#growthTrackingCard.gt-collapsed .gt-collapse-header-chevron { transform: rotate(-90deg); }
+#growthTrackingCard:not(.gt-collapsed) .gt-collapse-header {
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  border-radius: var(--r-md) var(--r-md) 0 0;
+}
+.gt-collapse-body {
+  padding: 12px 14px 14px;
+  animation: gtExpand .25s ease-out;
+}
+@keyframes gtExpand {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Fix #1 — Today's Tasks setup empty state
+─────────────────────────────────────────────────────────────────── */
+.aq-tasks-empty--setup {
+  padding: 22px 16px !important;
+  background: linear-gradient(180deg, rgba(245,158,11,.04), rgba(0,212,170,.02));
+  border: 1px dashed rgba(245,158,11,.25);
+  border-radius: var(--r-md);
+  margin: 4px 0;
+}
+.aq-tasks-empty--setup .aq-tasks-empty-icon {
+  font-size: 2rem !important;
+  margin-bottom: 6px;
+}
+.aq-tasks-empty--setup .aq-tasks-empty-text {
+  font-size: .85rem !important;
+  color: var(--t1) !important;
+  font-weight: 700 !important;
+  margin-bottom: 4px;
+}
+.aq-tasks-empty--setup .aq-tasks-empty-sub {
+  font-size: .72rem !important;
+  color: var(--t3) !important;
+  font-weight: 500;
+  line-height: 1.45;
+  max-width: 280px;
+}
+.aq-tasks-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-align: center;
+}
+.aq-tasks-empty-icon { font-size: 1.6rem; opacity: .7; }
+.aq-tasks-empty-text { font-weight: 600; color: var(--t2); }
+.aq-tasks-empty-sub  { font-size: .72rem; color: var(--t3); }
+
+/* ──────────────────────────────────────────────────────────────────
+   Fix #7 — Recent Activity at the bottom: add separator spacing
+─────────────────────────────────────────────────────────────────── */
+.aq-timeline-card--bottom {
+  margin-top: 22px !important;
+  position: relative;
+}
+.aq-timeline-card--bottom::before {
+  content: '';
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent);
+  margin: 0 0 16px;
+}
+.aq-timeline-card--bottom .aq-timeline-title {
+  font-family: var(--fh);
+  font-weight: 800;
+  font-size: .95rem;
+  color: var(--t1);
+  flex: 1;
+}
+.aq-timeline-card--bottom .aq-timeline-header {
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 8px;
+}
+
+/* Timeline dots for new event types */
+.aq-timeline-sampling { background: rgba(56,189,248,.18) !important; }
+.aq-timeline-weight   { background: rgba(245,158,11,.18) !important; }
+.aq-timeline-mortality{ background: rgba(239,68,68,.18) !important; }
+.aq-timeline-water    { background: rgba(59,130,246,.18) !important; }
+
+/* ──────────────────────────────────────────────────────────────────
+   Fix: Sessions section in Batch view (pond selector hidden)
+   When a specific batch is selected from the dashboard dropdown, the
+   pond selector chips are hidden (the pond is already chosen). Add a
+   bit of top padding so the date navigator doesn't crowd the header.
+─────────────────────────────────────────────────────────────────── */
+.dash-section--sessions.batch-mode .pond-session-strip {
+  display: none !important;
+}
+.dash-section--sessions.batch-mode #sessionDateNav {
+  padding-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MANAGE PAGE REDESIGN — management-first layout
+   - Primary action cards (Sites / Ponds / Batches) at top
+   - Active Pond chips selector (syncs with horizontal pager)
+   - Full-screen-width Pond Management Card carousel (swipeable)
+   - Tools & Analytics collapsible section (Compare features)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Primary action cards (Sites / Ponds / Batches) ── */
+.manage-primary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 14px 8px 12px;
+  background: linear-gradient(160deg, var(--surface) 0%, var(--surface-2) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  transition: transform .15s var(--tr-fast), border-color .15s, box-shadow .2s;
+  color: var(--t1);
+  font-family: var(--fb);
+  position: relative;
+  overflow: hidden;
+}
+.manage-primary-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--cyan));
+  opacity: .65;
+}
+.manage-primary-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--teal-dim);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+.manage-primary-card:active { transform: translateY(0); }
+.manage-primary-card .mpc-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.manage-primary-card .mpc-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--t1);
+}
+.manage-primary-card .mpc-sub {
+  font-size: 0.68rem;
+  color: var(--t3);
+  font-weight: 500;
+}
+
+/* ── Active Pond chips selector ── */
+.manage-pond-chips-wrap {
+  overflow: hidden;
+}
+.manage-pond-chips {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+}
+.manage-pond-chips::-webkit-scrollbar { display: none; }
+.manage-pond-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 100px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--t2);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--fb);
+  cursor: pointer;
+  transition: all .15s var(--tr-fast);
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.manage-pond-chip .mpc-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--t3);
+  flex-shrink: 0;
+}
+.manage-pond-chip.active {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dim) 100%);
+  border-color: var(--teal-dim);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0,168,134,0.35);
+}
+.manage-pond-chip.active .mpc-dot { background: #fff; }
+.manage-pond-chip:hover:not(.active) {
+  border-color: var(--teal-dim);
+  color: var(--t1);
+}
+
+/* ── Pond Management Card carousel (horizontal pager) ── */
+.manage-pond-pager {
+  display: flex;
+  gap: 12px;
+  padding: 8px 16px 4px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+.manage-pond-pager::-webkit-scrollbar { display: none; }
+.manage-pond-pager-card {
+  flex: 0 0 calc(100vw - 32px);
+  max-width: 520px;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  background: linear-gradient(165deg, var(--surface) 0%, var(--surface-2) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  position: relative;
+  overflow: hidden;
+}
+.manage-pond-pager-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--cyan), var(--teal));
+  opacity: .8;
+}
+.mppc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.mppc-title-block { flex: 1; min-width: 0; }
+.mppc-pond-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--t1);
+  font-family: var(--fh);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mppc-site-name {
+  font-size: 0.78rem;
+  color: var(--t3);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.mppc-status-pill {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.mppc-status-pill.active {
+  background: rgba(16,185,129,0.15);
+  color: #10b981;
+  border: 1px solid rgba(16,185,129,0.3);
+}
+.mppc-status-pill.idle {
+  background: rgba(148,163,184,0.12);
+  color: var(--t3);
+  border: 1px solid var(--border-2);
+}
+
+.mppc-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.mppc-section:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+.mppc-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.mppc-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.mppc-metric {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 8px 10px;
+}
+.mppc-metric-label {
+  font-size: 0.62rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+.mppc-metric-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--t1);
+  margin-top: 2px;
+  font-family: var(--fh);
+}
+.mppc-metric-value.teal { color: var(--teal); }
+.mppc-metric-value.amber { color: var(--amber); }
+.mppc-metric-value.red { color: var(--red); }
+
+.mppc-alert-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: var(--r-md);
+  font-size: 0.78rem;
+  color: var(--amber);
+  font-weight: 600;
+  margin-top: 8px;
+}
+.mppc-alert-row.critical {
+  background: rgba(244,63,94,0.08);
+  border-color: rgba(244,63,94,0.3);
+  color: var(--red);
+}
+.mppc-alert-row.ok {
+  background: rgba(16,185,129,0.08);
+  border-color: rgba(16,185,129,0.25);
+  color: #10b981;
+}
+.mppc-alert-row .mpa-icon { font-size: 1rem; }
+
+.mppc-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+.mppc-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--t1);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--fb);
+  cursor: pointer;
+  transition: all .15s var(--tr-fast);
+}
+.mppc-action-btn:hover {
+  background: rgba(0,168,134,0.08);
+  border-color: var(--teal-dim);
+  color: var(--teal);
+}
+.mppc-action-btn.primary {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dim) 100%);
+  border-color: var(--teal-dim);
+  color: #fff;
+  grid-column: span 2;
+}
+.mppc-action-btn.primary:hover {
+  filter: brightness(1.08);
+  color: #fff;
+}
+
+/* ── Tools & Analytics grid ── */
+.manage-tools-card .cc-body { padding: 0 14px 14px; }
+.manage-tools-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+}
+.manage-tool-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--t1);
+  font-family: var(--fb);
+  cursor: pointer;
+  transition: all .15s var(--tr-fast);
+  text-align: left;
+}
+.manage-tool-btn:hover {
+  background: rgba(124,58,237,0.08);
+  border-color: var(--accent-violet, #7c3aed);
+  transform: translateY(-1px);
+}
+.manage-tool-btn .mtb-icon { font-size: 1.25rem; line-height: 1; }
+.manage-tool-btn .mtb-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--t1);
+}
+.manage-tool-btn .mtb-sub {
+  font-size: 0.68rem;
+  color: var(--t3);
+  font-weight: 500;
+}
+
+/* ── Pager dots indicator ── */
+.manage-pager-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 0 4px;
+}
+.manage-pager-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border-2);
+  transition: all .2s var(--tr-fast);
+}
+.manage-pager-dot.active {
+  background: var(--teal);
+  width: 18px;
+  border-radius: 3px;
+}
+
+/* Responsive: narrow screens make pager card nearly full-width */
+@media (max-width: 380px) {
+  .manage-pond-pager-card { flex: 0 0 calc(100vw - 24px); }
+  .manage-pond-chip { padding: 7px 12px; font-size: 0.78rem; }
+  .mppc-metric-grid { grid-template-columns: repeat(2, 1fr); }
+  .manage-tools-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HIDE DYNAMICALLY-INJECTED COMPARE BUTTONS
+   The Compare Ponds / Compare Batches / Growth Comparison buttons
+   used to be injected at the top of the Manage page by
+   extra-features.js. They have been moved into the "Tools & Analytics"
+   section. The injected buttons are kept in the DOM (so the Tools
+   section can trigger them via .click()) but hidden from view.
+   ═══════════════════════════════════════════════════════════════ */
+#pageManage .aq-compare-btn-wrap,
+#pageManage .aq-pond-compare-btn-wrap,
+#pageManage .aq-growth-compare-btn-wrap,
+#pageManage .aq-compare-btn-wrap.aq-pond-compare-btn-wrap,
+#pageManage .aq-compare-btn-wrap.aq-growth-compare-btn-wrap {
+  display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VIEW BATCH MODAL — Issue #8 redesign
+   - Daily Summary stats grid (Total / Sessions / Avg)
+   - Feed Session Timeline (shows ALL feed times, not just Morning/Evening)
+   - Responsive 3-button footer with equal widths
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Daily Summary stats grid */
+.bdfs-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+.bdfs-stat-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 8px;
+  text-align: center;
+}
+.bdfs-stat-card.bdfs-stat-total {
+  background: linear-gradient(135deg, rgba(0,168,134,0.12) 0%, rgba(14,165,233,0.08) 100%);
+  border-color: rgba(0,168,134,0.3);
+}
+.bdfs-stat-lbl {
+  font-size: 0.62rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+.bdfs-stat-val {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--t1);
+  margin-top: 3px;
+  font-family: var(--fh);
+  line-height: 1.1;
+}
+.bdfs-stat-card.bdfs-stat-total .bdfs-stat-val { color: var(--teal); }
+.bdfs-stat-unit {
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-left: 2px;
+  color: var(--t3);
+}
+
+/* Feed Session Timeline (all feed times) */
+.bdfs-timeline-section {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+.bdfs-timeline-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+}
+.bdfs-timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+}
+.bdfs-timeline .bdfs-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 6px 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  text-align: center;
+  transition: all .15s var(--tr-fast);
+}
+.bdfs-timeline .bdfs-slot.has-data {
+  background: linear-gradient(160deg, rgba(0,168,134,0.08) 0%, rgba(255,255,255,0.03) 100%);
+  border-color: rgba(0,168,134,0.3);
+}
+.bdfs-timeline .bdfs-slot-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.bdfs-timeline .bdfs-slot-lbl {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--t1);
+}
+.bdfs-timeline .bdfs-slot-time {
+  font-size: 0.62rem;
+  color: var(--t3);
+  font-weight: 500;
+}
+.bdfs-timeline .bdfs-slot-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--teal);
+  margin-top: 2px;
+  font-family: var(--fh);
+}
+.bdfs-timeline .bdfs-slot-unit {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--t3);
+  margin-left: 2px;
+}
+.bdfs-timeline .bdfs-slot:not(.has-data) .bdfs-slot-val { color: var(--t3); }
+
+/* View Batch footer — responsive 3-button layout */
+.view-batch-footer-btn {
+  width: 100% !important;
+  padding: 10px 8px !important;
+  font-size: 0.78rem !important;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 380px) {
+  .view-batch-footer {
+    grid-template-columns: 1fr 1fr 1.1fr !important;
+    gap: 6px !important;
+  }
+  .view-batch-footer-btn { font-size: 0.72rem !important; padding: 9px 4px !important; }
+  .bdfs-stats-grid { grid-template-columns: 1fr 1fr; }
+  .bdfs-stat-card.bdfs-stat-total { grid-column: span 2; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPLETE BATCH MODAL — Issue #7 redesign (Harvest Summary + Completion)
+   - Grouped card sections (Summary → Harvest → Details → Calculations → Warning)
+   - Expandable optional fields
+   - Sticky bottom action button
+   ═══════════════════════════════════════════════════════════════ */
+.complete-batch-sheet {
+  padding-bottom: 0 !important; /* sticky footer handles its own padding */
+}
+
+/* Section wrapper */
+.cb-section {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+.cb-section:first-of-type { margin-top: 8px; }
+
+/* Section title */
+.cb-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 10px;
+  font-family: var(--fh);
+}
+.cb-section-title > span:first-child { font-size: 1rem; line-height: 1; }
+.cb-section-sub {
+  margin-left: auto;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  background: rgba(255,255,255,0.04);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+/* Field hint */
+.fi-hint {
+  font-size: 0.68rem;
+  color: var(--t3);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* 1. Pond & Batch Summary grid */
+.cb-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.cb-sum-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 8px 10px;
+}
+.cb-sum-lbl {
+  font-size: 0.62rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+.cb-sum-val {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--t1);
+  margin-top: 2px;
+  font-family: var(--fh);
+  word-break: break-word;
+}
+.cb-sum-val.teal { color: var(--teal); }
+
+/* 2. Harvest Summary grid */
+.cb-harvest-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.cb-hs-item {
+  background: linear-gradient(135deg, rgba(0,168,134,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(0,168,134,0.2);
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+}
+.cb-hs-lbl {
+  font-size: 0.62rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+.cb-hs-val {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--t1);
+  margin-top: 2px;
+  font-family: var(--fh);
+}
+.cb-hs-val.teal { color: var(--teal); }
+
+/* 3. Optional fields toggle */
+.cb-optional-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(124,58,237,0.06);
+  border: 1px dashed rgba(124,58,237,0.3);
+  border-radius: var(--r-md);
+  color: var(--accent-violet, #a78bfa);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--fb);
+  cursor: pointer;
+  transition: all .15s var(--tr-fast);
+}
+.cb-optional-toggle:hover {
+  background: rgba(124,58,237,0.12);
+  border-color: rgba(124,58,237,0.5);
+}
+.cb-ot-arrow {
+  font-size: 0.75rem;
+  transition: transform .2s var(--tr-fast);
+}
+.cb-optional-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.cb-optional-section.hidden { display: none; }
+
+/* 4. Auto Calculations grid */
+.cb-calculations-section {
+  background: linear-gradient(135deg, rgba(14,165,233,0.06) 0%, rgba(0,168,134,0.04) 100%) !important;
+  border-color: rgba(14,165,233,0.2) !important;
+}
+.cb-calc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.cb-calc-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 8px 6px;
+  text-align: center;
+}
+.cb-calc-lbl {
+  font-size: 0.58rem;
+  color: var(--t3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+.cb-calc-val {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--t1);
+  margin-top: 2px;
+  font-family: var(--fh);
+  word-break: break-word;
+}
+.cb-calc-val.teal { color: var(--teal); }
+
+/* 5. Confirmation warning */
+.cb-warning-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(244,63,94,0.06);
+  border: 1px solid rgba(244,63,94,0.3);
+  border-radius: var(--r-md);
+}
+.cb-warning-icon {
+  font-size: 1.1rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+.cb-warning-text {
+  font-size: 0.78rem;
+  color: #fda4af;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* 6. Sticky footer */
+.cb-sticky-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  margin-top: 14px;
+  background: linear-gradient(180deg, rgba(13,17,23,0) 0%, var(--surface) 35%);
+  backdrop-filter: blur(10px);
+  z-index: 5;
+}
+.cb-complete-btn {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  padding: 12px 16px !important;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,168,134,0.35);
+}
+
+/* Responsive: collapse to 2-column grids on very narrow screens */
+@media (max-width: 380px) {
+  .cb-summary-grid { grid-template-columns: 1fr 1fr; }
+  .cb-harvest-summary-grid { grid-template-columns: 1fr 1fr; }
+  .cb-calc-grid { grid-template-columns: 1fr 1fr; }
+  .cb-sticky-footer { grid-template-columns: 1fr 1.4fr; gap: 8px; padding: 10px 12px 14px; }
+  .cb-complete-btn { font-size: 0.85rem !important; padding: 11px 10px !important; }
+}
